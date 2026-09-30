@@ -304,6 +304,9 @@ dl.info dd{margin:0;font:600 15px var(--ui)}
 
 /* ===== Salle du boss / combat, au tour par tour ===== */
 .center-win{max-width:640px;margin:0 auto}
+.center-win.fail{border-color:rgba(255,77,109,.6);box-shadow:0 0 30px rgba(255,77,109,.2), inset 0 0 40px rgba(255,77,109,.06)}
+.center-win.fail .win-head{color:#ffb4c2}
+.center-win.fail .win-head::before{background:var(--blood);box-shadow:0 0 8px var(--blood)}
 .boss-preview{font-size:110px;text-align:center;line-height:1.1;filter:drop-shadow(0 0 26px rgba(255,77,109,.6))}
 .ctrl td:first-child{white-space:nowrap;font:600 15px var(--ui);color:var(--gold)}
 .boss-screen{max-width:640px;margin:0 auto;display:grid;gap:12px}
@@ -415,6 +418,7 @@ dl.info dd{margin:0;font:600 15px var(--ui)}
 .sys-win.error .sysline{background:linear-gradient(90deg,transparent,var(--blood) 20%,var(--blood) 80%,transparent);
   box-shadow:0 0 12px var(--blood),0 0 24px var(--blood)}
 .sys-win.error .sys-label{color:#ffb4c2}
+.sys-win.info .sys-label{color:var(--sys);animation:none}
 .lvlicon-wrap{display:flex;justify-content:center;margin-bottom:6px}
 .lvlicon-wrap .lvlicon{filter:drop-shadow(0 0 18px rgba(77,181,255,.6));animation:lvlPop .5s cubic-bezier(.2,.9,.3,1.3) both}
 @keyframes lvlPop{from{opacity:0;transform:scale(.4) rotate(-12deg)}to{opacity:1;transform:none}}
@@ -681,7 +685,12 @@ function fondBuildAttempt(hist, attempt){
       selected.push(pick);
     }
   });
-  return shuffle(selected);
+  // Toujours le français d'abord, puis les maths — mais mélangé à l'intérieur
+  // de chaque matière, pour ne pas revoir les catégories toujours dans le
+  // même ordre (conjugaison présent en premier, etc.).
+  const fr = shuffle(selected.filter(q => q.subject === "francais"));
+  const math = shuffle(selected.filter(q => q.subject === "maths"));
+  return [...fr, ...math];
 }
 const ALLITEMS = [...SHOP.potions, ...SHOP.weapons, ...SHOP.armors];
 const item = id => ALLITEMS.find(x => x.id === id);
@@ -860,7 +869,6 @@ function migrate(o){
   if (!item(m.weapon)) m.weapon = "w0";
   if (!item(m.armor)) m.armor = "a0";
   if (!Array.isArray(m.owned)) m.owned = ["w0","a0"];
-  m.inv = {potHp:m.inv.potHp || 0, potHpL:m.inv.potHpL || 0};
   if (o.seen === null || o.seen === undefined) m.seen = null;
   if (!Array.isArray(o.seenSubjects)) m.seenSubjects = null;
   // Sauvegarde antérieure à l'introduction des Fondamentaux : on considère
@@ -976,7 +984,8 @@ function nextSys(){
   const meta = {
     default:{cls:"", icon:"!", label:"ALERTE DU SYSTÈME"},
     levelup:{cls:"levelup", icon:"▲", label:"NIVEAU SUPÉRIEUR"},
-    error:{cls:"error", icon:"✕", label:"ERREUR"}
+    error:{cls:"error", icon:"✕", label:"ERREUR"},
+    info:{cls:"info", icon:"i", label:"NOTIFICATION"}
   }[v];
   el.innerHTML = `<div class="win sys-win ${meta.cls}" role="alertdialog" aria-modal="true" aria-labelledby="systitle">
     <i class="sysline top" aria-hidden="true"></i>
@@ -1006,7 +1015,7 @@ function gainXP(n){
 /* Onglets désactivés en attendant d'être conçus : affichent une page
    "bientôt disponible" au lieu de l'écran réel. Pour réactiver un onglet,
    retirer sa clé de cette liste. */
-const SOON = ["quests"];
+const SOON = []; // aucun onglet volontairement désactivé pour l'instant
 /* ===== Rendu ===== */
 function fondDone(){ return !!(S && S.dungeons.fondamentaux && S.dungeons.fondamentaux.cleared); }
 function hud(){
@@ -1154,7 +1163,7 @@ const SCREENS = {
       return `<button class="btn ans ${cls}" data-act="fondans" data-i="${i}" ${fb ? "disabled" : ""}><span>${esc(q.c[oi])}</span><kbd>${i + 1}</kbd></button>`;
     }).join("")}</div>`;
     return `<div class="title-row"><h2>Épreuve des Fondamentaux</h2>
-      <p class="sub">${subjLabel} · Question ${idx + 1} / ${total} · ${Math.max(0, errLeft)} erreur${errLeft === 1 ? "" : "s"} autorisée${errLeft === 1 ? "" : "s"}</p></div>
+      <p class="sub">${subjLabel} · Question ${idx + 1} / ${total} · ${Math.max(0, errLeft)} erreur${errLeft <= 1 ? "" : "s"} autorisée${errLeft <= 1 ? "" : "s"}</p></div>
       <div class="bar" style="margin-bottom:18px" role="progressbar" aria-valuenow="${idx}" aria-valuemax="${total}"><i style="width:${idx / total * 100}%"></i></div>
       <div class="win"><p class="q">${esc(q.q)}</p>${body}
       ${fb ? `<div class="fb ${fb.ok ? "ok" : "ko"}" role="status"><h3>${fb.ok ? "Correct" : "Pas tout à fait"}</h3>
@@ -1166,13 +1175,15 @@ const SCREENS = {
   fondresult(){
     const r = UI.fondResult;
     return `<div class="title-row"><h2>Résultat de l’épreuve</h2></div>
-      <div class="win center-win">
+      <div class="win center-win ${r.passed ? "" : "fail"}">
         <div class="win-head" style="justify-content:center">${r.passed ? "Épreuve validée" : "Épreuve non validée"}</div>
         <h2>${r.total} / 15</h2>
         <p class="sub">${r.passed
           ? "Le Système confirme : tes bases sont solides. Tu peux désormais l’aider."
-          : "Tu as dépassé les 3 erreurs autorisées. Le Système t’invite à retenter Les Fondamentaux."}</p>
-        <button class="btn primary wide" data-act="${r.passed ? "fondcontinue" : "fondretry"}">${r.passed ? "Continuer →" : "Retenter l’épreuve"}</button>
+          : "Tu as dépassé les 3 erreurs autorisées. Retente Les Fondamentaux quand tu es prêt."}</p>
+        ${r.passed
+          ? `<button class="btn primary wide" data-act="fondcontinue">Continuer →</button>`
+          : `<button class="link" data-act="fondretry">Retour vers les entraînements</button>`}
       </div>`;
   },
   storygrim(){
@@ -1450,19 +1461,11 @@ const SCREENS = {
   quests(){
     if (!fondDone()){
       return `<div class="title-row"><h2>Quête</h2></div>
-        <div class="win center-win" style="margin:0"><div class="win-head">Objectif du Système</div>
+        <div class="win center-win" style="margin:0"><div class="win-head">Quête active</div>
           <div class="task"><span class="check"></span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>
-          <p class="hint">D’autres quêtes seront confiées une fois cette étape franchie.</p>
         </div>`;
     }
-    return `<div class="win center-win shopsoon">
-      <div class="win-head" style="justify-content:center">Quête du jour</div>
-      <div class="shopsoon-icon" aria-hidden="true">📜</div>
-      <h2>Bientôt disponible</h2>
-      <p><em>Le tableau des quêtes est encore vierge.</em></p>
-      <p>Le Système prépare tes prochains objectifs quotidiens…</p>
-      <button class="btn primary big" data-act="go" data-to="map">Retour à la carte</button>
-    </div>`;
+    return SCREENS.questsReal();
   },
   questsReal(){
     const done = dailyDone();
@@ -1482,10 +1485,10 @@ const SCREENS = {
       return `<div class="title-row"><h2>Salle d’entraînement</h2></div>
         <div class="trainlist">
           <div class="win trainblock">
-            <div class="win-head">Première quête</div>
+            <div class="win-head">Entraînement</div>
             <h2>Les Fondamentaux</h2>
-            <p>Avant d’aller plus loin, le Système souhaite vérifier tes fondamentaux.</p>
-            <p>15 questions t’attendent.<br><br><span class="warn">Condition de réussite :<br>3 erreurs maximum.</span></p>
+            <p>Retrouve ici les fondamentaux avant d’acquérir de nouvelles connaissances : français et mathématiques.</p>
+            <p><span class="warn">Condition de réussite :<br>3 erreurs maximum.</span></p>
             <button class="btn primary wide" data-act="storystart">Commencer l’entraînement</button>
           </div>
           ${locked.map(name => `<div class="win trainblock locked"><h2>${name} <span class="soonbadge">🔒</span></h2></div>`).join("")}
@@ -2053,10 +2056,12 @@ const ACTIONS = {
   storystep(){ UI.storyStep++; render(); },
   storyback(){ if (UI.storyStep > 0){ UI.storyStep--; render(); } },
   storyenter(){ UI.screen = "training"; window.scrollTo(0, 0); render(); },
-  storystart(){ startFondamentaux(); },
+  storystart(){
+    sys("Épreuve des Fondamentaux", "<p>Tu répondras d’abord aux questions de <strong>français</strong>, puis à celles de <strong>mathématiques</strong>.</p>", () => startFondamentaux());
+  },
   fondans(t){ const i = +t.dataset.i; resolveFond(FONDTEST.cur.order[i] === 0, i); },
   fondnext(){ fondNext(); },
-  fondretry(){ startFondamentaux(); },
+  fondretry(){ go("training"); },
   fondcontinue(){ UI.storyPostStep = 0; go("storypost"); },
   storypoststep(){ UI.storyPostStep++; render(); },
   storypostback(){ if (UI.storyPostStep > 0){ UI.storyPostStep--; render(); } },
@@ -2135,7 +2140,6 @@ const ACTIONS = {
   trialans(t){ const i = +t.dataset.i; resolveTrial(TRIAL.cur.order[i] === 0, i); },
   trialnext(){ trialNext(); },
   trialcontinue(){ UI.screen = "intro"; UI.introStep = STORY_INTRO.length + 1; render(); setTimeout(() => { const i = $("#hn"); if (i) i.focus(); }, 50); },
-  introrestore(){ UI.introRestore = true; render(); setTimeout(() => { const t = $("#restoreIn"); if (t) t.focus(); }, 50); },
   restore(){ restoreFrom(($("#restoreIn") || {}).value); },
   copysave(){
     const code = exportCode();
@@ -2215,10 +2219,37 @@ if (!SUBJECTS.length){
   render();
   if (S){ checkNewContent(); save(); }
 }
+/* Prévient d'une mise à jour de l'app — entièrement automatique, rien à
+   changer à la main à chaque déploiement. On surveille index.html ET tous
+   les fichiers de contenu (déduits directement des balises <script src=...>
+   de la page, donc un futur fichier de matière est suivi sans rien changer
+   ici) : pour chacun, on compare l'ETag (ou, à défaut, la date de dernière
+   modification) renvoyée par le serveur à la dernière valeur vue sur cet
+   appareil. Le message apparaît si NE SERAIT-CE QU'UN SEUL de ces fichiers
+   a changé — un nouveau donjon ajouté dans un fichier de matière déclenche
+   donc le message tout autant qu'une modification du moteur. Ne s'affiche
+   jamais au tout premier lancement, et reste silencieux hors ligne ou si le
+   serveur ne fournit aucune de ces deux informations pour aucun fichier. */
+if (typeof fetch === "function"){
+  const watchedFiles = ["index.html", ...[...document.querySelectorAll("script[src]")].map(s => s.getAttribute("src"))];
+  Promise.all(watchedFiles.map(f =>
+    fetch(f, {method:"HEAD", cache:"no-store"})
+      .then(res => res.headers.get("etag") || res.headers.get("last-modified") || "")
+      .catch(() => "")
+  )).then(tags => {
+    if (!tags.some(Boolean)) return; // aucune info exploitable pour aucun fichier
+    const combined = tags.join("|");
+    const VKEY = "eveil-chasseur-version";
+    const last = localStorage.getItem(VKEY);
+    if (last && last !== combined){
+      sys("Mise à jour installée", "<p>Une nouvelle version du Système vient d’être téléchargée.</p>", null, "info");
+    }
+    localStorage.setItem(VKEY, combined);
+  });
+}
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 if (S && S.total.correct >= 10 && Date.now() - (S.lastBackup || 0) > 7 * 864e5)
   sys("Pense à ta sauvegarde", "<p>Ça fait un moment que tu n’as pas mis ta progression à l’abri.</p><p>Va dans <strong>Statut</strong>, puis <strong>Sauvegarde</strong>.</p>");
-if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>

@@ -3,7 +3,7 @@
    la dernière version des fichiers du site (moteur et contenu), même si le
    réseau est lent ; le cache ne sert que si le réseau échoue vraiment
    (vraiment hors ligne). La progression (localStorage) n'est jamais touchée. */
-const CACHE = "eveil-chasseur-v5";
+const CACHE = "eveil-chasseur-v6";
 const CORE = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
   "./content/anglais.js", "./content/histoire.js", "./content/physique-chimie.js", "./content/fondamentaux.js"
