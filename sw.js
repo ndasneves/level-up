@@ -6,7 +6,7 @@
 const CACHE = "eveil-chasseur-v5";
 const CORE = [
   "./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png",
-  "./content/en.js", "./content/hi.js", "./content/pc.js"
+  "./content/anglais.js", "./content/histoire.js", "./content/physique-chimie.js", "./content/fondamentaux.js"
 ];
 
 self.addEventListener("install", e => {

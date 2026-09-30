@@ -7,14 +7,15 @@
    Aucun numéro de version à gérer à la main : le jeu calcule tout seul une
    empreinte du contenu chargé (visible dans Statut), qui change dès qu'une
    question, une fiche ou un donjon est modifié. Rien à oublier de ce côté.
-   - content/en.js         → Anglais
-   - content/hi.js         → Histoire
-   - content/pc.js         → Physique-Chimie
+   - content/anglais.js         → Anglais
+   - content/histoire.js        → Histoire
+   - content/physique-chimie.js → Physique-Chimie
+   - content/fondamentaux.js    → Épreuve des Fondamentaux (à part, voir plus bas)
    Modifier une matière ne touche à aucun fichier des autres matières :
    les diffs restent petits et faciles à relire.
 
    AJOUTER UN CHAPITRE À UNE MATIÈRE EXISTANTE
-   → Éditer uniquement le fichier de cette matière (ex. content/pc.js).
+   → Éditer uniquement le fichier de cette matière (ex. content/physique-chimie.js).
    → index.html n'a rien à changer.
 
    AJOUTER UNE TOUTE NOUVELLE MATIÈRE
@@ -89,4 +90,22 @@
    Chaque palier devient sa propre salle, dans l'ordre des numéros de tier, et une
    dernière salle "Résumé" est ajoutée automatiquement en mélangeant tous les
    paliers — inutile de l'écrire à la main.
+
+   CAS À PART : content/fondamentaux.js
+   Ce fichier ne suit PAS le format ci-dessus (pas de donjons, pas de "tier",
+   pas de boss). C'est une réserve à plat de 45 questions, chacune avec :
+     { id:"FR-PRES-01", subject:"francais"|"maths", category:"...",
+       q:"…", c:["bonne réponse", "fausse", ...], ex:"explication" }
+   Le moteur choisit lui-même 15 questions à chaque tentative (9 français +
+   6 maths), selon des quotas par catégorie définis dans index.html
+   (const FOND_QUOTAS) — jamais une série figée à l'avance. Règles à
+   respecter en modifiant ce fichier :
+   - Ne jamais renommer/supprimer un id existant (l'historique de chaque
+     enfant est attaché à ces id précis, dans sa sauvegarde).
+   - Garder exactement les mêmes noms de "category" que ceux déjà utilisés :
+     ce sont eux qui pilotent les quotas. Ajouter une catégorie ou changer
+     un quota demande de modifier FOND_QUOTAS dans index.html en même temps
+     — ce n'est donc pas un simple fichier de contenu isolé comme les autres.
+   - Garder assez de questions par catégorie pour couvrir plusieurs
+     tentatives (au moins 3 fois le quota par tentative, dans l'idéal).
    ===================================================================== */

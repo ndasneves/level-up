@@ -7,7 +7,8 @@ Application web installable (PWA) pour réviser les cours de 6e sous forme de je
 | Fichier | Rôle | À modifier ? |
 |---|---|---|
 | `index.html` | Moteur du jeu (écrans, combats au tour par tour, boutique, salles, sauvegarde) | Non, sauf évolution du jeu lui-même, ou ajout d'une **toute nouvelle matière** |
-| `content/en.js`, `content/hi.js`, `content/pc.js`, … | **Un fichier par matière** : ses donjons, fiches, questions | **Oui, un seul à la fois, celui de la matière concernée** |
+| `content/anglais.js`, `content/histoire.js`, `content/physique-chimie.js`, … | **Un fichier par matière** : ses donjons, fiches, questions | **Oui, un seul à la fois, celui de la matière concernée** |
+| `content/fondamentaux.js` | Les 45 questions de l'Épreuve des Fondamentaux (à part, pas une matière classique) | Oui, avec précaution (voir le guide) |
 | `content/_lisez-moi.js` | Le guide complet du format de contenu | Non (juste à lire) |
 | `sw.js` | Mode hors ligne et mises à jour automatiques du contenu | Non |
 | `manifest.webmanifest`, `icon-*.png` | Installation sur l'écran d'accueil | Non |
@@ -17,7 +18,7 @@ Application web installable (PWA) pour réviser les cours de 6e sous forme de je
 deux, un fichier unique reste simple. Mais il grossit à chaque chapitre ajouté, dans toutes les
 matières mélangées — au bout de quelques mois, il devient long à relire et plus risqué à modifier
 (plus facile de perdre un id ou une virgule au milieu de centaines de lignes). En séparant par
-matière : ajouter un chapitre de physique-chimie ne touche qu'à `content/pc.js`, un fichier de
+matière : ajouter un chapitre de physique-chimie ne touche qu'à `content/physique-chimie.js`, un fichier de
 quelques dizaines de lignes qui reste lisible d'un coup d'œil, sans jamais risquer de perturber
 l'anglais ou l'histoire à côté.
 
@@ -86,7 +87,7 @@ Le fonctionnement le plus simple, sans outil supplémentaire :
    aussi longtemps que nécessaire, avant de valider.
 3. Une fois d'accord :
    - **Nouveau chapitre dans une matière existante** → Claude fournit uniquement le fichier de cette
-     matière à jour (ex. `content/pc.js`). Rien d'autre à toucher, rien à mettre à jour à la main :
+     matière à jour (ex. `content/physique-chimie.js`). Rien d'autre à toucher, rien à mettre à jour à la main :
      le jeu détecte tout seul que le contenu a changé (voir encadré ci-dessous).
    - **Toute nouvelle matière** → Claude fournit le nouveau fichier (ex. `content/svt.js`) et la ligne
      à ajouter dans `index.html` (une seule ligne, juste après les matières existantes).
