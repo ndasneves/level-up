@@ -1,0 +1,18 @@
+Dépose ici les images utilisées par les questions (pictogrammes, schémas, photos...).
+
+Formats acceptés : PNG, JPG, WEBP, SVG. Garde des fichiers raisonnablement légers
+(quelques dizaines de Ko suffisent largement pour un pictogramme ou un schéma).
+
+Nomme les fichiers simplement, par exemple :
+  inflammable.png
+  comburant.png
+  toxique.png
+
+Puis référence-les dans le fichier de la matière concernée (ex. content/pc.js) :
+  { id:"q1", img:"content/images/inflammable.png", q:"Comment s'appelle ce pictogramme ?", c:[...] }
+
+Ou comme réponse en image :
+  { id:"q2", q:"Quel est le pictogramme « Toxique » ?",
+    c:[{src:"content/images/toxique.png"}, {src:"content/images/corrosif.png"}, ...] }
+
+Voir content/_lisez-moi.js pour le format complet (légendes, texte alternatif, etc.).

@@ -133,10 +133,12 @@ kbd{display:none}
   background:linear-gradient(180deg,#fff,#8FCBFF);-webkit-background-clip:text;background-clip:text;color:transparent}
 .intro p{color:var(--muted)}
 .field{display:grid;gap:6px;text-align:left;margin:22px 0 14px;font:600 15px var(--ui)}
-.orb.small{width:120px;height:120px;margin-bottom:34px}
+.orb.small{width:90px;height:90px;margin-bottom:6px}
+.wordmark{font:800 15px var(--ui);letter-spacing:.14em;color:#8FCBFF;text-align:center;margin:0 0 22px;
+  animation:storyIn .5s ease both}
 .intro p.sysalert{font:700 14px var(--ui);letter-spacing:.08em;color:var(--blood);margin:0 0 14px;
   animation:storyIn .5s ease both, alertBlink 1.8s ease-in-out .5s infinite}
-.story .storytxt{font:600 26px/1.5 var(--ui);color:#fff;margin:0 0 34px;animation:storyIn .6s ease .05s both}
+.story .storytxt{font:600 20px/1.5 var(--ui);color:#fff;margin:0 0 26px;animation:storyIn .6s ease .05s both}
 .story .storytxt .warn{color:var(--blood);font-weight:700}
 @keyframes alertBlink{50%{opacity:.45}}
 .story .btn{animation:storyIn .6s ease .1s both}
@@ -147,8 +149,8 @@ kbd{display:none}
 @keyframes pulseGlow{50%{box-shadow:0 0 80px rgba(155,107,255,.7),0 0 140px rgba(77,181,255,.35)}}
 .story-win{position:relative;overflow:hidden;text-align:center;animation:unfold .38s cubic-bezier(.2,.9,.3,1.2)}
 .story-win::before,.story-win::after{content:none}
-.story-win .sysalert{margin:8px 0 16px}
-.story-win .storytxt{margin-bottom:26px}
+.story-win .sysalert{margin:6px 0 14px}
+.story-win .storytxt{margin-bottom:22px}
 input.txt,textarea.txt{font:400 18px var(--read);color:var(--text);background:rgba(5,8,20,.8);border:1px solid rgba(77,181,255,.55);
   padding:12px 14px;border-radius:2px;width:100%}
 input.txt:focus,textarea.txt:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
@@ -397,17 +399,16 @@ dl.info dd{margin:0;font:600 15px var(--ui)}
 .sysline{position:absolute;left:6%;right:6%;height:2px;background:linear-gradient(90deg,transparent,var(--sys) 20%,var(--sys) 80%,transparent);
   box-shadow:0 0 10px var(--sys),0 0 20px var(--sys)}
 .sysline.top{top:6px} .sysline.bottom{bottom:6px}
-.sys-label{display:inline-flex;align-items:center;gap:7px;font:700 12px var(--ui);letter-spacing:.1em;
-  border:1px solid var(--sys);color:var(--sys);padding:4px 12px;margin:10px 0 16px;background:rgba(77,181,255,.08)}
-.sys-ico{display:inline-grid;place-items:center;width:15px;height:15px;border:1px solid currentColor;border-radius:50%;font-size:9px;font-style:normal}
+.sys-label{font:700 13px var(--ui);letter-spacing:.08em;color:var(--blood);margin:10px 0 16px;
+  animation:alertBlink 1.8s ease-in-out .5s infinite}
 .sys-win.levelup{border-color:rgba(155,107,255,.65);box-shadow:0 0 40px rgba(155,107,255,.3), inset 0 0 60px rgba(120,80,255,.1)}
 .sys-win.levelup .sysline{background:linear-gradient(90deg,transparent,var(--gate) 20%,var(--gate) 80%,transparent);
   box-shadow:0 0 12px var(--gate),0 0 24px var(--gate)}
-.sys-win.levelup .sys-label{border-color:var(--gate);color:#d5bbff;background:rgba(155,107,255,.12)}
+.sys-win.levelup .sys-label{color:#c9a8ff}
 .sys-win.error{border-color:rgba(255,77,109,.65);box-shadow:0 0 40px rgba(255,77,109,.3), inset 0 0 60px rgba(255,77,109,.1)}
 .sys-win.error .sysline{background:linear-gradient(90deg,transparent,var(--blood) 20%,var(--blood) 80%,transparent);
   box-shadow:0 0 12px var(--blood),0 0 24px var(--blood)}
-.sys-win.error .sys-label{border-color:var(--blood);color:#ffb4c2;background:rgba(255,77,109,.12)}
+.sys-win.error .sys-label{color:#ffb4c2}
 .lvlicon-wrap{display:flex;justify-content:center;margin-bottom:6px}
 .lvlicon-wrap .lvlicon{filter:drop-shadow(0 0 18px rgba(77,181,255,.6));animation:lvlPop .5s cubic-bezier(.2,.9,.3,1.3) both}
 @keyframes lvlPop{from{opacity:0;transform:scale(.4) rotate(-12deg)}to{opacity:1;transform:none}}
@@ -705,23 +706,25 @@ function resolveTrial(ok, pick, typed){
   if (!ok && TRIAL.phase !== "last") trialFails++;
   TRIAL.fb = {ok, pick, typed};
   render();
-  setTimeout(() => {
-    if (TRIAL.phase === "last"){
-      if (ok){ UI.screen = "trialdone"; render(); }
-      else { prepTrialQ(); render(); }
-      return;
-    }
-    const item = TRIAL.pending[0];
-    if (ok){
-      TRIAL.pending.shift();
-      if (!TRIAL.pending.length) TRIAL.phase = "last";
-      prepTrialQ(); render();
-    } else {
-      if (TRIAL.backupPool.length) item.cur = TRIAL.backupPool.shift();
-      TRIAL.pending.push(TRIAL.pending.shift());
-      prepTrialQ(); render();
-    }
-  }, ok ? 550 : 1400);
+}
+function trialNext(){
+  if (!TRIAL || !TRIAL.fb) return;
+  const ok = TRIAL.fb.ok;
+  if (TRIAL.phase === "last"){
+    if (ok){ UI.screen = "trialdone"; render(); }
+    else { prepTrialQ(); render(); }
+    return;
+  }
+  const item = TRIAL.pending[0];
+  if (ok){
+    TRIAL.pending.shift();
+    if (!TRIAL.pending.length) TRIAL.phase = "last";
+    prepTrialQ(); render();
+  } else {
+    if (TRIAL.backupPool.length) item.cur = TRIAL.backupPool.shift();
+    TRIAL.pending.push(TRIAL.pending.shift());
+    prepTrialQ(); render();
+  }
 }
 
 const UI = {screen:"intro", introStep:0, introNo:false, storyStep:0, storyPostStep:0, arch:null, dId:null, shopTab:"potions", resetArm:false, result:null, introRestore:false};
@@ -852,6 +855,12 @@ function levelUpIcon(size){
     <text x="50" y="68" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="52" fill="#E8F1FF">E</text>
   </svg>`;
 }
+/* Petit bloc logo + mot-symbole, utilisé en haut de tous les écrans de récit.
+   Volontairement compact (icône réduite, pas de grande marge) pour que le
+   bouton reste visible sans défiler, même avec la barre d'adresse de Safari. */
+function smallOrb(){
+  return `<div class="orb small" aria-hidden="true">${levelUpIcon(84)}</div><p class="wordmark">LEVEL UP</p>`;
+}
 function nextSys(){
   const el = $("#sys");
   if (sysCurrent && sysCurrent.onClose) sysCurrent.onClose();
@@ -866,7 +875,7 @@ function nextSys(){
   }[v];
   el.innerHTML = `<div class="win sys-win ${meta.cls}" role="alertdialog" aria-modal="true" aria-labelledby="systitle">
     <i class="sysline top" aria-hidden="true"></i>
-    <div class="sys-label"><i class="sys-ico" aria-hidden="true">${meta.icon}</i>${meta.label}</div>
+    <p class="sys-label">${meta.icon} ${meta.label}</p>
     <h2 id="systitle">${sysCurrent.title}</h2>
     <div class="sys-body">${sysCurrent.body}</div>
     <button class="btn primary" data-act="sysok">Compris</button>
@@ -964,7 +973,7 @@ const SCREENS = {
       const nextBtn = `<button class="btn primary big" data-act="introstep">Suivant →</button>`;
       const backBtn = i > 0 ? `<button class="btn" data-act="introback">← Précédent</button>` : "";
       return `<section class="intro"><div class="intro-inner story">
-        <div class="orb small" aria-hidden="true">${levelUpIcon(120)}</div>
+        ${smallOrb()}
         ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_INTRO[i]}</p>
           ${backBtn ? `<div class="btnrow">${backBtn}${nextBtn}</div>` : nextBtn}`)}
         ${i === 0 ? `<button class="link" data-act="introrestoreskip">J’ai déjà une sauvegarde</button>` : ""}
@@ -972,7 +981,7 @@ const SCREENS = {
     }
     if (UI.introStep === STORY_INTRO.length && !UI.introNo){
       return `<section class="intro"><div class="intro-inner story">
-        <div class="orb small" aria-hidden="true">${levelUpIcon(120)}</div>
+        ${smallOrb()}
         ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">Acceptes-tu l’épreuve du Système ?</p>
           <div class="btnrow"><button class="btn primary big" data-act="introyes">Oui</button>
           <button class="btn big" data-act="introno">Non</button></div>`)}
@@ -980,7 +989,7 @@ const SCREENS = {
     }
     if (UI.introNo){
       return `<section class="intro"><div class="intro-inner story">
-        <div class="orb small" aria-hidden="true">${levelUpIcon(120)}</div>
+        ${smallOrb()}
         ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">Le Système ne te laisse pas le choix. L’épreuve commence.</p>
           <button class="btn primary big" data-act="introcontinue">Continuer →</button>`)}
       </div></section>`;
@@ -1017,12 +1026,13 @@ const SCREENS = {
     return `<section class="intro"><div class="intro-inner" style="max-width:560px">
       ${storyWindow("[ÉPREUVE DU SYSTÈME]", `${pipsHtml}<p class="q" style="text-align:left">${esc(q.q)}</p>${body}
         ${fb && !fb.ok ? `<div class="fb ko" role="status"><h3>Erreur détectée</h3><p class="ex">${koText}</p></div>` : ""}
-        ${fb && fb.ok ? `<div class="fb ok" role="status"><h3>Correct</h3></div>` : ""}`)}
+        ${fb && fb.ok ? `<div class="fb ok" role="status"><h3>Correct</h3></div>` : ""}
+        ${fb ? `<div class="fbrow"><span></span><button class="btn primary" data-act="trialnext" id="nextBtn">Continuer →</button></div>` : ""}`)}
     </div></section>`;
   },
   trialdone(){
     return `<section class="intro"><div class="intro-inner story">
-      <div class="orb small" aria-hidden="true">${levelUpIcon(120)}</div>
+      ${smallOrb()}
       ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">Épreuve réussie. Le Système enregistre ton profil.</p>
         <button class="btn primary big" data-act="trialcontinue">Continuer →</button>`)}
     </div></section>`;
@@ -1032,7 +1042,7 @@ const SCREENS = {
     const nextBtn = `<button class="btn primary big" data-act="${last ? "storyenter" : "storystep"}">${last ? "Compris" : "Suivant"} →</button>`;
     const backBtn = i > 0 ? `<button class="btn" data-act="storyback">← Précédent</button>` : "";
     return `<section class="intro"><div class="intro-inner story">
-      <div class="orb small" aria-hidden="true">${levelUpIcon(120)}</div>
+      ${smallOrb()}
       ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_GRIMOIRE[i]}</p>
         ${backBtn ? `<div class="btnrow">${backBtn}${nextBtn}</div>` : nextBtn}`)}
     </div></section>`;
@@ -1042,7 +1052,7 @@ const SCREENS = {
     const nextBtn = `<button class="btn primary big" data-act="${last ? "storypostend" : "storypoststep"}">${last ? "Rejoindre la Mer des Portails" : "Suivant"} →</button>`;
     const backBtn = i > 0 ? `<button class="btn" data-act="storypostback">← Précédent</button>` : "";
     return `<section class="intro"><div class="intro-inner story">
-      <div class="orb small" aria-hidden="true">${levelUpIcon(120)}</div>
+      ${smallOrb()}
       ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_POST[i]}</p>
         ${backBtn ? `<div class="btnrow">${backBtn}${nextBtn}</div>` : nextBtn}`)}
     </div></section>`;
@@ -1966,6 +1976,7 @@ const ACTIONS = {
     render(); setTimeout(() => { const t = $("#restoreIn"); if (t) t.focus(); }, 50);
   },
   trialans(t){ const i = +t.dataset.i; resolveTrial(TRIAL.cur.order[i] === 0, i); },
+  trialnext(){ trialNext(); },
   trialcontinue(){ UI.screen = "intro"; UI.introStep = STORY_INTRO.length + 1; render(); setTimeout(() => { const i = $("#hn"); if (i) i.focus(); }, 50); },
   introrestore(){ UI.introRestore = true; render(); setTimeout(() => { const t = $("#restoreIn"); if (t) t.focus(); }, 50); },
   restore(){ restoreFrom(($("#restoreIn") || {}).value); },
