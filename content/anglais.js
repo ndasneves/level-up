@@ -2,9 +2,8 @@
    CONTENU — Matière : Anglais
    Un seul fichier par matière : plus simple à relire, à modifier et à
    faire grandir sans risquer de toucher aux autres matières.
-   Règles : ne jamais renommer/supprimer un id existant. Ajouter les
-   nouveaux donjons à la fin du tableau "dungeons". Voir aussi le guide
-   complet dans content/_lisez-moi.js.
+   Règle : ne jamais renommer/supprimer un id existant. Ajouter les
+   nouveaux donjons à la fin du tableau "dungeons".
    ===================================================================== */
 window.GAME_CONTENT.subjects.push(
 {

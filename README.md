@@ -8,8 +8,7 @@ Application web installable (PWA) pour réviser les cours de 6e sous forme de je
 |---|---|---|
 | `index.html` | Moteur du jeu (écrans, combats au tour par tour, boutique, salles, sauvegarde) | Non, sauf évolution du jeu lui-même, ou ajout d'une **toute nouvelle matière** |
 | `content/anglais.js`, `content/histoire.js`, `content/physique-chimie.js`, … | **Un fichier par matière** : ses donjons, fiches, questions | **Oui, un seul à la fois, celui de la matière concernée** |
-| `content/fondamentaux.js` | Les 45 questions de l'Épreuve des Fondamentaux (à part, pas une matière classique) | Oui, avec précaution (voir le guide) |
-| `content/_lisez-moi.js` | Le guide complet du format de contenu | Non (juste à lire) |
+| `content/fondamentaux.js` | Les 45 questions de l'Épreuve des Fondamentaux (à part, pas une matière classique) | Oui, avec précaution |
 | `sw.js` | Mode hors ligne et mises à jour automatiques du contenu | Non |
 | `manifest.webmanifest`, `icon-*.png` | Installation sur l'écran d'accueil | Non |
 | `.nojekyll` | Désactive un traitement automatique de GitHub Pages | Non (fichier vide) |
@@ -46,8 +45,8 @@ change pas.
 4. Pour mettre à jour : remplacer le(s) fichier(s) dans le dépôt (bouton crayon, ou *Upload files*).
 
 > `.nojekyll` désactive le traitement automatique (Jekyll) que GitHub Pages applique par défaut,
-> qui ignore sinon silencieusement certains fichiers (ceux commençant par `_`, comme
-> `content/_lisez-moi.js`). Sans danger pour le jeu, mais autant l'éviter proprement.
+> qui ignore sinon silencieusement certains fichiers (ceux commençant par `_`). Sans danger
+> pour le jeu, mais autant l'éviter proprement.
 
 > Dans les deux cas : **toujours la même adresse**. La sauvegarde du navigateur y est attachée.
 > Avec GitHub Pages gratuit, le dépôt est public (visible de tous) : sans souci ici, il ne contient

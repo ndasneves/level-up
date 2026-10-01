@@ -102,6 +102,8 @@ kbd{display:none}
 .gold-count{font:700 18px var(--ui);color:var(--gold);white-space:nowrap}
 .gold-count small{font-weight:500;color:var(--muted)}
 .soonbadge{font-size:11px;margin-left:2px;opacity:.8}
+.okbadge{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;
+  background:var(--heal);color:#05230f;font-size:15px;font-weight:800;vertical-align:middle;margin-left:4px}
 .shopsoon{text-align:center}
 .shopsoon-icon{font-size:64px;margin:6px 0 4px;filter:drop-shadow(0 0 14px rgba(245,196,81,.5))}
 .shopsoon em{color:var(--gold);font-style:normal;font-weight:600}
@@ -308,19 +310,67 @@ dl.info dd{margin:0;font:600 15px var(--ui)}
 .center-win.fail .win-head{color:#ffb4c2}
 .center-win.fail .win-head::before{background:var(--blood);box-shadow:0 0 8px var(--blood)}
 .boss-preview{font-size:110px;text-align:center;line-height:1.1;filter:drop-shadow(0 0 26px rgba(255,77,109,.6))}
+/* Chefs des Veilleurs Noirs : présentation plus sombre, plus dramatique */
+.chiefgate{border-color:#000;background:linear-gradient(180deg,rgba(40,0,10,.55),rgba(5,2,10,.9));
+  box-shadow:0 0 50px rgba(0,0,0,.6), inset 0 0 60px rgba(255,0,40,.12)}
+.chiefgate .win-head{color:#ff6b7d}
+.chiefgate .boss-preview{filter:drop-shadow(0 0 34px rgba(255,0,40,.8)) brightness(.85);animation:chiefLoom 2.4s ease-in-out infinite}
+@keyframes chiefLoom{50%{transform:scale(1.06)}}
+.btn.chiefbtn{background:linear-gradient(180deg,#5a0012,#1a0006);border-color:#ff2d4d;box-shadow:0 0 24px rgba(255,20,50,.5)}
+.btn.chiefbtn:hover:not(:disabled){box-shadow:0 0 32px rgba(255,20,50,.75)}
+.chiefarena{background:radial-gradient(ellipse at 50% 78%,rgba(120,0,30,.3),transparent 60%),linear-gradient(#050109,#020206) !important;
+  border-color:#000 !important;box-shadow:inset 0 0 90px rgba(255,0,40,.22)}
+.chiefwin{border-color:#ff2d4d;box-shadow:0 0 40px rgba(255,20,50,.3)}
+.chiefwin .win-head{color:#ff6b7d}
+.fragmentget{text-align:center;font:700 14px/1.5 var(--ui);color:var(--gold);
+  background:rgba(245,196,81,.1);border:1px solid rgba(245,196,81,.4);border-radius:3px;padding:10px 14px;margin:4px 0}
+/* Codex des Ombres : collection des boss vaincus, façon "Pokédex" */
+.codexgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin-top:10px}
+.codexcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;
+  border:1px solid rgba(77,181,255,.35);border-radius:4px;background:rgba(77,181,255,.05);padding:10px 4px 8px}
+.codexcard b{font-size:12px;line-height:1.25}
+.codexcard small{font-size:10px;color:var(--muted)}
+.codexcard .cicon{font-size:30px;line-height:1}
+.codexcard.locked{opacity:.45;border-style:dashed}
+.codexcard.locked .cicon{filter:grayscale(1)}
+.codexcard.chief{border-color:#ff2d4d;background:rgba(255,20,50,.08)}
+.codexkey{position:absolute;top:3px;right:4px;font-size:13px}
+/* Clé ancestrale : se remplit visuellement à mesure que les fragments arrivent */
+.keywrap{text-align:center;margin:8px 0 4px}
+.keysvg{width:100%;max-width:280px;height:auto}
+.keyseg{fill:#262f49;transition:fill .5s, filter .5s}
+.keyseg.on{fill:var(--gold);filter:drop-shadow(0 0 7px rgba(245,196,81,.85))}
+.keyhole{fill:#070b1a}
+.keycount{font:700 14px var(--ui);color:var(--gold);margin-top:10px}
 .ctrl td:first-child{white-space:nowrap;font:600 15px var(--ui);color:var(--gold)}
 .boss-screen{max-width:640px;margin:0 auto;display:grid;gap:12px}
 .btop{display:grid;gap:6px}
 .bname{display:flex;justify-content:space-between;align-items:baseline;font:700 20px var(--ui)}
+.specialwarn{font:700 13px var(--ui);color:var(--blood);text-align:center;margin:6px 0 0;animation:alertBlink 1.2s ease-in-out infinite}
+.streak{font:700 13px var(--ui);color:var(--gold);text-align:center;margin:8px 0 0}
+.bicon.charging{animation:chargeGlow 1s ease-in-out infinite}
+@keyframes chargeGlow{50%{filter:drop-shadow(0 0 22px var(--blood))}}
 .bname span{font:500 14px var(--ui);color:var(--muted)}
 .arena{position:relative;height:clamp(260px,46vh,400px);overflow:hidden;border-radius:3px;
   border:1px solid rgba(255,77,109,.35);
   background:radial-gradient(ellipse at 50% 78%,rgba(155,107,255,.28),transparent 60%),linear-gradient(#0c0622,#050814)}
 .arena.rage{border-color:var(--blood);box-shadow:inset 0 0 70px rgba(255,40,70,.38)}
+.arena.shake{animation:arenaShake .4s ease}
+.arena.hitflash::after,.arena.hitflash-red::after,.arena.hitflash-gold::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;animation:flashFade .4s ease forwards}
+.arena.hitflash::after{background:rgba(255,255,255,.18)}
+.arena.hitflash-red::after{background:rgba(255,40,70,.3)}
+.arena.hitflash-gold::after{background:rgba(245,196,81,.28)}
+@keyframes arenaShake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(7px)}45%{transform:translateX(-6px)}60%{transform:translateX(5px)}75%{transform:translateX(-3px)}90%{transform:translateX(2px)}}
+@keyframes flashFade{0%{opacity:1}100%{opacity:0}}
 .bicon{position:absolute;top:14%;left:50%;transform:translateX(-50%);z-index:2;font-size:clamp(96px,20vw,150px);line-height:1;
   filter:drop-shadow(0 0 26px rgba(255,77,109,.55));animation:float 3s ease-in-out infinite}
 .bicon.attack{animation:bossAttack .55s ease}
 .bicon.hit{animation:hit .22s}
+.bicon.block{animation:bossBlock .3s ease}
+@keyframes bossBlock{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(.94)}}
+.blockfx{position:absolute;top:14%;left:50%;transform:translate(-50%,-10%);z-index:3;font-size:clamp(70px,16vw,110px);
+  opacity:0;animation:blockPop .5s ease forwards;filter:drop-shadow(0 0 16px rgba(77,181,255,.8))}
+@keyframes blockPop{0%{opacity:0;transform:translate(-50%,-10%) scale(.6)}30%{opacity:1;transform:translate(-50%,-10%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-10%) scale(1.2)}}
 .hero-fig{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);width:clamp(96px,26vw,150px);z-index:2;
   filter:drop-shadow(0 8px 10px rgba(0,0,0,.5))}
 .hero-fig svg{width:100%;height:auto;display:block}
@@ -339,6 +389,18 @@ dl.info dd{margin:0;font:600 15px var(--ui)}
 .pbars{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .pbars .lbl{font:500 13px var(--ui);color:var(--muted);display:flex;justify-content:space-between}
 .skills{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.timegame{display:grid;gap:12px;animation:storyIn .25s ease both}
+.timelabel{font:600 14px/1.4 var(--ui);color:var(--sys-soft);text-align:center;margin:0}
+.timebar{position:relative;height:30px;border-radius:4px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(77,181,255,.4);overflow:hidden;cursor:pointer;touch-action:manipulation}
+.timebar .tzone{position:absolute;top:0;bottom:0}
+.timebar .tzone.good{background:rgba(245,196,81,.35)}
+.timebar .tzone.crit{background:rgba(61,220,151,.55)}
+.timebar .tmarker{position:absolute;top:-5px;bottom:-5px;width:5px;border-radius:2px;background:#fff;
+  box-shadow:0 0 10px #fff,0 0 18px rgba(255,255,255,.7);left:0;
+  animation-name:timerun;animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes timerun{0%{left:0}50%{left:calc(100% - 5px)}100%{left:0}}
+.fx .meh{color:#c9d3e4}
 .skill{position:relative;overflow:hidden;min-height:68px;font:600 15px var(--ui);color:var(--text);cursor:pointer;
   background:rgba(77,181,255,.08);border:1px solid rgba(77,181,255,.65);border-radius:2px;padding:6px;
   touch-action:manipulation;user-select:none;-webkit-user-select:none;display:grid;place-items:center;text-align:center;line-height:1.2}
@@ -468,7 +530,6 @@ dl.info dd{margin:0;font:600 15px var(--ui)}
    choix de QCM peut être une image plutôt qu'un texte avec
    { src:"chemin/fichier.png", label:"texte facultatif" }. Le chemin est
    relatif à index.html (donc typiquement "content/images/....png").
-   Voir content/_lisez-moi.js pour le format complet.
    PICTO_GLYPH ci-dessous ne sert plus qu'en dépannage, pour un croquis rapide
    le temps qu'une vraie image arrive : { icon:"nomIcone" } au lieu de src. */
 const PICTO_NAMES = {
@@ -487,7 +548,7 @@ const PICTO_GLYPH = {
   explosif:'<circle cx="45" cy="60" r="15" fill="#1a1a1a"/><path d="M45 45c2-6 -2-10 3-17" stroke="#1a1a1a" stroke-width="3.4" fill="none" stroke-linecap="round"/><g stroke="#1a1a1a" stroke-width="3.4" stroke-linecap="round"><path d="M64 38 l9 -7"/><path d="M69 49 l11 -2"/><path d="M67 61 l11 5"/><path d="M57 71 l7 10"/></g>',
   pression:'<rect x="39" y="30" width="22" height="44" rx="7" fill="#1a1a1a"/><rect x="45.5" y="19" width="9" height="11" rx="2" fill="#1a1a1a"/><rect x="43" y="14" width="14" height="6" rx="1.5" fill="#1a1a1a"/>'
 };
-function pictoSvg(name, size){
+function svgPictogramme(name, size){
   const s = size || 84;
   const glyph = PICTO_GLYPH[name];
   if (!glyph) return "";
@@ -498,11 +559,11 @@ function pictoSvg(name, size){
    - une chaîne "chemin/fichier.png" → une vraie image, fournie par le créateur du contenu ;
    - { icon:"nomIcone" } → un croquis de dépannage tiré de PICTO_GLYPH (voir plus haut) ;
    - { src:"chemin/fichier.png", label:"...", alt:"..." } → une vraie image, avec légende. */
-function mediaHtml(spec, size){
+function htmlMedia(spec, size){
   const s = size || 84;
   if (typeof spec === "string") return `<img src="${esc(spec)}" width="${s}" height="${s}" class="media-img" alt="" loading="lazy" onerror="this.classList.add('broken')">`;
   if (spec && spec.src) return `<img src="${esc(spec.src)}" width="${s}" height="${s}" class="media-img" alt="${esc(spec.alt || "")}" loading="lazy" onerror="this.classList.add('broken')">`;
-  if (spec && spec.icon) return pictoSvg(spec.icon, s);
+  if (spec && spec.icon) return svgPictogramme(spec.icon, s);
   return "";
 }
 const isMediaChoice = ch => ch && typeof ch === "object" && (ch.src || ch.icon);
@@ -510,8 +571,8 @@ const isMediaChoice = ch => ch && typeof ch === "object" && (ch.src || ch.icon);
    { src:"...", label:"..." } / { icon:"nomIcone", label:"..." } (image). */
 const choiceText = ch => typeof ch === "string" ? ch : (ch.label || PICTO_NAMES[ch.icon] || ch.icon || ch.alt || "");
 const choiceHtml = ch => typeof ch === "string" ? `<span>${esc(ch)}</span>`
-  : `<span class="ans-icon">${mediaHtml(ch, 64)}${ch.label ? `<small>${esc(ch.label)}</small>` : ""}</span>`;
-function loadContent(){
+  : `<span class="ans-icon">${htmlMedia(ch, 64)}${ch.label ? `<small>${esc(ch.label)}</small>` : ""}</span>`;
+function chargerContenu(){
   const src = window.GAME_CONTENT && Array.isArray(window.GAME_CONTENT.subjects) ? window.GAME_CONTENT.subjects : [];
   const dIds = new Set(), sIds = new Set();
   const out = [];
@@ -538,14 +599,14 @@ function loadContent(){
   }
   return out;
 }
-const SUBJECTS = loadContent();
+const SUBJECTS = chargerContenu();
 /* Empreinte du contenu chargé : calculée à partir des matières elles-mêmes,
    pas d'un numéro à mettre à jour à la main. Change automatiquement dès qu'une
    question, une fiche ou un donjon est modifié, ajouté ou retiré. */
 const CONTENT_STATS = (() => {
   const nDungeons = SUBJECTS.reduce((n, s) => n + s.dungeons.length, 0);
   const nQuestions = SUBJECTS.reduce((n, s) => n + s.dungeons.reduce((m, d) => m + d.questions.length, 0), 0);
-  const print = hashStr(JSON.stringify(SUBJECTS)).toString(16).padStart(8, "0").slice(0, 6);
+  const print = hacherTexte(JSON.stringify(SUBJECTS)).toString(16).padStart(8, "0").slice(0, 6);
   return {nDungeons, nQuestions, print};
 })();
 
@@ -576,6 +637,27 @@ const SHOP = {
     {id:"a4", icon:"✨", name:"Égide des étoiles",    def:15, price:1100, req:15}
   ]
 };
+/* Boutique en mode "vitrine" : on montre qu'il y aura une boutique, avec de
+   vrais noms d'objets, mais sans prix ni description — juste pour donner
+   envie, en attendant de décider comment l'équilibrer pour de vrai. Données
+   volontairement séparées de SHOP (qui reste la vraie boutique, prête à être
+   réactivée d'un coup en remettant shop() = shopReal() dans SCREENS). */
+const SHOP_TEASER = {
+  potions:[
+    {icon:"🧪", name:"Potion de soin"},
+    {icon:"⚗️", name:"Grande potion de soin"}
+  ],
+  weapons:[
+    {icon:"🗡️", name:"Dague rouillée"}
+  ],
+  armors:[
+    {icon:"🧥", name:"Cape trouée"}
+  ],
+  artefacts:[
+    {icon:"🔄", name:"Seconde Chance"},
+    {icon:"⏳", name:"Dilatation du Temps"}
+  ]
+};
 const MOBS = [["🦇","Chauve-souris des cavernes"],["🐀","Rat des profondeurs"],["🕷️","Araignée tisseuse"],["🐍","Vipère d’ombre"],
   ["🦂","Scorpion de cendre"],["👺","Gobelin masqué"],["💀","Squelette errant"],["🧟","Goule affamée"],["🐗","Sanglier de fer"],["🦎","Lézard de lave"]];
 const RANKS = [["E",1],["D",5],["C",10],["B",15],["A",20],["S",25]];
@@ -604,14 +686,14 @@ const DEF_STOPWORDS = new Set(("le la les l un une des du de d et ou mais donc o
   + "plus moins très trop bien aussi comme ainsi alors donc quand si ne pas non oui "
   + "au aux à ça cela ceci").split(" "));
 const DEF_THRESHOLD = 0.5; // part des mots-clés de la définition qu'il faut retrouver
-function defWords(s){
+function motsDefinition(s){
   return norm(s).split(/[^a-zàâäéèêëîïôöùûüç0-9]+/i)
     .filter(w => w.length >= 3 && !DEF_STOPWORDS.has(w));
 }
-function stem(w){ return w.length > 5 ? w.slice(0, 5) : w; } // tolère singulier/pluriel, conjugaisons simples
-function gradeDefinition(answer, reference){
-  const refWords = Array.from(new Set(defWords(reference).map(stem)));
-  const ansStems = new Set(defWords(answer).map(stem));
+function racine(w){ return w.length > 5 ? w.slice(0, 5) : w; } // tolère singulier/pluriel, conjugaisons simples
+function noterDefinition(answer, reference){
+  const refWords = Array.from(new Set(motsDefinition(reference).map(racine)));
+  const ansStems = new Set(motsDefinition(answer).map(racine));
   const matched = refWords.filter(w => ansStems.has(w));
   const total = refWords.length || 1;
   const score = matched.length / total;
@@ -651,7 +733,7 @@ const FOND_TOTAL_MATH = FOND_POOL.filter(q => q.subject === "maths").length;
    1) jamais posée, 2) déjà ratée (en évitant si possible la tentative
    précédente, en préférant la dernière ratée puis la moins récemment revue),
    3) déjà réussie (la moins récemment posée, puis le plus petit compteur). */
-function fondPickOne(candidates, hist, attempt){
+function choisirQuestionFond(candidates, hist, attempt){
   const h = id => hist[id] || {askedCount:0, correctCount:0, wrongCount:0, lastAskedAttempt:null, lastResult:null};
   const neverAsked = candidates.filter(q => h(q.id).askedCount === 0);
   if (neverAsked.length) return neverAsked[Math.floor(Math.random() * neverAsked.length)];
@@ -672,7 +754,7 @@ function fondPickOne(candidates, hist, attempt){
   return finalPool[Math.floor(Math.random() * finalPool.length)] || candidates[0];
 }
 /* Construit les 15 questions d'une tentative en respectant les quotas. */
-function fondBuildAttempt(hist, attempt){
+function construireTentativeFond(hist, attempt){
   const used = new Set();
   const selected = [];
   FOND_QUOTAS.forEach(({category, n}) => {
@@ -680,7 +762,7 @@ function fondBuildAttempt(hist, attempt){
     for (let k = 0; k < n && catPool.length; k++){
       const avail = catPool.filter(q => !used.has(q.id));
       if (!avail.length) break;
-      const pick = fondPickOne(avail, hist, attempt);
+      const pick = choisirQuestionFond(avail, hist, attempt);
       used.add(pick.id);
       selected.push(pick);
     }
@@ -695,7 +777,7 @@ function fondBuildAttempt(hist, attempt){
 const ALLITEMS = [...SHOP.potions, ...SHOP.weapons, ...SHOP.armors];
 const item = id => ALLITEMS.find(x => x.id === id);
 
-function rankOf(l){ let r = "E"; for (const [k, m] of RANKS) if (l >= m) r = k; return r; }
+function rangDe(l){ let r = "E"; for (const [k, m] of RANKS) if (l >= m) r = k; return r; }
 const xpNeed = l => 50 + l * 30;
 
 /* ===== Sauvegarde ===== */
@@ -738,44 +820,44 @@ const TRIAL_FAIL_MSGS = [
 ];
 let trialFails = 0;
 let TRIAL = null;
-function startTrial(){
+function demarrerEpreuve(){
   trialFails = 0;
   TRIAL = {
     pending: TRIAL_FIXED.map((q, origIdx) => ({origIdx, cur:q})),
     backupPool: TRIAL_BACKUP.slice(),
     phase: "main", cur:null, fb:null
   };
-  prepTrialQ();
-  UI.screen = "trial"; window.scrollTo(0, 0); render();
+  preparerQuestionEpreuve();
+  UI.screen = "trial"; window.scrollTo(0, 0); afficher();
 }
-function prepTrialQ(){
+function preparerQuestionEpreuve(){
   const q = TRIAL.phase === "last" ? TRIAL_LAST : TRIAL.pending[0].cur;
   TRIAL.cur = {q, order:shuffle(q.c.map((_, i) => i))};
   TRIAL.fb = null;
 }
-function resolveTrial(ok, pick, typed){
+function resoudreEpreuve(ok, pick, typed){
   if (!TRIAL || TRIAL.fb) return;
   if (!ok && TRIAL.phase !== "last") trialFails++;
   TRIAL.fb = {ok, pick, typed};
-  render();
+  afficher();
 }
-function trialNext(){
+function epreuveSuivante(){
   if (!TRIAL || !TRIAL.fb) return;
   const ok = TRIAL.fb.ok;
   if (TRIAL.phase === "last"){
-    if (ok){ UI.screen = "trialdone"; render(); }
-    else { prepTrialQ(); render(); }
+    if (ok){ UI.screen = "trialdone"; afficher(); }
+    else { preparerQuestionEpreuve(); afficher(); }
     return;
   }
   const item = TRIAL.pending[0];
   if (ok){
     TRIAL.pending.shift();
     if (!TRIAL.pending.length) TRIAL.phase = "last";
-    prepTrialQ(); render();
+    preparerQuestionEpreuve(); afficher();
   } else {
     if (TRIAL.backupPool.length) item.cur = TRIAL.backupPool.shift();
     TRIAL.pending.push(TRIAL.pending.shift());
-    prepTrialQ(); render();
+    preparerQuestionEpreuve(); afficher();
   }
 }
 
@@ -785,23 +867,23 @@ function trialNext(){
    autres questionnaires du jeu. */
 let FONDTEST = null;
 const FOND_MAX_ERRORS = 3; // droit à 3 erreurs ; la 4e met fin à la tentative
-function startFondamentaux(){
+function demarrerFondamentaux(){
   S.fondAttempt = (S.fondAttempt || 0) + 1;
-  const selected = fondBuildAttempt(S.fondHist, S.fondAttempt);
+  const selected = construireTentativeFond(S.fondHist, S.fondAttempt);
   FONDTEST = {
     queue:selected, idx:0, correct:0, wrong:0,
     cur:null, fb:null
   };
-  prepFondQ();
-  save();
-  UI.screen = "fondquiz"; window.scrollTo(0, 0); render();
+  preparerQuestionFond();
+  sauvegarder();
+  UI.screen = "fondquiz"; window.scrollTo(0, 0); afficher();
 }
-function prepFondQ(){
+function preparerQuestionFond(){
   const q = FONDTEST.queue[FONDTEST.idx];
   FONDTEST.cur = {q, order:shuffle(q.c.map((_, i) => i))};
   FONDTEST.fb = null;
 }
-function resolveFond(ok, pick){
+function resoudreFond(ok, pick){
   if (!FONDTEST || FONDTEST.fb) return;
   const q = FONDTEST.cur.q;
   const h = S.fondHist[q.id] || (S.fondHist[q.id] = {askedCount:0, correctCount:0, wrongCount:0, lastAskedAttempt:null, lastResult:null});
@@ -815,42 +897,43 @@ function resolveFond(ok, pick){
     FONDTEST.wrong++;
   }
   FONDTEST.fb = {ok, pick};
-  save();
-  render();
+  sauvegarder();
+  afficher();
 }
-function fondNext(){
+function fondSuivant(){
   if (!FONDTEST || !FONDTEST.fb) return;
   if (FONDTEST.wrong > FOND_MAX_ERRORS){
     UI.fondResult = {total:FONDTEST.correct, wrong:FONDTEST.wrong, passed:false};
     FONDTEST = null;
-    go("fondresult");
+    allerA("fondresult");
     return;
   }
   FONDTEST.idx++;
   if (FONDTEST.idx >= FONDTEST.queue.length){
-    UI.fondResult = {total:FONDTEST.correct, wrong:FONDTEST.wrong, passed:true};
+    const firstTime = !fondamentauxTermines();
+    UI.fondResult = {total:FONDTEST.correct, wrong:FONDTEST.wrong, passed:true, firstTime};
     S.dungeons.fondamentaux = {cleared:true, stars:3, best:1};
-    save();
+    sauvegarder();
     FONDTEST = null;
-    go("fondresult");
+    allerA("fondresult");
     return;
   }
-  prepFondQ(); render();
+  preparerQuestionFond(); afficher();
 }
 
-const UI = {screen:"intro", introStep:0, introNo:false, storyStep:0, storyPostStep:0, fondResult:null, arch:null, dId:null, shopTab:"potions", resetArm:false, result:null, introRestore:false};
+const UI = {screen:"intro", introStep:0, introNo:false, storyStep:0, storyPostStep:0, fondResult:null, arch:null, group:null, dId:null, shopTab:"potions", resetArm:false, result:null, introRestore:false};
 
 let R = null;   // partie en cours (donjon ou entraînement)
 let B = null;   // combat de boss
 
-function newSave(name){
+function nouvelleSauvegarde(name){
   return {v:2, name, level:1, xp:0, gold:0, points:0, stats:{str:5, agi:5, vit:5, int:5},
     inv:{potHp:2, potHpL:0, potSecond:0, potTime:0}, owned:["w0","a0"], weapon:"w0", armor:"a0",
     dungeons:{}, mistakes:{}, daily:{date:today(), correct:0, bosses:0, trainings:0, claimed:false},
     total:{correct:0, wrong:0, bosses:0}, seen:Object.keys(DMAP), seenSubjects:SUBJECTS.map(s => s.id),
-    fondHist:{}, fondAttempt:0, lastBackup:0, updatedAt:Date.now()};
+    fondHist:{}, fondAttempt:0, fondQuestClaimed:false, keyFragments:0, codex:{}, lastBackup:0, updatedAt:Date.now()};
 }
-function migrate(o){
+function migrerSauvegarde(o){
   if (!o || (o.v !== 1 && o.v !== 2) || !o.name) return null;
   if (o.v === 1){
     // v1 : les questions étaient repérées par leur position ("en-1:3" = 4e question)
@@ -858,7 +941,7 @@ function migrate(o){
     Object.entries(o.mistakes || {}).forEach(([k, n]) => { const [d, i] = k.split(":"); mk[d + ":q" + (+i + 1)] = n; });
     o = Object.assign({}, o, {v:2, mistakes:mk, seen:null});
   }
-  const base = newSave(o.name);
+  const base = nouvelleSauvegarde(o.name);
   const m = Object.assign(base, o);
   m.stats = Object.assign(base.stats, o.stats || {});
   m.inv = Object.assign({potHp:0, potHpL:0, potSecond:0, potTime:0}, o.inv || {});
@@ -872,29 +955,31 @@ function migrate(o){
   if (o.seen === null || o.seen === undefined) m.seen = null;
   if (!Array.isArray(o.seenSubjects)) m.seenSubjects = null;
   // Sauvegarde antérieure à l'introduction des Fondamentaux : on considère
-  // qu'elle est déjà passée par l'onboarding, pour ne pas la lui refaire faire.
-  if (!m.dungeons.fondamentaux) m.dungeons.fondamentaux = {cleared:true, stars:3, best:1};
+  // qu'elle est déjà passée par l'onboarding, pour ne pas la lui refaire faire
+  // — y compris la petite récompense de cette toute première quête.
+  if (!m.dungeons.fondamentaux){ m.dungeons.fondamentaux = {cleared:true, stars:3, best:1}; m.fondQuestClaimed = true; }
+  if (m.fondQuestClaimed === undefined) m.fondQuestClaimed = false;
   return m;
 }
-function loadLocal(){ try { const raw = localStorage.getItem(KEY); return raw ? migrate(JSON.parse(raw)) : null; } catch (e) { return null; } }
-function save(){
+function chargerLocal(){ try { const raw = localStorage.getItem(KEY); return raw ? migrerSauvegarde(JSON.parse(raw)) : null; } catch (e) { return null; } }
+function sauvegarder(){
   if (!S) return;
   S.updatedAt = Date.now();
   try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
 }
 /* Code de sauvegarde : permet de changer de téléphone ou de se protéger d'un nettoyage du navigateur */
 const exportCode = () => btoa(unescape(encodeURIComponent(JSON.stringify(S))));
-function parseSave(txt){
+function analyserSauvegarde(txt){
   txt = String(txt || "").trim();
   if (!txt) return null;
-  try { return migrate(JSON.parse(txt)); } catch (e) {}
-  try { return migrate(JSON.parse(decodeURIComponent(escape(atob(txt.replace(/\s+/g, "")))))); } catch (e) { return null; }
+  try { return migrerSauvegarde(JSON.parse(txt)); } catch (e) {}
+  try { return migrerSauvegarde(JSON.parse(decodeURIComponent(escape(atob(txt.replace(/\s+/g, "")))))); } catch (e) { return null; }
 }
-function restoreFrom(txt){
-  const m = parseSave(txt);
-  if (!m){ sys("Code invalide", "<p>Ce code de sauvegarde n’est pas reconnu. Vérifie qu’il a été copié en entier.</p>"); return; }
-  S = m; checkNewContent(); save(); UI.introRestore = false; go("map");
-  sys("Sauvegarde restaurée", `<p>Bon retour, <strong>${esc(S.name)}</strong>. Niveau ${S.level}, rang ${rankOf(S.level)}.</p>`);
+function restaurerDepuis(txt){
+  const m = analyserSauvegarde(txt);
+  if (!m){ systeme("Code invalide", "<p>Ce code de sauvegarde n’est pas reconnu. Vérifie qu’il a été copié en entier.</p>"); return; }
+  S = m; verifierNouveauContenu(); sauvegarder(); UI.introRestore = false; allerA("map");
+  systeme("Sauvegarde restaurée", `<p>Bon retour, <strong>${esc(S.name)}</strong>. Niveau ${S.level}, rang ${rangDe(S.level)}.</p>`);
 }
 /* Signale, dès le chargement, tout ce qui a été ajouté au contenu depuis la
    dernière ouverture : une matière entière ("De nouvelles îles sont apparues")
@@ -902,7 +987,7 @@ function restoreFrom(txt){
    sont apparus"). Se base sur ce que la sauvegarde a déjà "vu", pas sur un
    numéro de version à tenir à jour : rien à faire de spécial en ajoutant du
    contenu, ça se déclenche tout seul. */
-function checkNewContent(){
+function verifierNouveauContenu(){
   const allSubjects = SUBJECTS.map(s => s.id);
   const allDungeons = Object.keys(DMAP);
   if (!Array.isArray(S.seen)){ S.seen = allDungeons; S.seenSubjects = allSubjects; return; }
@@ -917,11 +1002,11 @@ function checkNewContent(){
   S.seenSubjects = Array.from(new Set([...S.seenSubjects, ...allSubjects]));
   if (freshSubjects.length){
     const names = freshSubjects.map(id => (SUBJECTS.find(s => s.id === id) || {}).name || id);
-    sys("De nouvelles îles sont apparues",
+    systeme("De nouvelles îles sont apparues",
       "<p>" + names.map(n => `<strong>${esc(n)}</strong>`).join(", ") + " " +
       (freshSubjects.length > 1 ? "ont rejoint" : "a rejoint") + " la Mer des Portails.</p>");
   }
-  if (freshDungeons.length) sys(freshDungeons.length > 1 ? "De nouveaux donjons sont apparus" : "Un nouveau donjon est apparu",
+  if (freshDungeons.length) systeme(freshDungeons.length > 1 ? "De nouveaux donjons sont apparus" : "Un nouveau donjon est apparu",
     "<p>" + freshDungeons.map(id => `<strong>${esc(DMAP[id].d.name)}</strong> (${esc(DMAP[id].s.name)})`).join("<br>") + "</p><p>Ils t’attendent sur la carte.</p>");
 }
 
@@ -932,22 +1017,31 @@ const atkVal = () => item(S.weapon).atk + S.stats.str * 2;
 const defVal = () => item(S.armor).def;
 const dodgeChance = () => Math.min(80, 30 + S.stats.agi * 3);
 
-function ensureDaily(){ if (S && S.daily.date !== today()) S.daily = {date:today(), correct:0, bosses:0, trainings:0, claimed:false}; }
+function assurerQuotidienne(){ if (S && S.daily.date !== today()) S.daily = {date:today(), correct:0, bosses:0, trainings:0, claimed:false}; }
 const DAILY = [
   {k:"correct",   goal:10, label:"Répondre juste à 10 questions"},
   {k:"bosses",    goal:1,  label:"Vaincre 1 boss"},
   {k:"trainings", goal:1,  label:"Terminer 1 entraînement"}
 ];
 const dailyDone = () => DAILY.every(t => S.daily[t.k] >= t.goal);
+function corpsQueteEphemere(){
+  const done = dailyDone();
+  return `<p class="sub">Une nouvelle quête apparaît chaque jour à minuit.</p>
+    ${DAILY.map(t => { const v = Math.min(t.goal, S.daily[t.k]); const ok = v >= t.goal;
+      return `<div class="task"><span class="check ${ok ? "done" : ""}">${ok ? "✓" : ""}</span><span>${t.label}</span><span class="prog">${v} / ${t.goal}</span></div>`; }).join("")}
+    <p class="hint">Récompense : 100 or, 60 XP et 1 point de statistique.</p>
+    ${S.daily.claimed ? `<button class="btn gold big" disabled>Récompense reçue, reviens demain</button>`
+      : `<button class="btn primary big" data-act="claim" ${done ? "" : "disabled"}>${done ? "Recevoir la récompense" : "Termine les trois objectifs"}</button>`}`;
+}
 
-function isUnlocked(d){
+function estDebloque(d){
   const {s, i} = DMAP[d.id];
   if (S.level < d.req) return false;
   if (i === 0) return true;
   const prev = s.dungeons[i - 1];
   return !!(S.dungeons[prev.id] && S.dungeons[prev.id].cleared);
 }
-function lockReason(d){
+function raisonVerrouillage(d){
   const {s, i} = DMAP[d.id];
   if (i > 0 && !(S.dungeons[s.dungeons[i - 1].id] || {}).cleared) return "Termine le portail précédent";
   if (S.level < d.req) return "Niveau " + d.req + " requis";
@@ -956,12 +1050,12 @@ function lockReason(d){
 
 /* ===== Notifications "Système" ===== */
 const sysQ = [];
-function sys(title, body, onClose, variant){ sysQ.push({title, body, onClose, variant}); if ($("#sys").hidden) nextSys(); }
+function systeme(title, body, onClose, variant){ sysQ.push({title, body, onClose, variant}); if ($("#sys").hidden) messageSuivant(); }
 let sysCurrent = null;
 /* Icône "Level Up" : le logo de l'app (hexagone + flèche), redessiné en SVG
    pour rester net à toute taille. Réutilisée uniquement au moment où elle a
    vraiment du sens : quand le joueur monte de niveau pour de vrai. */
-function levelUpIcon(size){
+function iconeLevelUp(size){
   const s = size || 110;
   return `<svg class="lvlicon" width="${s}" height="${s}" viewBox="0 0 100 100" aria-hidden="true">
     <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="#0a1130" stroke="#4DB5FF" stroke-width="5"/>
@@ -971,10 +1065,10 @@ function levelUpIcon(size){
 /* Petit bloc logo + mot-symbole, utilisé en haut de tous les écrans de récit.
    Volontairement compact (icône réduite, pas de grande marge) pour que le
    bouton reste visible sans défiler, même avec la barre d'adresse de Safari. */
-function smallOrb(){
-  return `<div class="orb small" aria-hidden="true">${levelUpIcon(84)}</div><p class="wordmark">LEVEL UP</p>`;
+function petitOrbe(){
+  return `<div class="orb small" aria-hidden="true">${iconeLevelUp(84)}</div><p class="wordmark">LEVEL UP</p>`;
 }
-function nextSys(){
+function messageSuivant(){
   const el = $("#sys");
   if (sysCurrent && sysCurrent.onClose) sysCurrent.onClose();
   sysCurrent = sysQ.shift() || null;
@@ -998,17 +1092,17 @@ function nextSys(){
   setTimeout(() => { const b = el.querySelector("button"); if (b) b.focus(); }, 30);
 }
 
-function gainXP(n){
+function gagnerXP(n){
   if (n <= 0) return;
-  const oldLevel = S.level, oldRank = rankOf(S.level);
+  const oldLevel = S.level, oldRank = rangDe(S.level);
   S.xp += n;
   while (S.xp >= xpNeed(S.level)){ S.xp -= xpNeed(S.level); S.level++; S.points += 3; }
   if (S.level > oldLevel){
     const ups = S.level - oldLevel;
-    sys("Niveau supérieur", `<div class="lvlicon-wrap">${levelUpIcon(96)}</div><p>Tu es maintenant <strong>niveau ${S.level}</strong>.</p><p>+${ups * 3} points de statistique à répartir dans la fenêtre Statut.</p>`, null, "levelup");
-    if (oldLevel < 5 && S.level >= 5) sys("Nouvelle compétence", "<p>Tu as appris <strong>Frappe de l’ombre</strong> : une attaque dévastatrice contre les boss.</p>");
-    const nr = rankOf(S.level);
-    if (nr !== oldRank) sys("Réévaluation du rang", `<p>Ton rang de chasseur passe de <strong>${oldRank}</strong> à <strong>${nr}</strong>.</p><p>De nouveaux équipements t’attendent à la boutique.</p>`);
+    systeme("Niveau supérieur", `<div class="lvlicon-wrap">${iconeLevelUp(96)}</div><p>Tu es maintenant <strong>niveau ${S.level}</strong>.</p><p>+${ups * 3} points de statistique à répartir dans la fenêtre Statut.</p>`, null, "levelup");
+    if (oldLevel < 5 && S.level >= 5) systeme("Nouvelle compétence", "<p>Tu as appris <strong>Frappe de l’ombre</strong> : une attaque dévastatrice contre les boss.</p>");
+    const nr = rangDe(S.level);
+    if (nr !== oldRank) systeme("Réévaluation du rang", `<p>Ton rang de chasseur passe de <strong>${oldRank}</strong> à <strong>${nr}</strong>.</p><p>De nouveaux équipements t’attendent à la boutique.</p>`);
   }
 }
 
@@ -1017,10 +1111,10 @@ function gainXP(n){
    retirer sa clé de cette liste. */
 const SOON = []; // aucun onglet volontairement désactivé pour l'instant
 /* ===== Rendu ===== */
-function fondDone(){ return !!(S && S.dungeons.fondamentaux && S.dungeons.fondamentaux.cleared); }
-function hud(){
-  const classed = fondDone();
-  const r = rankOf(S.level), need = xpNeed(S.level);
+function fondamentauxTermines(){ return !!(S && S.dungeons.fondamentaux && S.dungeons.fondamentaux.cleared); }
+function enteteJeu(){
+  const classed = fondamentauxTermines();
+  const r = rangDe(S.level), need = xpNeed(S.level);
   const badgeRank = classed ? r : "unranked";
   const badgeLabel = classed ? r : "?";
   const on = UI.screen === "lesson" || UI.screen === "result" ? "map" : UI.screen;
@@ -1034,7 +1128,7 @@ function hud(){
       <span>${S.xp} / ${need} XP avant le niveau ${S.level + 1}</span></div>` : ""}
     <div class="gold-count">◈ ${S.gold} <small>or</small></div>
   </header>
-  <nav class="tabs" aria-label="Menu">${tabs.map(([k, l, ic]) => `<button class="tab ${on === k ? "on" : ""} ${locked(k) ? "soon" : ""}" data-act="go" data-to="${k}" ${on === k ? 'aria-current="page"' : ""}><span class="ti" aria-hidden="true">${ic}</span><span>${l}</span>${locked(k) ? '<span class="soonbadge">🔒</span>' : dot(k)}</button>`).join("")}</nav>`;
+  <nav class="tabs" aria-label="Menu">${tabs.map(([k, l, ic]) => `<button class="tab ${on === k ? "on" : ""} ${locked(k) ? "soon" : ""}" data-act="allerA" data-to="${k}" ${on === k ? 'aria-current="page"' : ""}><span class="ti" aria-hidden="true">${ic}</span><span>${l}</span>${locked(k) ? '<span class="soonbadge">🔒</span>' : dot(k)}</button>`).join("")}</nav>`;
 }
 
 /* Message d'ouverture, raconté en plusieurs écrans avant la création du
@@ -1070,9 +1164,9 @@ const STORY_POST = [
   "Empêche les Veilleurs Noirs d’atteindre le Grimoire des Mille Savoirs.<br><br><strong>Ta quête commence maintenant.</strong>"
 ];
 /* Encadré "fenêtre système" utilisé sur tous les écrans d'intro/épreuve :
-   mêmes barres lumineuses que les notifications sys(), pour une cohérence
+   mêmes barres lumineuses que les notifications systeme(), pour une cohérence
    visuelle totale entre le récit et les alertes en jeu. */
-function storyWindow(label, innerHtml, extra){
+function fenetreRecit(label, innerHtml, extra){
   return `<div class="story-win win ${extra || ""}">
     <i class="sysline top" aria-hidden="true"></i>
     <p class="sysalert">${label}</p>
@@ -1087,29 +1181,29 @@ const SCREENS = {
       const nextBtn = `<button class="btn primary wide" data-act="introstep">Suivant →</button>`;
       const backBtn = i > 0 ? `<button class="btn" data-act="introback">← Précédent</button>` : "";
       return `<section class="intro"><div class="intro-inner story">
-        ${smallOrb()}
-        ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_INTRO[i]}</p>
+        ${petitOrbe()}
+        ${fenetreRecit("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_INTRO[i]}</p>
           ${backBtn ? `<div class="btnrow">${backBtn}${nextBtn}</div>` : nextBtn}`)}
         ${i === 0 ? `<button class="link" data-act="introrestoreskip">J’ai déjà une sauvegarde</button>` : ""}
       </div></section>`;
     }
     if (UI.introStep === STORY_INTRO.length && !UI.introNo){
       return `<section class="intro"><div class="intro-inner story">
-        ${smallOrb()}
-        ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">Acceptes-tu l’épreuve du Système ?</p>
+        ${petitOrbe()}
+        ${fenetreRecit("[ALERTE DU SYSTÈME]", `<p class="storytxt">Acceptes-tu l’épreuve du Système ?</p>
           <div class="btnrow"><button class="btn" data-act="introno">Non</button>
           <button class="btn primary" data-act="introyes">Oui</button></div>`)}
       </div></section>`;
     }
     if (UI.introNo){
       return `<section class="intro"><div class="intro-inner story">
-        ${smallOrb()}
-        ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">Le Système ne te laisse pas le choix. L’épreuve commence.</p>
+        ${petitOrbe()}
+        ${fenetreRecit("[ALERTE DU SYSTÈME]", `<p class="storytxt">Le Système ne te laisse pas le choix. L’épreuve commence.</p>
           <button class="btn primary wide" data-act="introcontinue">Continuer →</button>`)}
       </div></section>`;
     }
     return `<section class="intro"><div class="intro-inner">
-      <div class="orb" aria-hidden="true">${levelUpIcon(180)}</div>
+      <div class="orb" aria-hidden="true">${iconeLevelUp(180)}</div>
       <h1>Level Up</h1>
       <p>Ton profil est en cours de création. Avant que le Système ne t’en dise plus sur la disparition de l’artefact, indique le nom sous lequel tu seras désormais connu.</p>
       <label class="field">Ton nom de chasseur<input id="hn" class="txt" maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Par exemple : Kaï"></label>
@@ -1138,7 +1232,7 @@ const SCREENS = {
     const pipsHtml = `<div class="pips" style="justify-content:center;display:flex;margin:2px 0 18px" aria-label="Question ${curPos + 1} sur 5">${pips}</div>`;
     const koText = isLast ? "Pas tout à fait… réessaie !" : TRIAL_FAIL_MSGS[Math.min(trialFails - 1, TRIAL_FAIL_MSGS.length - 1)];
     return `<section class="intro"><div class="intro-inner" style="max-width:560px">
-      ${storyWindow("[ÉPREUVE DU SYSTÈME]", `${pipsHtml}<p class="q" style="text-align:left">${esc(q.q)}</p>${body}
+      ${fenetreRecit("[ÉPREUVE DU SYSTÈME]", `${pipsHtml}<p class="q" style="text-align:left">${esc(q.q)}</p>${body}
         ${fb && !fb.ok ? `<div class="fb ko" role="status"><h3>Erreur détectée</h3><p class="ex">${koText}</p></div>` : ""}
         ${fb && fb.ok ? `<div class="fb ok" role="status"><h3>Correct</h3></div>` : ""}
         ${fb ? `<div class="fbrow"><span></span><button class="btn primary" data-act="trialnext" id="nextBtn">Continuer →</button></div>` : ""}`)}
@@ -1146,8 +1240,8 @@ const SCREENS = {
   },
   trialdone(){
     return `<section class="intro"><div class="intro-inner story">
-      ${smallOrb()}
-      ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">Épreuve réussie. Le Système enregistre ton profil.</p>
+      ${petitOrbe()}
+      ${fenetreRecit("[ALERTE DU SYSTÈME]", `<p class="storytxt">Épreuve réussie. Le Système enregistre ton profil.</p>
         <button class="btn primary wide" data-act="trialcontinue">Continuer →</button>`)}
     </div></section>`;
   },
@@ -1179,10 +1273,12 @@ const SCREENS = {
         <div class="win-head" style="justify-content:center">${r.passed ? "Épreuve validée" : "Épreuve non validée"}</div>
         <h2>${r.total} / 15</h2>
         <p class="sub">${r.passed
-          ? "Le Système confirme : tes bases sont solides. Tu peux désormais l’aider."
+          ? (r.firstTime ? "Le Système confirme : tes bases sont solides. Tu peux désormais l’aider." : "Bien joué — tes fondamentaux sont toujours solides.")
           : "Tu as dépassé les 3 erreurs autorisées. Retente Les Fondamentaux quand tu es prêt."}</p>
         ${r.passed
-          ? `<button class="btn primary wide" data-act="fondcontinue">Continuer →</button>`
+          ? (r.firstTime
+              ? `<button class="btn primary wide" data-act="fondcontinue">Continuer →</button>`
+              : `<button class="link" data-act="fondretry">Retour à l’entraînement</button>`)
           : `<button class="link" data-act="fondretry">Retour vers les entraînements</button>`}
       </div>`;
   },
@@ -1191,8 +1287,8 @@ const SCREENS = {
     const nextBtn = `<button class="btn primary wide" data-act="${last ? "storyenter" : "storystep"}">${last ? "Compris" : "Suivant"} →</button>`;
     const backBtn = i > 0 ? `<button class="btn" data-act="storyback">← Précédent</button>` : "";
     return `<section class="intro"><div class="intro-inner story">
-      ${smallOrb()}
-      ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_GRIMOIRE[i]}</p>
+      ${petitOrbe()}
+      ${fenetreRecit("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_GRIMOIRE[i]}</p>
         ${backBtn ? `<div class="btnrow">${backBtn}${nextBtn}</div>` : nextBtn}`)}
     </div></section>`;
   },
@@ -1201,8 +1297,8 @@ const SCREENS = {
     const nextBtn = `<button class="btn primary wide" data-act="${last ? "storypostend" : "storypoststep"}">${last ? "Rejoindre la Mer des Portails" : "Suivant"} →</button>`;
     const backBtn = i > 0 ? `<button class="btn" data-act="storypostback">← Précédent</button>` : "";
     return `<section class="intro"><div class="intro-inner story">
-      ${smallOrb()}
-      ${storyWindow("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_POST[i]}</p>
+      ${petitOrbe()}
+      ${fenetreRecit("[ALERTE DU SYSTÈME]", `<p class="storytxt">${STORY_POST[i]}</p>
         ${backBtn ? `<div class="btnrow">${backBtn}${nextBtn}</div>` : nextBtn}`)}
     </div></section>`;
   },
@@ -1210,23 +1306,38 @@ const SCREENS = {
   map(){
     const s = UI.arch && SUBJECTS.find(x => x.id === UI.arch);
     if (!s) return `<div class="title-row"><h2>La Mer des Portails</h2>
-      <p class="sub">Chaque archipel est une matière. Touche un archipel pour naviguer entre ses îles.</p></div>${worldMap()}`;
-    const done = s.dungeons.filter(d => (S.dungeons[d.id] || {}).cleared).length;
-    return `<button class="link" data-act="world">← La Mer des Portails</button>
-      <div class="title-row"><h2 style="color:${s.color}">${esc(s.region || s.name)}</h2>
-      <p class="sub">${esc(s.name)} : ${done} île${done > 1 ? "s" : ""} libérée${done > 1 ? "s" : ""} sur ${s.dungeons.length}. Suis la route, chaque île cache un donjon.</p></div>${archMap(s)}`;
+      <p class="sub">Chaque archipel est une matière. Touche un archipel pour naviguer entre ses îles.</p></div>${carteMonde()}`;
+    const groups = groupesMatiere(s);
+    const grouped = groups.length > 1;
+    if (grouped && UI.group === null){
+      return `<button class="link" data-act="world">← La Mer des Portails</button>
+        <div class="title-row"><h2 style="color:${s.color}">${esc(s.region || s.name)}</h2>
+        <p class="sub">${esc(s.name)} — choisis un groupe de portails à explorer.</p></div>
+        <div class="trainlist">${groups.map((g, i) => {
+          const done = g.filter(d => (S.dungeons[d.id] || {}).cleared).length;
+          return `<div class="win trainblock" data-act="group" data-idx="${i}" role="button" tabindex="0" style="cursor:pointer">
+            <h2>Groupe ${i + 1} ${done === g.length ? '<span class="okbadge" title="Terminé">✓</span>' : ""}</h2>
+            <p class="sub">${done} / ${g.length} portails franchis</p>
+          </div>`;
+        }).join("")}</div>`;
+    }
+    const list = grouped ? groups[UI.group] : s.dungeons;
+    const done = list.filter(d => (S.dungeons[d.id] || {}).cleared).length;
+    return `<button class="link" data-act="${grouped ? "backgroup" : "world"}">← ${grouped ? "Groupes de " + esc(s.name) : "La Mer des Portails"}</button>
+      <div class="title-row"><h2 style="color:${s.color}">${esc(s.region || s.name)}${grouped ? " — Groupe " + (UI.group + 1) : ""}</h2>
+      <p class="sub">${esc(s.name)} : ${done} île${done > 1 ? "s" : ""} libérée${done > 1 ? "s" : ""} sur ${list.length}. Chaque île cache un donjon — explore-les dans l’ordre qui te plaît.</p></div>${carteArchipel(s, list)}`;
   },
 
   lesson(){
     const d = DMAP[UI.dId].d, rec = S.dungeons[d.id] || {};
-    return `<button class="link" data-act="go" data-to="map">← Retour à l’archipel</button>
+    return `<button class="link" data-act="allerA" data-to="map">← Retour à l’archipel</button>
     <div class="lesson-grid">
       <article class="win"><div class="win-head">Parchemin de savoir</div><h2>${d.name}</h2><div class="lesson">${d.lesson}</div></article>
       <aside class="win sticky"><div class="win-head">Portail de rang ${d.rank}</div>
         <dl class="info">
           <dt>Matière</dt><dd>${DMAP[d.id].s.name}</dd>
           <dt>Niveau</dt><dd>${d.req}</dd>
-          <dt>Créatures</dt><dd>${buildRooms(d).reduce((n, r) => n + r.ids.length, 0)}</dd>
+          <dt>Créatures</dt><dd>${construireSalles(d).reduce((n, r) => n + r.ids.length, 0)}</dd>
           <dt>Boss</dt><dd>${rec.cleared ? d.boss.icon + " " + d.boss.name : "???"}</dd>
           <dt>Record</dt><dd>${rec.cleared ? `<span class="stars">${stars(rec.stars)}</span>` : "Jamais vaincu"}</dd>
         </dl>
@@ -1236,7 +1347,7 @@ const SCREENS = {
   },
 
   dungeon(){
-    if (R.mode === "dungeon" && R.stagePending !== null) return stageClearScreen();
+    if (R.mode === "dungeon" && R.stagePending !== null) return ecranEtapeReussie();
     const room = R.rooms[R.roomIndex];
     const {e, q, order} = R.cur, fb = R.fb;
     const dd = DMAP[e.d].d;
@@ -1245,7 +1356,7 @@ const SCREENS = {
     let pips = "";
     for (let i = 0; i < room.total; i++) pips += `<span class="pip ${i < room.defeated ? "on" : ""}"></span>`;
     if (R.mode === "dungeon") pips += `<span class="pip boss" title="Boss"></span>`;
-    const progressBar = R.mode === "dungeon" ? stageBar()
+    const progressBar = R.mode === "dungeon" ? barreEtape()
       : `<div class="pips" aria-label="${room.defeated} créatures vaincues sur ${room.total}">${pips}</div>`;
     let body;
     if (q.c){
@@ -1270,13 +1381,13 @@ const SCREENS = {
         : `<div class="fb ko" role="status"><h3>${R.mode === "training" ? "Raté" : "La créature riposte : −" + fb.dmg + " PV"}</h3>
            ${kwNote}<p>${q.def ? "Une définition possible" : "La bonne réponse était"} : <strong>${esc(good)}</strong></p><p class="ex">${q.ex}</p>
            <p>${R.mode === "training" ? "Cette question reviendra." : "Elle se relève et reviendra plus tard."}</p>`;
-      if (!fb.ok && isTimedRoom() && (S.inv.potSecond || 0) > 0){
+      if (!fb.ok && estSalleChronometree() && (S.inv.potSecond || 0) > 0){
         fbHtml += `<div class="fbrow"><span></span><button class="btn gold" data-act="usesecond">🔄 Seconde Chance ×${S.inv.potSecond} — retenter cette question</button></div>`;
       }
       fbHtml += `<div class="fbrow"><span></span><button class="btn primary" data-act="next" id="nextBtn">${R.hp <= 0 ? "Continuer" : room.queue.length ? "Question suivante" : R.mode === "dungeon" ? "Vers la salle du boss" : "Voir le résultat"}</button></div></div>`;
     }
     const mobCls = fb ? (fb.ok ? "dead" : "strike") : "";
-    const pot = R.mode === "dungeon" ? potionButtons() : "";
+    const pot = R.mode === "dungeon" ? boutonsPotions() : "";
     return `<div class="dungeon">
       <div class="dtop"><div class="dtitle">${title}<small>${subtitle}</small></div></div>
       ${progressBar}
@@ -1285,17 +1396,19 @@ const SCREENS = {
         <div class="combo">${R.combo >= 2 ? "Série ×" + R.combo : ""}</div>
       </div>
       <div class="mobzone"><div class="mob ${mobCls}" aria-hidden="true">${e.mob[0]}</div><div class="mobname">${e.mob[1]}</div></div>
-      <div class="win">${isTimedRoom() && !fb ? `<div class="qtimer" aria-hidden="true"><i style="animation-duration:${(QTIME + (R.qtimeBonus || 0)) / 1000}s"></i></div>` : ""}<p class="q">${q.img ? `<span class="qimg">${mediaHtml(q.img, 120)}</span>` : ""}${esc(q.q)}</p>${body}${fbHtml}</div>
-      <div class="dactions">${pot}${isTimedRoom() ? `<button class="btn" data-act="usetime" ${(S.inv.potTime || 0) ? "" : "disabled"}>⏳ Dilatation ×${S.inv.potTime || 0}</button>` : ""}<button class="link" data-act="flee">${R.mode === "training" ? "Quitter l’entraînement" : "Fuir le donjon"}</button></div>
+      <div class="win">${estSalleChronometree() && !fb ? `<div class="qtimer" aria-hidden="true"><i style="animation-duration:${(QTIME + (R.qtimeBonus || 0)) / 1000}s"></i></div>` : ""}<p class="q">${q.img ? `<span class="qimg">${htmlMedia(q.img, 120)}</span>` : ""}${esc(q.q)}</p>${body}${fbHtml}</div>
+      <div class="dactions">${pot}${estSalleChronometree() ? `<button class="btn" data-act="usetime" ${(S.inv.potTime || 0) ? "" : "disabled"}>⏳ Dilatation ×${S.inv.potTime || 0}</button>` : ""}<button class="link" data-act="flee">${R.mode === "training" ? "Quitter l’entraînement" : "Fuir le donjon"}</button></div>
     </div>`;
   },
 
   bossgate(){
-    const d = DMAP[R.dId].d, acc = accuracy();
-    return `<div class="win center-win"><div class="win-head">Salle du boss</div>
+    const d = DMAP[R.dId].d, acc = precisionDonjon(), chief = estChef(d);
+    return `<div class="win center-win ${chief ? "chiefgate" : ""}"><div class="win-head">${chief ? "⚠️ Un Chef des Veilleurs Noirs" : "Salle du boss"}</div>
       <div class="boss-preview" aria-hidden="true">${d.boss.icon}</div>
       <h2 style="text-align:center">${d.boss.name}</h2>
-      <p style="text-align:center">Toutes les créatures sont tombées. La porte du boss s’ouvre. Le combat se joue au tour par tour : à toi de jouer, puis au boss.</p>
+      <p style="text-align:center">${chief
+        ? "Ce n’est pas une simple sentinelle. Un chef des Veilleurs Noirs garde ce lieu — et avec lui, un fragment de la Clé ancestrale. Le combat sera plus rude que les autres."
+        : "Toutes les créatures sont tombées. La porte du boss s’ouvre. Le combat se joue au tour par tour : à toi de jouer, puis au boss."}</p>
       <div class="memo"><b>Bénédiction du donjon</b>
         Précision ${Math.round(acc * 100)} % → <strong>+${Math.round(acc * 50)} % de dégâts</strong><br>
         ${R.maxCombo >= 5 ? "Série de " + R.maxCombo + " bonnes réponses → <strong>+15 % de coups critiques</strong><br>" : "Fais une série de 5 bonnes réponses pour gagner des coups critiques.<br>"}
@@ -1309,7 +1422,7 @@ const SCREENS = {
         <tr><td>Esquiver · Espace</td><td>${dodgeChance()} % de chances d’éviter complètement l’attaque du boss et de doubler ta prochaine attaque.</td></tr>
         <tr><td>Potion · H</td><td>Boit une potion de soin (utilise ton tour).</td></tr>
       </table></div>
-      <button class="btn primary big" data-act="fightboss">Affronter le boss</button>
+      <button class="btn primary big ${chief ? "chiefbtn" : ""}" data-act="fightboss">${chief ? "Affronter le Chef" : "Affronter le boss"}</button>
     </div>`;
   },
 
@@ -1317,19 +1430,33 @@ const SCREENS = {
     const d = DMAP[B.dId].d;
     const busy = B.turn !== "player";
     const pots = (S.inv.potHp || 0) + (S.inv.potHpL || 0);
-    const heroCls = ["hero-fig"], bossCls = ["bicon"];
+    const temper = TEMPERAMENTS[B.temper];
+    const heroCls = ["hero-fig"], bossCls = ["bicon"], arenaCls = ["arena"];
+    if (B.chief) arenaCls.push("chiefarena");
     if (B.anim){
-      if (B.anim.actor === "hero") heroCls.push(B.anim.kind);
-      else { bossCls.push("attack"); heroCls.push(B.anim.dodged ? "dodge" : "hit"); }
+      if (B.anim.actor === "hero"){
+        heroCls.push(B.anim.kind);
+        if (B.anim.bossDodged || B.anim.shielded) bossCls.push("block");
+        else { bossCls.push("hit"); arenaCls.push("hitflash"); }
+        if (B.anim.fatal) arenaCls.push("shake", "hitflash-gold");
+      } else {
+        bossCls.push("attack"); heroCls.push(B.anim.dodged ? "dodge" : "hit");
+        if (B.anim.special && !B.anim.dodged) arenaCls.push("shake", "hitflash-red");
+      }
     }
     const fxHtml = (B.fx || []).map(f => `<span class="${f.cls}" style="left:${f.x}%;top:${f.y}%">${f.text}</span>`).join("");
     const logHtml = B.log.slice(-6).reverse().map(l => `<p class="${l.cls}">${esc(l.text)}</p>`).join("");
+    if (B.specialNext) bossCls.push("charging");
+    const canSecond = S.inv.potSecond > 0 && !B.usedSecond;
+    const canDilate = S.inv.potTime > 0 && !B.usedTime;
     return `<div class="boss-screen">
-      <div class="btop"><div class="bname">${d.boss.name}<span>Boss de rang ${d.rank}</span></div>
-        <div class="bar boss"><i style="width:${Math.max(0, B.bossHp) / B.bossMax * 100}%"></i></div></div>
-      <div class="arena ${B.enraged ? "rage" : ""}">
+      <div class="btop"><div class="bname">${d.boss.name}<span>${B.chief ? "🗝️ Chef des Veilleurs Noirs · " : ""}${temper.icon} ${temper.label} · rang ${d.rank}</span></div>
+        <div class="bar boss"><i style="width:${Math.max(0, B.bossHp) / B.bossMax * 100}%"></i></div>
+        ${B.specialNext ? `<p class="specialwarn">⚠️ Attaque dévastatrice imminente !</p>` : ""}</div>
+      <div class="${arenaCls.join(" ")} ${B.enraged ? "rage" : ""}">
         <div class="${bossCls.join(" ")}" aria-hidden="true">${d.boss.icon}</div>
-        <div class="${heroCls.join(" ")}">${heroSvg()}</div>
+        ${bossCls.includes("block") ? `<div class="blockfx" aria-hidden="true">🛡️</div>` : ""}
+        <div class="${heroCls.join(" ")}">${svgHeros()}</div>
         <div class="fx" aria-hidden="true">${fxHtml}</div>
       </div>
       <div class="ppanel">
@@ -1337,13 +1464,27 @@ const SCREENS = {
           <div><div class="lbl"><span>PV</span><span>${Math.ceil(B.hp)} / ${B.hpMax}</span></div><div class="bar hp"><i style="width:${B.hp / B.hpMax * 100}%"></i></div></div>
           <div><div class="lbl"><span>PM</span><span>${Math.floor(B.mp)} / ${B.mpMax}</span></div><div class="bar mp"><i style="width:${B.mp / B.mpMax * 100}%"></i></div></div>
         </div>
-        <div class="skills">
+        ${B.perfectStreak > 0 ? `<p class="streak">⚡ Série de coups parfaits : ${B.perfectStreak} / 3</p>` : ""}
+        ${B.missPending ? `<div class="timegame">
+          <p class="timelabel">Coup manqué. Utiliser <strong>Seconde Chance</strong> pour retenter ?</p>
+          <div class="btnrow"><button class="btn" data-bact="keepmiss">Garder le résultat</button>
+            <button class="btn primary" data-bact="secondtry">🔄 Seconde Chance ×${S.inv.potSecond}</button></div>
+        </div>` : B.timing ? `<div class="timegame">
+          <p class="timelabel">Appuie sur <strong>Frapper</strong> quand le curseur passe par le centre !</p>
+          <div class="timebar" data-bact="hit">
+            <div class="tzone good" style="left:${50 + B.timing.offset - B.timing.goodHalf}%;width:${B.timing.goodHalf * 2}%"></div>
+            <div class="tzone crit" style="left:${50 + B.timing.offset - B.timing.half}%;width:${B.timing.half * 2}%"></div>
+            <div class="tmarker" style="animation-duration:${B.timing.period * 2}ms"></div>
+          </div>
+          <button class="btn primary big" data-bact="hit">Frapper !</button>
+        </div>` : `<div class="skills">
           <button class="skill" data-bact="atk" ${busy ? "disabled" : ""}>Attaque<small>gratuit<kbd>J</kbd></small></button>
           <button class="skill ${B.mp < 10 ? "nomp" : ""}" data-bact="s1" ${busy || B.mp < 10 ? "disabled" : ""}>Entaille<small>10 PM<kbd>K</kbd></small></button>
           <button class="skill ${B.mp < 25 ? "nomp" : ""}" data-bact="s2" ${busy || S.level < 5 || B.mp < 25 ? "disabled" : ""}>Frappe de l’ombre<small>${S.level < 5 ? "niveau 5" : "25 PM"}<kbd>L</kbd></small></button>
           <button class="skill dodge" data-bact="dodge" ${busy ? "disabled" : ""}>Esquiver<small>${dodgeChance()}% de réussite<kbd>Espace</kbd></small></button>
           <button class="skill pot" data-bact="pot" ${busy || pots === 0 ? "disabled" : ""}>Potion<small>×${pots}<kbd>H</kbd></small></button>
-        </div>
+          ${canDilate ? `<button class="skill" data-bact="dilate" ${busy ? "disabled" : ""}>⏳ Dilatation<small>×${S.inv.potTime}</small></button>` : ""}
+        </div>`}
       </div>
       <div class="battlelog" aria-live="polite">${logHtml}</div>
       <button class="link" data-act="bossflee">Abandonner le combat</button>
@@ -1354,33 +1495,34 @@ const SCREENS = {
     const r = UI.result;
     if (r.type === "win"){
       const d = DMAP[r.dId].d;
-      return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Donjon nettoyé</div>
+      return `<div class="win center-win result ${r.chief ? "chiefwin" : ""}"><div class="win-head" style="justify-content:center">${r.chief ? "Chef des Veilleurs Noirs vaincu" : "Donjon nettoyé"}</div>
         <div class="boss-preview" aria-hidden="true">${d.boss.icon}</div>
         <h2>${d.boss.name} est vaincu</h2>
         <div class="big-stars" aria-label="${r.stars} étoiles sur 3">${stars(r.stars)}</div>
         <p>Précision dans le donjon : ${Math.round(r.acc * 100)} %${r.first ? "" : " · récompenses de reprise"}</p>
         <div class="rewards"><span class="x">+${r.xp} XP</span><span class="g">+${r.gold} or</span>${r.loot ? `<span class="l">+1 ${r.loot}</span>` : ""}</div>
-        <div class="btnrow"><button class="btn primary" data-act="go" data-to="map">Retour à la carte</button><button class="btn" data-act="replay" data-id="${r.dId}">Rejouer ce donjon</button></div></div>`;
+        ${r.fragment ? `<p class="fragmentget">🗝️ Un fragment de la Clé ancestrale t’a été arraché des mains ! (${S.keyFragments} au total)</p>` : ""}
+        <div class="btnrow"><button class="btn primary" data-act="allerA" data-to="map">Retour à la carte</button><button class="btn" data-act="replay" data-id="${r.dId}">Rejouer ce donjon</button></div></div>`;
     }
     if (r.type === "lose"){
       return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Défaite</div>
         <h2>Le boss t’a mis à terre</h2>
         <p>Il lui restait ${r.left} % de ses PV. Ta bénédiction du donjon est conservée, et tu recommences avec tous tes PV.</p>
         <div class="memo" style="text-align:left"><b>Conseils</b>Esquive quand le cercle devient doré, puis frappe : ton attaque suivante fait double dégâts. Achète une meilleure arme à la boutique ou ajoute des points en Vitalité et Agilité.</div>
-        <div class="btnrow"><button class="btn primary" data-act="retry">Retenter le boss</button><button class="btn" data-act="go" data-to="map">Retour à la carte</button></div></div>`;
+        <div class="btnrow"><button class="btn primary" data-act="retry">Retenter le boss</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
     }
     if (r.type === "faint"){
       return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Évanoui</div>
         <h2>Tu t’es évanoui dans le donjon</h2>
         <p>Les créatures étaient trop fortes cette fois. Tu gardes l’XP et l’or gagnés.</p>
         <p>Relis le parchemin : toutes les réponses s’y trouvent.</p>
-        <div class="btnrow"><button class="btn primary" data-act="gate" data-id="${r.dId}">Relire le parchemin</button><button class="btn" data-act="go" data-to="map">Retour à la carte</button></div></div>`;
+        <div class="btnrow"><button class="btn primary" data-act="gate" data-id="${r.dId}">Relire le parchemin</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
     }
     return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Entraînement terminé</div>
       <h2>${r.correct} bonnes réponses sur ${r.correct + r.wrong} essais</h2>
       <div class="rewards"><span class="x">+${r.xp} XP</span><span class="g">+${r.gold} or</span></div>
       <p>${r.wrong ? "Les questions ratées sont notées : elles reviendront au prochain entraînement." : "Sans faute. Tes points faibles fondent."}</p>
-      <div class="btnrow"><button class="btn primary" data-act="train">Encore un entraînement</button><button class="btn" data-act="go" data-to="map">Retour à la carte</button></div></div>`;
+      <div class="btnrow"><button class="btn primary" data-act="train">Encore un entraînement</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
   },
 
   status(){
@@ -1412,6 +1554,23 @@ const SCREENS = {
           <span>Erreurs</span><span>${S.total.wrong}</span>
           <span>Boss vaincus</span><span>${S.total.bosses}</span>
           <span>Portails nettoyés</span><span>${Object.values(S.dungeons).filter(x => x.cleared).length} / ${Object.keys(DMAP).length}</span>
+          <span>🗝️ Fragments de la Clé</span><span>${S.keyFragments || 0}</span>
+        </div>
+      </section>
+      <section class="win"><div class="win-head">Codex des Ombres</div>
+        <p class="sub">${Object.keys(S.codex || {}).length} / ${Object.keys(DMAP).length} Veilleurs Noirs consignés.</p>
+        <div class="codexgrid">
+          ${Object.values(DMAP).map(({d}) => {
+            const entry = (S.codex || {})[d.id];
+            if (!entry) return `<div class="codexcard locked"><div class="cicon">❔</div><small>???</small></div>`;
+            const t = TEMPERAMENTS[entry.temper] || {icon:"", label:""};
+            return `<div class="codexcard ${entry.chief ? "chief" : ""}">
+              ${entry.chief ? `<span class="codexkey" title="Chef des Veilleurs Noirs — fragment de la Clé">🗝️</span>` : ""}
+              <div class="cicon">${entry.icon}</div>
+              <b>${esc(entry.name)}</b>
+              <small>${t.icon} ${t.label}</small>
+            </div>`;
+          }).join("")}
         </div>
       </section>
       <section class="win"><div class="win-head">Sauvegarde</div>
@@ -1435,6 +1594,16 @@ const SCREENS = {
   },
 
   shop(){
+    const tabs = [["potions","Potions"],["weapons","Armes"],["armors","Armures"],["artefacts","Artefact"]];
+    const list = SHOP_TEASER[UI.shopTab] || SHOP_TEASER.potions;
+    const row = it => `<div class="itemrow lock"><div class="icon" aria-hidden="true">${it.icon}</div>
+      <div><b>${it.name}</b><small>Indisponible — en rupture de stock · tu en as 0</small></div>
+      <div class="buy"><button class="btn" disabled>Indisponible</button></div></div>`;
+    return `<div class="title-row"><h2>Boutique du Système</h2><p class="sub">Le Système prépare ses réserves. Reviens plus tard.</p></div>
+      <div class="shoptabs">${tabs.map(([k, l]) => `<button class="btn ${UI.shopTab === k ? "on" : ""}" data-act="shoptab" data-k="${k}">${l}</button>`).join("")}</div>
+      <div class="items">${list.map(row).join("")}</div>`;
+  },
+  shopReal(){
     const tabs = [["potions","Potions"],["weapons","Armes"],["armors","Armures"]];
     const list = SHOP[UI.shopTab];
     const row = it => {
@@ -1459,28 +1628,25 @@ const SCREENS = {
   },
 
   quests(){
-    if (!fondDone()){
-      return `<div class="title-row"><h2>Quête</h2></div>
-        <div class="win center-win" style="margin:0"><div class="win-head">Quête active</div>
-          <div class="task"><span class="check"></span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>
-        </div>`;
+    let mainBody;
+    if (!fondamentauxTermines()){
+      mainBody = `<div class="task"><span class="check"></span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>`;
+    } else if (!S.fondQuestClaimed){
+      mainBody = `<div class="task"><span class="check done">✓</span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>
+        <button class="btn primary wide" data-act="claimfondquest">Récompense</button>`;
+    } else {
+      mainBody = htmlProgressionCle();
     }
-    return SCREENS.questsReal();
+    return `<div class="title-row"><h2>Quête</h2></div>
+      <div class="win center-win" style="margin:0"><div class="win-head">Quête principale</div>${mainBody}</div>
+      ${fondamentauxTermines() && S.fondQuestClaimed ? `<div class="win center-win" style="margin-top:14px">
+        <div class="win-head">Quête éphémère</div>${corpsQueteEphemere()}
+      </div>` : ""}`;
   },
-  questsReal(){
-    const done = dailyDone();
-    return `<div class="title-row"><h2>Quête du jour</h2><p class="sub">Une nouvelle quête apparaît chaque jour à minuit.</p></div>
-      <div class="win center-win" style="margin:0"><div class="win-head">Entraînement quotidien du chasseur</div>
-        ${DAILY.map(t => { const v = Math.min(t.goal, S.daily[t.k]); const ok = v >= t.goal;
-          return `<div class="task"><span class="check ${ok ? "done" : ""}">${ok ? "✓" : ""}</span><span>${t.label}</span><span class="prog">${v} / ${t.goal}</span></div>`; }).join("")}
-        <p class="hint">Récompense : 100 or, 60 XP et 1 point de statistique.</p>
-        ${S.daily.claimed ? `<button class="btn gold big" disabled>Récompense reçue, reviens demain</button>`
-          : `<button class="btn primary big" data-act="claim" ${done ? "" : "disabled"}>${done ? "Recevoir la récompense" : "Termine les trois objectifs"}</button>`}
-      </div>`;
-  },
+  questsReal(){ return SCREENS.quests(); },
 
   training(){
-    if (!fondDone()){
+    if (!fondamentauxTermines()){
       const locked = ["Anglais", "Histoire", "Géographie", "Physique-Chimie"];
       return `<div class="title-row"><h2>Salle d’entraînement</h2></div>
         <div class="trainlist">
@@ -1494,19 +1660,15 @@ const SCREENS = {
           ${locked.map(name => `<div class="win trainblock locked"><h2>${name} <span class="soonbadge">🔒</span></h2></div>`).join("")}
         </div>`;
     }
-    const weak = {};
-    Object.entries(S.mistakes).forEach(([qid, n]) => { const [did, q] = qid.split(":"); if (DMAP[did] && DMAP[did].qmap[q]) weak[did] = (weak[did] || 0) + n; });
-    const list = Object.entries(weak).sort((a, b) => b[1] - a[1]);
     const locked = ["Anglais", "Histoire", "Géographie", "Physique-Chimie"];
     return `<div class="title-row"><h2>Salle d’entraînement</h2></div>
       <div class="trainlist">
         <div class="win trainblock">
-          <div class="win-head">Révision</div>
-          <h2>Toutes matières</h2>
-          <p>Huit questions tirées des portails que tu as ouverts, en commençant par celles que tu as ratées. Pas de dégâts ici : c’est l’endroit pour réviser.</p>
-          ${list.length ? `<div class="weak">${list.map(([did, n]) => `<div><span>${DMAP[did].s.name} · ${DMAP[did].d.name}</span><strong>${n} à revoir</strong></div>`).join("")}</div>`
-            : `<p class="sub">Aucune erreur pour l’instant. Chaque erreur faite dans un donjon apparaîtra ici.</p>`}
-          <button class="btn primary wide" data-act="train" ${availQuestions().length ? "" : "disabled"}>Commencer l’entraînement</button>
+          <div class="win-head">Entraînement</div>
+          <h2>Les Fondamentaux <span class="okbadge" title="Épreuve validée" aria-label="Épreuve validée">✓</span></h2>
+          <p>Tu peux retenter cette épreuve quand tu veux, dans les mêmes conditions.</p>
+          <p><span class="warn">Condition de réussite :<br>3 erreurs maximum.</span></p>
+          <button class="btn primary wide" data-act="storystart">Recommencer l’entraînement</button>
         </div>
         ${locked.map(name => `<div class="win trainblock locked"><h2>${name} <span class="soonbadge">🔒</span></h2></div>`).join("")}
       </div>`;
@@ -1517,12 +1679,12 @@ const SCREENS = {
    Les positions et formes des îles sont calculées à partir des identifiants :
    une île garde toujours la même forme, et une nouvelle matière apparaît
    automatiquement comme un nouvel archipel. */
-function hashStr(s){ let h = 2166136261; for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
-function rng(seed){ return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hacherTexte(s){ let h = 2166136261; for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function generateurAleatoire(seed){ return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const f1 = n => Math.round(n * 10) / 10;
 const reduceMotion = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 const GOLD = "#F5C451", MUTED = "#8FA3C8";
-function smooth(p){
+function lisser(p){
   const n = p.length;
   let d = `M${f1(p[0][0])},${f1(p[0][1])}`;
   for (let i = 0; i < n; i++){
@@ -1531,10 +1693,10 @@ function smooth(p){
   }
   return d + "Z";
 }
-function islandSvg(cx, cy, r, seed, color, detail){
-  const R = rng(seed), n = 9, k = [];
+function svgIle(cx, cy, r, seed, color, detail){
+  const R = generateurAleatoire(seed), n = 9, k = [];
   for (let i = 0; i < n; i++) k.push(0.74 + R() * 0.42);
-  const shape = sc => smooth(k.map((v, i) => { const a = i / n * Math.PI * 2; return [cx + Math.cos(a) * r * v * sc, cy + Math.sin(a) * r * v * sc * 0.8]; }));
+  const shape = sc => lisser(k.map((v, i) => { const a = i / n * Math.PI * 2; return [cx + Math.cos(a) * r * v * sc, cy + Math.sin(a) * r * v * sc * 0.8]; }));
   let g = `<path d="${shape(1.5)}" fill="${color}" opacity=".14"/>
     <path d="${shape(1.16)}" fill="#cdbb8c" opacity=".5"/>
     <path d="${shape(1)}" fill="url(#land)" stroke="${color}" stroke-opacity=".6" stroke-width="1.5"/>`;
@@ -1552,8 +1714,8 @@ function islandSvg(cx, cy, r, seed, color, detail){
   }
   return g;
 }
-function seaDefs(W, H, seed){
-  const R = rng(seed);
+function defsOcean(W, H, seed){
+  const R = generateurAleatoire(seed);
   let g = `<defs>
     <radialGradient id="sea" cx="50%" cy="20%" r="90%"><stop offset="0" stop-color="#0f2250"/><stop offset="1" stop-color="#040919"/></radialGradient>
     <linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#31604f"/><stop offset="1" stop-color="#132c25"/></linearGradient>
@@ -1568,7 +1730,7 @@ function seaDefs(W, H, seed){
   }
   return g;
 }
-function wrapText(s, max){
+function retourLigne(s, max){
   const words = String(s).split(" "), lines = [""];
   for (const w of words){
     const cur = lines[lines.length - 1];
@@ -1577,7 +1739,7 @@ function wrapText(s, max){
   }
   return lines;
 }
-function boatSvg(x, y, color){
+function svgBateau(x, y, color){
   const anim = reduceMotion() ? "" : `<animateTransform attributeName="transform" type="translate" values="0,0;0,-3;0,0" dur="3s" repeatCount="indefinite"/>`;
   return `<g id="boat" transform="translate(${f1(x)},${f1(y)})" aria-hidden="true"><g>${anim}
     <path d="M-18,12 q6,3 12,0 M6,12 q6,3 12,0" fill="none" stroke="#A6D8FF" stroke-opacity=".5" stroke-width="1.2"/>
@@ -1586,20 +1748,41 @@ function boatSvg(x, y, color){
     <path d="M1.5,-19 L13,-2 L1.5,-2Z" fill="#E8F1FF"/>
     <path d="M0,-20 L-8,-17 L0,-14Z" fill="${color}"/></g></g>`;
 }
-function dState(d){ return (S.dungeons[d.id] || {}).cleared ? "cleared" : isUnlocked(d) ? "open" : "locked"; }
+function etatDonjon(d){ return (S.dungeons[d.id] || {}).cleared ? "cleared" : estDebloque(d) ? "open" : "locked"; }
 
-function archMap(s){
-  const W = 400, gap = 185, top = 95, n = s.dungeons.length, H = top + (n - 1) * gap + 150;
-  const nodes = s.dungeons.map((d, i) => {
-    const R = rng(hashStr(d.id));
-    return {d, st:dState(d), x:(i % 2 ? 282 : 118) + (R() - .5) * 34, y:top + i * gap + (R() - .5) * 14, r:42 + R() * 10, seed:hashStr(d.id + ":isle")};
+/* Regroupe les donjons d'une matière par paquets de GROUP_SIZE, dans l'ordre
+   où ils existent déjà — jamais par thème (impossible à deviner à l'avance
+   pour du contenu pas encore écrit). Une matière avec peu de donjons ne
+   produit qu'un seul groupe, et l'étape de sélection de groupe est alors
+   sautée automatiquement (voir map()). */
+const GROUP_SIZE = 5;
+function groupesMatiere(s){
+  const groups = [];
+  for (let i = 0; i < s.dungeons.length; i += GROUP_SIZE) groups.push(s.dungeons.slice(i, i + GROUP_SIZE));
+  return groups;
+}
+/* Positions "planisphère" pour 1 à GROUP_SIZE îles : dispersées dans la zone
+   comme sur une vraie carte, pas alignées le long d'un chemin. Comme un
+   groupe ne dépasse jamais GROUP_SIZE donjons, tout tient sur un seul écran,
+   sans défilement. */
+const ARCH_SLOTS = {
+  1:[[200,170]],
+  2:[[135,140],[265,270]],
+  3:[[130,120],[285,150],[195,310]],
+  4:[[110,120],[290,140],[140,300],[300,330]],
+  5:[[100,110],[300,130],[200,250],[115,370],[295,390]]
+};
+function carteArchipel(s, list){
+  list = list || s.dungeons;
+  const W = 400, n = list.length;
+  const slots = ARCH_SLOTS[n] || ARCH_SLOTS[GROUP_SIZE].slice(0, n);
+  const H = Math.max(...slots.map(p => p[1])) + 150;
+  const nodes = list.map((d, i) => {
+    const R = generateurAleatoire(hacherTexte(d.id));
+    const [bx, by] = slots[i];
+    return {d, st:etatDonjon(d), x:bx + (R() - .5) * 18, y:by + (R() - .5) * 18, r:40 + R() * 10, seed:hacherTexte(d.id + ":isle")};
   });
-  let svg = seaDefs(W, H, hashStr(s.id));
-  for (let i = 0; i < n - 1; i++){
-    const a = nodes[i], b = nodes[i + 1], on = b.st !== "locked";
-    const mx = (a.x + b.x) / 2 + (i % 2 ? -46 : 46), my = (a.y + b.y) / 2;
-    svg += `<path d="M${f1(a.x)},${f1(a.y)} Q${f1(mx)},${f1(my)} ${f1(b.x)},${f1(b.y)}" fill="none" stroke="${on ? s.color : MUTED}" stroke-opacity="${on ? .8 : .25}" stroke-width="2.5" stroke-dasharray="1 9" stroke-linecap="round"/>`;
-  }
+  let svg = defsOcean(W, H, hacherTexte(s.id));
   let boatAt = nodes.findIndex(o => o.st === "open");
   if (boatAt < 0){ const lastC = nodes.map(o => o.st).lastIndexOf("cleared"); boatAt = lastC; }
   nodes.forEach((o, i) => {
@@ -1611,10 +1794,10 @@ function archMap(s){
     const pulse = st === "open" && !reduceMotion() ? `<circle cx="${f1(x)}" cy="${f1(y)}" r="17" fill="none" stroke="${s.color}" stroke-width="2">
         <animate attributeName="r" values="17;36" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="2.4s" repeatCount="indefinite"/></circle>` : "";
     const flag = st === "cleared" ? `<path d="M${f1(x + 12)},${f1(y - 14)} L${f1(x + 12)},${f1(y - 40)}" stroke="#E8F1FF" stroke-width="1.6"/><path d="M${f1(x + 13)},${f1(y - 40)} L${f1(x + 30)},${f1(y - 34)} L${f1(x + 13)},${f1(y - 28)}Z" fill="${GOLD}"/>` : "";
-    const lines = wrapText(d.name, 20), ly = y + r * 0.95 + 22;
+    const lines = retourLigne(d.name, 20), ly = y + r * 0.95 + 22;
     svg += `<g class="isl" role="button" tabindex="0" data-act="gate" data-id="${d.id}" aria-label="${esc(aria)}">
       <ellipse cx="${f1(x)}" cy="${f1(y + 20)}" rx="${f1(r * 1.6)}" ry="${f1(r * 1.5)}" fill="transparent"/>
-      <g ${st === "locked" ? 'filter="url(#fog)" opacity=".5"' : ""}>${islandSvg(x, y, r, o.seed, st === "cleared" ? GOLD : s.color, true)}</g>
+      <g ${st === "locked" ? 'filter="url(#fog)" opacity=".5"' : ""}>${svgIle(x, y, r, o.seed, st === "cleared" ? GOLD : s.color, true)}</g>
       ${pulse}
       <circle class="ring" cx="${f1(x)}" cy="${f1(y)}" r="17" fill="#0a0624" stroke="${ring}" stroke-width="3"/>
       <text x="${f1(x)}" y="${f1(y + 6)}" text-anchor="middle" class="rk" fill="${st === "locked" ? MUTED : "#fff"}">${d.rank}</text>
@@ -1623,31 +1806,29 @@ function archMap(s){
       <text x="${f1(x)}" y="${f1(ly + lines.length * 17 + 1)}" text-anchor="middle" class="lbl meta">${meta}</text>
     </g>`;
   });
-  if (boatAt >= 0){ const o = nodes[boatAt]; svg += boatSvg(o.x < 200 ? o.x + o.r + 26 : o.x - o.r - 26, o.y + 2, s.color); }
+  if (boatAt >= 0){ const o = nodes[boatAt]; svg += svgBateau(o.x < 200 ? o.x + o.r + 26 : o.x - o.r - 26, o.y + 2, s.color); }
   return `<svg class="seamap" viewBox="0 0 ${W} ${H}" role="group" aria-label="Carte de ${esc(s.region || s.name)}">${svg}</svg>`;
 }
 
-function worldMap(){
+function carteMonde(){
   const W = 400, gap = 280, top = 160, n = SUBJECTS.length, H = top + (n - 1) * gap + 170;
   const centers = SUBJECTS.map((s, i) => ({s, x:n === 1 ? 200 : (i % 2 ? 262 : 138), y:top + i * gap}));
-  let svg = seaDefs(W, H, 7);
-  for (let i = 0; i < n - 1; i++){
-    const a = centers[i], b = centers[i + 1];
-    svg += `<path d="M${a.x},${a.y} C${a.x + 90},${a.y + 110} ${b.x - 90},${b.y - 110} ${b.x},${b.y}" fill="none" stroke="${MUTED}" stroke-opacity=".3" stroke-width="2" stroke-dasharray="1 8" stroke-linecap="round"/>`;
-  }
+  let svg = defsOcean(W, H, 7);
+  // Pas de route tracée entre les archipels : ils sont dispersés sur la mer
+  // comme sur un vrai planisphère, sans ordre imposé pour y accéder.
   // rose des vents
   svg += `<g transform="translate(${W - 44},44)" opacity=".7" aria-hidden="true">
     <path d="M0,-24 L5,-5 L24,0 L5,5 L0,24 L-5,5 L-24,0 L-5,-5Z" fill="none" stroke="#A6D8FF" stroke-width="1.2"/>
     <path d="M0,-24 L5,-5 L0,0Z M0,24 L-5,5 L0,0Z" fill="#A6D8FF"/>
     <text y="-29" text-anchor="middle" class="lbl meta" fill="#A6D8FF">N</text></g>`;
   centers.forEach(({s, x, y}) => {
-    const R = rng(hashStr(s.id + ":arch")), a0 = R() * Math.PI * 2;
+    const R = generateurAleatoire(hacherTexte(s.id + ":arch")), a0 = R() * Math.PI * 2;
     let isles = "", maxY = y;
     s.dungeons.forEach((d, j) => {
       const dist = j ? 34 + j * 9 : 0, ang = a0 + j * 2.4;
       const ix = x + Math.cos(ang) * dist * 1.25, iy = y + Math.sin(ang) * dist * 0.8, r = Math.max(15, 27 - j * 1.5);
-      const st = dState(d);
-      isles += `<g ${st === "locked" ? 'filter="url(#fog)" opacity=".45"' : ""}>${islandSvg(ix, iy, r, hashStr(d.id + ":isle"), st === "cleared" ? GOLD : s.color, false)}</g>`;
+      const st = etatDonjon(d);
+      isles += `<g ${st === "locked" ? 'filter="url(#fog)" opacity=".45"' : ""}>${svgIle(ix, iy, r, hacherTexte(d.id + ":isle"), st === "cleared" ? GOLD : s.color, false)}</g>`;
       maxY = Math.max(maxY, iy + r);
     });
     const done = s.dungeons.filter(d => (S.dungeons[d.id] || {}).cleared).length, tot = s.dungeons.length;
@@ -1664,17 +1845,17 @@ function worldMap(){
   });
   return `<svg class="seamap" viewBox="0 0 ${W} ${H}" role="group" aria-label="Carte des archipels">${svg}</svg>`;
 }
-function potionButtons(){
+function boutonsPotions(){
   const hp = S.inv.potHp || 0, hpl = S.inv.potHpL || 0;
   return `<button class="btn" data-act="dpot" data-id="potHp" ${hp ? "" : "disabled"}>🧪 Potion ×${hp}</button>` +
     (hpl ? `<button class="btn" data-act="dpot" data-id="potHpL">⚗️ Grande potion ×${hpl}</button>` : "");
 }
 
-function render(){
-  ensureDaily();
+function afficher(){
+  assurerQuotidienne();
   const app = $("#app");
   const hideHud = !S || ["intro","boss","trial","trialdone","storygrim","storypost"].includes(UI.screen);
-  app.innerHTML = (hideHud ? "" : hud()) + `<main>${SCREENS[UI.screen]()}</main>`;
+  app.innerHTML = (hideHud ? "" : enteteJeu()) + `<main>${SCREENS[UI.screen]()}</main>`;
   if (UI.screen === "intro") setTimeout(() => { const i = $("#hn"); if (i) i.focus(); }, 50);
   if (UI.screen === "dungeon"){
     setTimeout(() => {
@@ -1683,8 +1864,8 @@ function render(){
     }, 60);
   }
 }
-function go(screen){
-  UI.screen = screen; UI.resetArm = false; render();
+function allerA(screen){
+  UI.screen = screen; UI.resetArm = false; afficher();
   const boat = screen === "map" && UI.arch ? document.getElementById("boat") : null;
   if (boat && boat.scrollIntoView) boat.scrollIntoView({block:"center"}); else window.scrollTo(0, 0);
 }
@@ -1696,7 +1877,7 @@ function go(screen){
    mélangeant tous les paliers. Sans "tier", on garde l'ancien découpage automatique
    en 2 ou 3 salles à peu près égales, pour ne rien casser sur le contenu existant. */
 const ROOM_CAP = 4;
-function buildRooms(d){
+function construireSalles(d){
   const tiers = {};
   d.questions.forEach(q => { if (q.tier != null) (tiers[q.tier] = tiers[q.tier] || []).push(q.id); });
   const tierKeys = Object.keys(tiers).map(Number).sort((a, b) => a - b);
@@ -1711,35 +1892,35 @@ function buildRooms(d){
   }
   const total = Math.min(DUNGEON_LEN, d.questions.length);
   const ids = shuffle(d.questions.map(q => q.id)).slice(0, total);
-  const bounds = stageBoundsFor(total);
+  const bounds = limitesEtapePour(total);
   const rooms = []; let prev = 0;
   bounds.forEach((b, i) => { rooms.push({ids:ids.slice(prev, b), label:"Salle " + (i + 1)}); prev = b; });
   return rooms;
 }
-function makeRoom(dId, ids, label, recap, mobs, mobStart){
+function creerSalle(dId, ids, label, recap, mobs, mobStart){
   return {ids, label, recap:!!recap, defeated:0, total:ids.length,
     queue:ids.map((qid, k) => ({d:dId, q:qid, mob:mobs[(mobStart + k) % mobs.length]}))};
 }
-function startDungeon(dId){
+function demarrerDonjon(dId){
   const d = DMAP[dId].d;
   const mobs = shuffle(MOBS);
-  const defs = buildRooms(d);
+  const defs = construireSalles(d);
   let mi = 0;
-  const rooms = defs.map(rd => { const r = makeRoom(dId, rd.ids, rd.label, rd.recap, mobs, mi); mi += rd.ids.length; return r; });
+  const rooms = defs.map(rd => { const r = creerSalle(dId, rd.ids, rd.label, rd.recap, mobs, mi); mi += rd.ids.length; return r; });
   R = {mode:"dungeon", dId, lvl:d.req, rooms, roomIndex:0,
        correct:0, wrong:0, combo:0, maxCombo:0, hpMax:maxHp(), hp:maxHp(), qtimeBonus:0, xp:0, gold:0, cur:null, fb:null,
        stagePending:null, log:[], logStageStart:0};
-  prepQ(); go("dungeon");
+  preparerQuestion(); allerA("dungeon");
 }
-function availQuestions(){
+function questionsDisponibles(){
   const out = [];
   SUBJECTS.forEach(s => s.dungeons.forEach(d => {
-    if (isUnlocked(d) || (S.dungeons[d.id] || {}).cleared) d.questions.forEach(q => out.push({d:d.id, q:q.id}));
+    if (estDebloque(d) || (S.dungeons[d.id] || {}).cleared) d.questions.forEach(q => out.push({d:d.id, q:q.id}));
   }));
   return out;
 }
-function startTraining(){
-  const avail = availQuestions();
+function demarrerEntrainement(){
+  const avail = questionsDisponibles();
   if (!avail.length) return;
   const key = x => x.d + ":" + x.q;
   const mist = avail.filter(x => S.mistakes[key(x)]).sort((a, b) => S.mistakes[key(b)] - S.mistakes[key(a)]).slice(0, 5);
@@ -1750,7 +1931,7 @@ function startTraining(){
     queue:list.map(x => ({d:x.d, q:x.q, mob:mobs}))};
   R = {mode:"training", dId:null, lvl:1, rooms:[room], roomIndex:0,
        correct:0, wrong:0, combo:0, maxCombo:0, hpMax:maxHp(), hp:maxHp(), qtimeBonus:0, xp:0, gold:0, cur:null, fb:null, log:[], logStageStart:0};
-  prepQ(); go("dungeon");
+  preparerQuestion(); allerA("dungeon");
 }
 /* Chrono de 6 s : uniquement sur la toute dernière salle d'un donjon, juste
    avant le boss — pas sur les autres salles, pas en entraînement. Une réponse
@@ -1758,33 +1939,33 @@ function startTraining(){
    contrairement à l'Épreuve du Système). */
 const QTIME = 6000;
 let QTIMER = null;
-function isTimedRoom(){ return R && R.mode === "dungeon" && R.roomIndex === R.rooms.length - 1; }
-function prepQ(){
+function estSalleChronometree(){ return R && R.mode === "dungeon" && R.roomIndex === R.rooms.length - 1; }
+function preparerQuestion(){
   clearTimeout(QTIMER); QTIMER = null;
   const e = R.rooms[R.roomIndex].queue[0];
   const q = DMAP[e.d].qmap[e.q];
   R.cur = {e, q, order:q.c ? shuffle(q.c.map((_, i) => i)) : null};
   R.fb = null;
-  if (isTimedRoom()){
+  if (estSalleChronometree()){
     QTIMER = setTimeout(() => {
       if (!R || R.fb) return;
-      resolveAnswer(false, null, R.cur.q.c ? null : "");
+      resoudreReponse(false, null, R.cur.q.c ? null : "");
     }, QTIME + (R.qtimeBonus || 0));
   }
 }
-function useTimeDilation(){
-  if (!R || !isTimedRoom() || R.fb) return;
+function utiliserDilatationTemps(){
+  if (!R || !estSalleChronometree() || R.fb) return;
   if (!(S.inv.potTime > 0)) return;
   S.inv.potTime--; R.qtimeBonus = (R.qtimeBonus || 0) + 3000;
   clearTimeout(QTIMER);
   QTIMER = setTimeout(() => {
     if (!R || R.fb) return;
-    resolveAnswer(false, null, R.cur.q.c ? null : "");
+    resoudreReponse(false, null, R.cur.q.c ? null : "");
   }, QTIME + R.qtimeBonus);
-  save(); render();
+  sauvegarder(); afficher();
 }
-function useSecondChance(){
-  if (!R || !R.fb || R.fb.ok || !isTimedRoom()) return;
+function utiliserSecondeChance(){
+  if (!R || !R.fb || R.fb.ok || !estSalleChronometree()) return;
   if (!(S.inv.potSecond > 0)) return;
   S.inv.potSecond--;
   const room = R.rooms[R.roomIndex];
@@ -1795,25 +1976,25 @@ function useSecondChance(){
   if (S.mistakes[qid]){ S.mistakes[qid]--; if (S.mistakes[qid] <= 0) delete S.mistakes[qid]; }
   R.hp = Math.min(R.hpMax, R.hp + (R.fb.dmg || 0));
   R.log.pop();
-  save();
-  prepQ(); render();
+  sauvegarder();
+  preparerQuestion(); afficher();
 }
-function accuracy(){ const n = R.correct + R.wrong; return n ? R.correct / n : 0; }
+function precisionDonjon(){ const n = R.correct + R.wrong; return n ? R.correct / n : 0; }
 /* Découpe un donjon en 2 ou 3 "salles" à peu près égales.
    Retourne les seuils cumulés de créatures vaincues marquant la fin de chaque salle,
    ex. pour 8 créatures : [3, 6, 8]. */
-function stageBoundsFor(total){
+function limitesEtapePour(total){
   const n = total <= 4 ? 2 : 3;
   const base = Math.floor(total / n), rem = total % n;
   const bounds = []; let acc = 0;
   for (let i = 0; i < n; i++){ acc += base + (i < rem ? 1 : 0); bounds.push(acc); }
   return bounds;
 }
-function stageStates(){
+function etatsEtapes(){
   return R.rooms.map((room, i) => i < R.roomIndex ? "done" : i === R.roomIndex ? "current" : "locked");
 }
-function stageBar(){
-  const states = stageStates();
+function barreEtape(){
+  const states = etatsEtapes();
   let html = '<div class="stagebar" role="img" aria-label="Progression dans le donjon : salle '
     + (R.roomIndex + 1) + ' sur ' + R.rooms.length + '">';
   R.rooms.forEach((room, i) => {
@@ -1826,7 +2007,7 @@ function stageBar(){
   html += `<div class="stage boss ${states[states.length - 1] === "done" ? "current" : "locked"}"><span class="stagenum">🗡️</span><span class="stagelbl">Boss</span></div>`;
   return html + "</div>";
 }
-function stageClearScreen(){
+function ecranEtapeReussie(){
   const d = DMAP[R.dId].d, i = R.stagePending, left = R.rooms.length - i - 1;
   const entries = R.log.slice(R.logStageStart);
   const okN = entries.filter(x => x.ok).length, koN = entries.length - okN;
@@ -1836,7 +2017,7 @@ function stageClearScreen(){
     </div>`;
   return `<div class="dungeon">
     <div class="dtop"><div class="dtitle">${d.name}<small>${DMAP[d.id].s.name}</small></div></div>
-    ${stageBar()}
+    ${barreEtape()}
     <div class="win center-win" style="margin-top:6px;text-align:center">
       <div class="win-head" style="justify-content:center">${esc(R.rooms[i].label || "Salle " + (i + 1))} franchie</div>
       <h2>${left > 0 ? (left > 1 ? "Encore " + left + " salles avant le boss" : "Une dernière salle avant le boss") : "Toutes les salles sont franchies"}</h2>
@@ -1845,7 +2026,7 @@ function stageClearScreen(){
     </div>
   </div>`;
 }
-function resolveAnswer(ok, pick, typed, defInfo){
+function resoudreReponse(ok, pick, typed, defInfo){
   if (!R || R.fb) return;
   clearTimeout(QTIMER); QTIMER = null;
   const room = R.rooms[R.roomIndex];
@@ -1869,7 +2050,7 @@ function resolveAnswer(ok, pick, typed, defInfo){
     S.total.correct++; S.daily.correct++;
     if (S.mistakes[qid]){ S.mistakes[qid]--; if (S.mistakes[qid] <= 0) delete S.mistakes[qid]; }
     R.fb = {ok:true, pick, typed, xp, gold, defInfo};
-    gainXP(xp);
+    gagnerXP(xp);
   } else {
     R.wrong++; R.combo = 0; S.total.wrong++;
     S.mistakes[qid] = (S.mistakes[qid] || 0) + 1;
@@ -1878,26 +2059,26 @@ function resolveAnswer(ok, pick, typed, defInfo){
     room.queue.push(room.queue.shift());
     R.fb = {ok:false, pick, typed, dmg, defInfo};
   }
-  save(); render();
+  sauvegarder(); afficher();
 }
-function nextQ(){
+function questionSuivante(){
   if (!R) return;
-  if (R.hp <= 0){ UI.result = {type:"faint", dId:R.dId}; R = null; go("result"); return; }
+  if (R.hp <= 0){ UI.result = {type:"faint", dId:R.dId}; R = null; allerA("result"); return; }
   const room = R.rooms[R.roomIndex];
   if (!room.queue.length){
-    if (R.mode === "dungeon" && R.stagePending === null){ R.stagePending = R.roomIndex; render(); return; }
+    if (R.mode === "dungeon" && R.stagePending === null){ R.stagePending = R.roomIndex; afficher(); return; }
     if (R.mode === "training"){
       S.daily.trainings++;
       UI.result = {type:"training", correct:R.correct, wrong:R.wrong, xp:R.xp, gold:R.gold};
-      R = null; save(); go("result");
+      R = null; sauvegarder(); allerA("result");
     }
     return;
   }
-  prepQ(); render();
+  preparerQuestion(); afficher();
 }
-function drinkInDungeon(id){
+function boirePotionDonjon(id){
   if (!R || !(S.inv[id] > 0) || R.hp >= R.hpMax) return;
-  S.inv[id]--; R.hp = Math.min(R.hpMax, R.hp + item(id).heal); save(); render();
+  S.inv[id]--; R.hp = Math.min(R.hpMax, R.hp + item(id).heal); sauvegarder(); afficher();
 }
 
 /* ===== Héros vu de dos : reflète le rang, l'armure et l'arme équipées ===== */
@@ -1906,8 +2087,8 @@ const ARMOR_FILL = ["#2a3350", "#5a3b22", "#5b6b8c", "#2a1f3d", "#eee6ff"];
 const ARMOR_GLOW = ["none", "none", "none", "drop-shadow(0 0 12px rgba(155,107,255,.7))", "drop-shadow(0 0 16px rgba(245,196,81,.85))"];
 const WEAPON_FILL = ["#93a0b8", "#c9d3e4", "#7fd0ff", "#c9a6ff", "#ff8fa3"];
 const WEAPON_GLOW = ["none", "none", "drop-shadow(0 0 6px #7fd0ff)", "drop-shadow(0 0 9px #c9a6ff)", "drop-shadow(0 0 12px #ff4d6d)"];
-function heroSvg(){
-  const cape = RANK_HEX[rankOf(S.level)] || "#8FA3C8";
+function svgHeros(){
+  const cape = RANK_HEX[rangDe(S.level)] || "#8FA3C8";
   const aTier = Number(S.armor.slice(1)) || 0, wTier = Number(S.weapon.slice(1)) || 0;
   const armorFill = ARMOR_FILL[aTier], armorGlow = ARMOR_GLOW[aTier];
   const weaponFill = WEAPON_FILL[wTier], weaponGlow = WEAPON_GLOW[wTier];
@@ -1930,244 +2111,418 @@ function heroSvg(){
    une courte animation se joue, puis c'est au tour du boss d'attaquer, avant de
    redonner la main au joueur. B.turn vaut "player" (boutons actifs) ou "busy"
    (une animation est en cours, les boutons sont désactivés). */
-function startBoss(dId, bless){
-  const d = DMAP[dId].d, L = d.req;
-  const hpStart = bless.hp !== undefined ? bless.hp : maxHp();
-  B = {dId, L, bossMax:150 + L * 55, bossHp:150 + L * 55, bossAtk:9 + L * 3,
-       hpMax:maxHp(), hp:Math.max(1, hpStart), mpMax:maxMp(), mp:maxMp(),
-       mult:1 + bless.acc * 0.5, crit:0.08 + (bless.maxCombo >= 5 ? 0.15 : 0), bless,
-       counter:false, enraged:false, over:false, turn:"player", anim:null, fx:[],
-       log:[{text:"Le combat commence.", cls:"sys"}]};
-  UI.screen = "boss"; window.scrollTo(0, 0); render();
+/* ===== Tempéraments de boss =====
+   Déterminé uniquement par l'identifiant du donjon (seed stable) : un même
+   boss se comporte toujours pareil, mais deux boss différents se jouent
+   différemment, sans rien à configurer à la main dans les fichiers de
+   contenu. */
+const TEMPERAMENTS = {
+  brute:{icon:"💢", label:"Brute"},
+  insaisissable:{icon:"💨", label:"Insaisissable"},
+  gardien:{icon:"🛡️", label:"Gardien"},
+  vampirique:{icon:"🩸", label:"Vampirique"}
+};
+function temperamentBoss(dId){
+  const keys = Object.keys(TEMPERAMENTS);
+  return keys[hacherTexte(dId + ":temper") % keys.length];
 }
-function pushLog(text, cls){ B.log.push({text, cls}); if (B.log.length > 40) B.log.shift(); }
-function endTurnCheck(){
-  if (B.bossHp <= 0){ winBoss(); return true; }
-  if (B.hp <= 0){ loseBoss(); return true; }
+function niveauArme(){ return +((S.weapon || "w0").slice(1)) || 0; }
+function niveauArmure(){ return +((S.armor || "a0").slice(1)) || 0; }
+/* ===== Chefs des Veilleurs Noirs =====
+   Tous les boss du jeu appartiennent aux Veilleurs Noirs ; certains sont de
+   simples sentinelles, d'autres sont des chefs porteurs d'un fragment de la
+   Clé. C'est un choix éditorial (champ boss.chief:true dans le fichier de
+   contenu du donjon concerné), jamais tiré au hasard. */
+function estChef(d){ return !!(d && d.boss && d.boss.chief); }
+/* Nombre total de fragments pour reconstituer la Clé ancestrale — à ajuster
+   si le nombre de donjons "chef" prévus dans l'histoire change. */
+const TOTAL_KEY_FRAGMENTS = 8;
+function htmlProgressionCle(){
+  const n = Math.min(S.keyFragments || 0, TOTAL_KEY_FRAGMENTS);
+  const seg = i => `keyseg${i < n ? " on" : ""}`;
+  const svg = `<svg viewBox="0 0 220 70" class="keysvg" aria-hidden="true">
+    <circle cx="34" cy="35" r="24" class="${seg(0)}"/>
+    <circle cx="34" cy="35" r="11" class="keyhole"/>
+    <rect x="56" y="27" width="66" height="16" rx="3" class="${seg(1)}"/>
+    <rect x="124" y="27" width="12" height="16" rx="2" class="${seg(2)}"/>
+    <rect x="138" y="27" width="12" height="28" rx="2" class="${seg(3)}"/>
+    <rect x="152" y="27" width="12" height="16" rx="2" class="${seg(4)}"/>
+    <rect x="166" y="27" width="12" height="34" rx="2" class="${seg(5)}"/>
+    <rect x="180" y="27" width="12" height="16" rx="2" class="${seg(6)}"/>
+    <rect x="194" y="27" width="14" height="28" rx="2" class="${seg(7)}"/>
+  </svg>`;
+  return `<div class="keywrap">${svg}<p class="keycount">${n} / ${TOTAL_KEY_FRAGMENTS} fragments de la Clé ancestrale</p>
+    ${n >= TOTAL_KEY_FRAGMENTS ? `<p class="hint">La Clé est complète…</p>` : ""}</div>`;
+}
+function demarrerBoss(dId, bless){
+  const d = DMAP[dId].d, L = d.req;
+  const chief = estChef(d);
+  const hpStart = bless.hp !== undefined ? bless.hp : maxHp();
+  const temper = temperamentBoss(dId);
+  B = {dId, L, temper, chief,
+       bossMax:Math.round((150 + L * 55) * (chief ? 1.8 : 1)),
+       bossHp:Math.round((150 + L * 55) * (chief ? 1.8 : 1)),
+       bossAtk:Math.round((9 + L * 3) * (chief ? 1.3 : 1)),
+       hpMax:maxHp(), hp:Math.max(1, hpStart), mpMax:maxMp(), mp:maxMp(),
+       mult:1 + bless.acc * 0.5, bless, perfectStreak:0, lastZone:null, playerTurns:0,
+       usedSecond:false, usedTime:false, timeBoost:false, missPending:null,
+       specialIn:temper === "brute" ? 3 : 2 + Math.floor(Math.random() * 3), specialNext:false,
+       counter:false, enraged:false, over:false, turn:"player", anim:null, fx:[],
+       log:[{text:"Le combat commence.", cls:"systeme"}]};
+  UI.screen = "boss"; window.scrollTo(0, 0); afficher();
+}
+function ajouterJournal(text, cls){ B.log.push({text, cls}); if (B.log.length > 40) B.log.shift(); }
+function verifierFinTour(){
+  if (B.bossHp <= 0){ victoireBoss(); return true; }
+  if (B.hp <= 0){ defaiteBoss(); return true; }
   return false;
 }
-function bossAct(a){
-  if (!B || B.over || B.turn !== "player" || UI.screen !== "boss" || !$("#sys").hidden) return;
-  if (a === "dodge"){ playerDodge(); return; }
-  if (a === "pot"){ playerPotion(); return; }
+function actionBoss(a){
+  if (a === "hit"){ resoudreJauge(); return; }
+  if (a === "secondtry"){ bossUtiliserSecondeChance(); return; }
+  if (a === "keepmiss"){ bossGarderRate(); return; }
+  if (!B || B.over || B.turn !== "player" || UI.screen !== "boss" || !$("#sys").hidden || B.timing || B.missPending) return;
+  if (a === "dodge"){ esquiveJoueur(); return; }
+  if (a === "pot"){ potionJoueur(); return; }
+  if (a === "dilate"){ bossUtiliserDilatation(); return; }
   const spec = {atk:{m:1, mp:0}, s1:{m:3, mp:10}, s2:{m:6, mp:25}}[a];
   if (!spec) return;
   if (a === "s2" && S.level < 5) return;
   if (B.mp < spec.mp) return;
-  playerAttack(a, spec);
+  demarrerJauge(a, spec);
 }
-function playerAttack(name, spec){
+function bossUtiliserSecondeChance(){
+  if (!B || !B.missPending || S.inv.potSecond <= 0 || B.usedSecond) return;
+  S.inv.potSecond--; B.usedSecond = true;
+  const {name, spec} = B.missPending; B.missPending = null;
+  ajouterJournal("Tu utilises Seconde Chance : la frappe est à retenter.", "me");
+  sauvegarder();
+  demarrerJauge(name, spec);
+}
+function bossGarderRate(){
+  if (!B || !B.missPending) return;
+  const {name, spec} = B.missPending; B.missPending = null;
+  attaqueJoueur(name, spec, "miss");
+}
+function bossUtiliserDilatation(){
+  if (!B || B.timeBoost || S.inv.potTime <= 0 || B.usedTime || B.turn !== "player") return;
+  S.inv.potTime--; B.usedTime = true; B.timeBoost = true;
+  ajouterJournal("Tu actives la Dilatation du Temps : ta prochaine frappe sera ralentie.", "me");
+  afficher(); sauvegarder();
+}
+/* Jauge de précision : un curseur fait l'aller-retour sur une barre, le
+   joueur doit "Frapper" au bon moment. Plus le donjon est élevé, plus la
+   jauge va vite et plus les zones se resserrent — le combat ne se résume
+   plus à enchaîner des coups garantis à 100%. */
+function demarrerJauge(name, spec){
+  const comboBonus = B.bless.maxCombo >= 5 ? 2 : 0; // un bon combo en donjon élargit un peu la zone parfaite
+  const wBonus = niveauArme() * 1.3;                 // une meilleure arme élargit la zone parfaite
+  let half = Math.max(4, 9 - B.L * 0.35) + comboBonus + wBonus;  // demi-largeur de la zone "parfait"
+  let goodHalf = Math.max(13, 28 - B.L * 0.7);                    // demi-largeur de la zone "réussi"
+  let period = Math.max(500, 1050 - B.L * 22);                    // durée d'une moitié d'aller-retour (ms)
+  // La difficulté grimpe pendant le combat, selon les PV du boss (jamais au hasard).
+  const hpPct = B.bossHp / B.bossMax;
+  if (hpPct <= 0.3){ period *= 0.72; half = Math.max(3, half - 2); goodHalf = Math.max(10, goodHalf - 4); }
+  else if (hpPct <= 0.6){ period *= 0.86; half = Math.max(3.5, half - 1); goodHalf = Math.max(11, goodHalf - 2); }
+  // Tempérament insaisissable : jauge plus rapide, zone décentrée (jamais pile au milieu).
+  let offset = 0;
+  if (B.temper === "insaisissable"){
+    period *= 0.8;
+    offset = (hacherTexte(B.dId + ":off:" + B.playerTurns) % 2 === 0 ? -1 : 1) * (8 + B.L * 0.4);
+  }
+  // Dilatation du Temps : ralentit nettement ce tir précis, une fois par combat.
+  if (B.timeBoost){ period *= 1.6; B.timeBoost = false; }
+  B.timing = {name, spec, start:performance.now(), period, half, goodHalf, offset};
+  afficher();
+}
+function resoudreJauge(){
+  if (!B || !B.timing || B.turn !== "player") return;
+  const t = B.timing;
+  const elapsed = (performance.now() - t.start) % (t.period * 2);
+  const phase = elapsed / t.period;
+  const pos = phase <= 1 ? phase * 100 : (2 - phase) * 100;
+  const dist = Math.abs(pos - (50 + t.offset));
+  const zone = dist <= t.half ? "perfect" : dist <= t.goodHalf ? "good" : "miss";
+  if (zone === "miss" && S.inv.potSecond > 0 && !B.usedSecond){
+    B.missPending = {name:t.name, spec:t.spec};
+    B.timing = null;
+    afficher();
+    return;
+  }
+  B.timing = null;
+  attaqueJoueur(t.name, t.spec, zone);
+}
+function attaqueJoueur(name, spec, zone){
   B.mp -= spec.mp;
-  const crit = Math.random() < B.crit;
-  let dmg = atkVal() * spec.m * B.mult * rnd(0.9, 1.1);
-  if (crit) dmg *= 1.8;
+  B.lastZone = zone;
+  const mult = {perfect:1.6, good:1, miss:0.35}[zone || "good"];
+  let dmg = atkVal() * spec.m * B.mult * rnd(0.9, 1.1) * mult;
   if (B.counter){ dmg *= 2; B.counter = false; }
   dmg = Math.max(1, Math.round(dmg));
-  B.bossHp = Math.max(0, B.bossHp - dmg);
+
+  // Le boss peut esquiver — plus probable s'il est insaisissable, bien moins probable si ton tir était parfait.
+  let bossDodgeChance = 6 + B.L * 0.6 + (B.temper === "insaisissable" ? 10 : 0);
+  if (zone === "perfect") bossDodgeChance *= 0.4;
+  const bossDodged = Math.random() * 100 < bossDodgeChance;
+  // Le Gardien se protège un tour sur quatre.
+  const shielded = !bossDodged && B.temper === "gardien" && B.playerTurns % 4 === 3;
+  const applied = bossDodged ? 0 : shielded ? Math.round(dmg * 0.25) : dmg;
+  B.bossHp = Math.max(0, B.bossHp - applied);
+  B.playerTurns++;
+
   const label = {atk:"Attaque", s1:"Entaille", s2:"Frappe de l’ombre"}[name];
-  pushLog(`Tu utilises ${label} : ${crit ? "coup critique, " : ""}${dmg} dégâts.`, "me");
-  B.anim = {actor:"hero", kind:"attack"};
-  B.fx = [{text:(crit ? "Critique ! " : "") + dmg, cls:crit ? "crit" : "hurt", x:44 + Math.random() * 14, y:14 + Math.random() * 10}];
-  if (!B.enraged && B.bossHp > 0 && B.bossHp <= B.bossMax * 0.3){ B.enraged = true; pushLog("Le boss entre en rage !", "sys"); }
-  B.turn = "busy"; render(); save();
+  ajouterJournal(bossDodged ? `Tu utilises ${label} : le boss esquive !`
+    : shielded ? `Tu utilises ${label} : bloqué par son bouclier, ${applied} dégâts seulement.`
+    : `Tu utilises ${label} : ${{perfect:"coup parfait, ", good:"", miss:"coup imprécis, "}[zone || "good"]}${applied} dégâts.`, "me");
+
+  const extraFx = [];
+  // Série de coups parfaits : le 3e déclenche un coup fatal gratuit.
+  if (zone === "perfect") B.perfectStreak = (B.perfectStreak || 0) + 1;
+  else if (zone) B.perfectStreak = 0;
+  let fatal = 0;
+  if (B.perfectStreak >= 3 && B.bossHp > 0){
+    fatal = Math.max(1, Math.round(atkVal() * 1.8 * B.mult));
+    B.bossHp = Math.max(0, B.bossHp - fatal);
+    B.perfectStreak = 0;
+    ajouterJournal(`Série de 3 coups parfaits : coup fatal, ${fatal} dégâts supplémentaires !`, "systeme");
+    extraFx.push({text:"COUP FATAL ! +" + fatal, cls:"crit", x:40 + Math.random() * 16, y:30 + Math.random() * 8});
+  }
+  B.anim = {actor:"hero", kind:"attack", bossDodged, shielded, fatal:fatal > 0};
+  const fxText = bossDodged ? "Esquivé !" : shielded ? "Bouclier !" : (zone === "perfect" ? "Parfait ! " : zone === "miss" ? "Raté… " : "") + applied;
+  const fxCls = bossDodged || shielded ? "info" : zone === "perfect" ? "crit" : zone === "miss" ? "meh" : "hurt";
+  B.fx = [{text:fxText, cls:fxCls, x:44 + Math.random() * 14, y:14 + Math.random() * 10}, ...extraFx];
+  if (!B.enraged && B.bossHp > 0 && B.bossHp <= B.bossMax * 0.3){ B.enraged = true; ajouterJournal("Le boss entre en rage !", "systeme"); }
+  B.turn = "busy"; afficher(); sauvegarder();
   setTimeout(() => {
     B.anim = null; B.fx = [];
-    if (endTurnCheck()) return;
-    render();
-    setTimeout(bossTurn, 450);
+    if (verifierFinTour()) return;
+    afficher();
+    setTimeout(tourBoss, 450);
   }, 650);
 }
-function playerDodge(){
-  pushLog("Tu te prépares à esquiver.", "me");
-  B.turn = "busy"; render();
-  setTimeout(() => bossTurn(true), 400);
+function esquiveJoueur(){
+  ajouterJournal("Tu te prépares à esquiver.", "me");
+  B.turn = "busy"; afficher();
+  setTimeout(() => tourBoss(true), 400);
 }
-function playerPotion(){
+function potionJoueur(){
   const id = (S.inv.potHpL > 0 && B.hpMax - B.hp > 60) ? "potHpL" : (S.inv.potHp > 0 ? "potHp" : (S.inv.potHpL > 0 ? "potHpL" : null));
   if (!id || B.hp >= B.hpMax) return;
   S.inv[id]--; const heal = Math.min(B.hpMax - B.hp, item(id).heal); B.hp += heal;
-  pushLog(`Tu bois ${item(id).name.toLowerCase()} : +${heal} PV.`, "me");
+  ajouterJournal(`Tu bois ${item(id).name.toLowerCase()} : +${heal} PV.`, "me");
   B.anim = {actor:"hero", kind:"heal"};
   B.fx = [{text:"+" + heal + " PV", cls:"good", x:40 + Math.random() * 18, y:66 + Math.random() * 10}];
-  B.turn = "busy"; render(); save();
+  B.turn = "busy"; afficher(); sauvegarder();
   setTimeout(() => {
     B.anim = null; B.fx = [];
-    render();
-    setTimeout(bossTurn, 450);
+    afficher();
+    setTimeout(tourBoss, 450);
   }, 600);
 }
-function bossTurn(playerDodging){
-  const dodged = !!playerDodging && Math.random() * 100 < dodgeChance();
+function tourBoss(playerDodging){
+  const special = B.specialNext;
+  const dodged = !!playerDodging && Math.random() * 100 < dodgeChance() * (special ? 0.5 : 1);
   let dmg = 0;
   if (dodged){
     B.counter = true;
-    pushLog("Tu esquives l’attaque ! Ta prochaine attaque fera double dégâts.", "sys");
+    ajouterJournal(special ? "Tu esquives de justesse l’attaque spéciale ! Ta prochaine attaque fera double dégâts."
+      : "Tu esquives l’attaque ! Ta prochaine attaque fera double dégâts.", "systeme");
   } else {
-    dmg = Math.max(2, Math.round((B.bossAtk - defVal()) * (B.enraged ? 1.25 : 1) * rnd(0.9, 1.1)));
+    // L'armure amortit surtout les attaques spéciales.
+    const armorReduction = special ? Math.max(0.4, 1 - niveauArmure() * 0.06) : 1;
+    dmg = Math.max(2, Math.round((B.bossAtk - defVal()) * (B.enraged ? 1.25 : 1) * (special ? 2.2 : 1) * armorReduction * rnd(0.9, 1.1)));
     B.hp = Math.max(0, B.hp - dmg);
-    pushLog(`${DMAP[B.dId].d.boss.name} attaque : −${dmg} PV.`, "foe");
+    ajouterJournal(special ? `${DMAP[B.dId].d.boss.name} déchaîne son attaque spéciale : −${dmg} PV !`
+      : `${DMAP[B.dId].d.boss.name} attaque : −${dmg} PV.`, "foe");
+    // Tempérament vampirique : se nourrit de ses coups, sauf si ta dernière frappe était parfaite.
+    if (B.temper === "vampirique" && B.lastZone !== "perfect" && B.bossHp < B.bossMax){
+      const heal = Math.max(1, Math.round(dmg * 0.4));
+      B.bossHp = Math.min(B.bossMax, B.bossHp + heal);
+      ajouterJournal(`${DMAP[B.dId].d.boss.name} se nourrit du coup : +${heal} PV.`, "foe");
+    }
   }
-  B.anim = {actor:"boss", dodged};
+  B.anim = {actor:"boss", dodged, special};
   B.fx = [dodged
     ? {text:"Esquive !", cls:"info", x:40 + Math.random() * 18, y:66 + Math.random() * 10}
-    : {text:"−" + dmg, cls:"hurt", x:40 + Math.random() * 18, y:66 + Math.random() * 10}];
-  render(); save();
+    : {text:(special ? "💥 " : "") + "−" + dmg, cls:"hurt", x:40 + Math.random() * 18, y:66 + Math.random() * 10}];
+  if (special){
+    B.specialNext = false;
+    B.specialIn = 2 + Math.floor(Math.random() * 3);
+  } else {
+    B.specialIn--;
+    if (B.specialIn <= 0){
+      B.specialNext = true;
+      ajouterJournal(`${DMAP[B.dId].d.boss.name} se prépare à une attaque dévastatrice !`, "systeme");
+    }
+  }
+  afficher(); sauvegarder();
   setTimeout(() => {
     B.anim = null; B.fx = [];
-    if (endTurnCheck()) return;
+    if (verifierFinTour()) return;
     B.mp = Math.min(B.mpMax, B.mp + 10);
     B.turn = "player";
-    render();
+    afficher();
   }, 650);
 }
-function winBoss(){
+function victoireBoss(){
   B.over = true;
   const d = DMAP[B.dId].d, rec = S.dungeons[d.id] || {};
   const first = !rec.cleared, acc = B.bless.acc;
   const st = acc >= 0.9 ? 3 : acc >= 0.7 ? 2 : 1;
   const k = first ? 1 : 0.5;
-  const xp = Math.round((40 + d.req * 20) * k), gold = Math.round((30 + d.req * 15) * k);
+  const xp = Math.round((40 + d.req * 20) * (B.chief ? 1.5 : 1) * k), gold = Math.round((30 + d.req * 15) * (B.chief ? 1.5 : 1) * k);
   let loot = null;
   if (Math.random() < 0.5){ const id = d.req >= 5 && Math.random() < 0.5 ? "potHpL" : "potHp"; S.inv[id] = (S.inv[id] || 0) + 1; loot = item(id).name.toLowerCase(); }
+  let fragment = false;
+  if (B.chief && first){ S.keyFragments = (S.keyFragments || 0) + 1; fragment = true; }
+  if (first) S.codex[d.id] = {name:d.boss.name, icon:d.boss.icon, chief:!!B.chief, temper:B.temper};
   S.dungeons[d.id] = {cleared:true, stars:Math.max(st, rec.stars || 0), best:Math.max(acc, rec.best || 0)};
   S.gold += gold; S.daily.bosses++; S.total.bosses++;
-  UI.result = {type:"win", dId:d.id, stars:st, acc, xp, gold, loot, first};
-  R = null; gainXP(xp); save();
-  pushLog("Victoire !", "sys"); render();
-  setTimeout(() => go("result"), 700);
+  UI.result = {type:"win", dId:d.id, stars:st, acc, xp, gold, loot, first, chief:B.chief, fragment};
+  R = null; gagnerXP(xp); sauvegarder();
+  ajouterJournal("Victoire !", "systeme"); afficher();
+  setTimeout(() => allerA("result"), 700);
 }
-function loseBoss(){
+function defaiteBoss(){
   B.over = true;
   UI.result = {type:"lose", dId:B.dId, left:Math.max(1, Math.round(B.bossHp / B.bossMax * 100)), bless:{acc:B.bless.acc, maxCombo:B.bless.maxCombo}};
-  save();
-  pushLog("Défaite…", "sys"); render();
-  setTimeout(() => go("result"), 700);
+  sauvegarder();
+  ajouterJournal("Défaite…", "systeme"); afficher();
+  setTimeout(() => allerA("result"), 700);
 }
 
 /* ===== Actions ===== */
 const ACTIONS = {
-  sysok(){ nextSys(); },
+  sysok(){ messageSuivant(); },
   start(){
     const name = ($("#hn").value || "").trim().slice(0, 16);
     if (!name){ $("#hn").focus(); $("#hn").placeholder = "Écris ton nom de chasseur"; return; }
-    S = newSave(name); save();
-    UI.storyStep = 0; go("storygrim");
+    S = nouvelleSauvegarde(name); sauvegarder();
+    UI.storyStep = 0; allerA("storygrim");
   },
-  storystep(){ UI.storyStep++; render(); },
-  storyback(){ if (UI.storyStep > 0){ UI.storyStep--; render(); } },
-  storyenter(){ UI.screen = "training"; window.scrollTo(0, 0); render(); },
+  storystep(){ UI.storyStep++; afficher(); },
+  storyback(){ if (UI.storyStep > 0){ UI.storyStep--; afficher(); } },
+  storyenter(){ UI.screen = "training"; window.scrollTo(0, 0); afficher(); },
   storystart(){
-    sys("Épreuve des Fondamentaux", "<p>Tu répondras d’abord aux questions de <strong>français</strong>, puis à celles de <strong>mathématiques</strong>.</p>", () => startFondamentaux());
+    systeme("Épreuve des Fondamentaux", "<p>Tu répondras d’abord aux questions de <strong>français</strong>, puis à celles de <strong>mathématiques</strong>.</p>", () => demarrerFondamentaux());
   },
-  fondans(t){ const i = +t.dataset.i; resolveFond(FONDTEST.cur.order[i] === 0, i); },
-  fondnext(){ fondNext(); },
-  fondretry(){ go("training"); },
-  fondcontinue(){ UI.storyPostStep = 0; go("storypost"); },
-  storypoststep(){ UI.storyPostStep++; render(); },
-  storypostback(){ if (UI.storyPostStep > 0){ UI.storyPostStep--; render(); } },
-  storypostend(){ UI.screen = "map"; window.scrollTo(0, 0); render(); },
-  go(t){
+  fondans(t){ const i = +t.dataset.i; resoudreFond(FONDTEST.cur.order[i] === 0, i); },
+  fondnext(){ fondSuivant(); },
+  fondretry(){ allerA("training"); },
+  fondcontinue(){ UI.storyPostStep = 0; allerA("storypost"); },
+  storypoststep(){ UI.storyPostStep++; afficher(); },
+  storypostback(){ if (UI.storyPostStep > 0){ UI.storyPostStep--; afficher(); } },
+  storypostend(){ UI.screen = "map"; window.scrollTo(0, 0); afficher(); },
+  allerA(t){
     const to = t.dataset.to;
-    if (["map","status","shop"].includes(to) && !fondDone()){
-      sys("Accès interdit", "<p>Termine d’abord <strong>Les Fondamentaux</strong>, dans l’onglet Entraînement.</p>", null, "error");
+    if (["map","status","shop"].includes(to) && !fondamentauxTermines()){
+      systeme("Accès interdit", "<p>Termine d’abord <strong>Les Fondamentaux</strong>, dans l’onglet Entraînement.</p>", null, "error");
       return;
     }
-    if (to === "map" && UI.screen === "map") UI.arch = null;
-    go(to);
+    if (to === "map" && UI.screen === "map"){ UI.arch = null; UI.group = null; }
+    allerA(to);
   },
-  arch(t){ UI.arch = t.dataset.id; go("map"); },
-  world(){ UI.arch = null; go("map"); },
+  arch(t){ UI.arch = t.dataset.id; UI.group = null; allerA("map"); },
+  world(){ UI.arch = null; UI.group = null; allerA("map"); },
+  group(t){ UI.group = +t.dataset.idx; window.scrollTo(0, 0); afficher(); },
+  backgroup(){ UI.group = null; window.scrollTo(0, 0); afficher(); },
   gate(t){
     const d = DMAP[t.dataset.id].d;
-    if (!isUnlocked(d) && !(S.dungeons[d.id] || {}).cleared){ sys("Portail scellé", `<p>${lockReason(d)} pour ouvrir « ${d.name} ».</p>`); return; }
-    UI.dId = d.id; UI.arch = DMAP[d.id].s.id; go("lesson");
+    if (!estDebloque(d) && !(S.dungeons[d.id] || {}).cleared){ systeme("Portail scellé", `<p>${raisonVerrouillage(d)} pour ouvrir « ${d.name} ».</p>`); return; }
+    UI.dId = d.id; UI.arch = DMAP[d.id].s.id; allerA("lesson");
   },
-  enter(){ startDungeon(UI.dId); },
-  replay(t){ UI.dId = t.dataset.id; go("lesson"); },
-  ans(t){ const i = +t.dataset.i; resolveAnswer(R.cur.order[i] === 0, i); },
+  enter(){ demarrerDonjon(UI.dId); },
+  replay(t){ UI.dId = t.dataset.id; allerA("lesson"); },
+  ans(t){ const i = +t.dataset.i; resoudreReponse(R.cur.order[i] === 0, i); },
   submit(){
     const v = ($("#ansIn") || {}).value || "";
     if (!v.trim()) return;
     const q = R.cur.q;
     if (q.def){
-      const g = gradeDefinition(v, q.def);
-      resolveAnswer(g.ok, null, v, g);
+      const g = noterDefinition(v, q.def);
+      resoudreReponse(g.ok, null, v, g);
     } else {
-      resolveAnswer(q.t.some(a => norm(a) === norm(v)), null, v);
+      resoudreReponse(q.t.some(a => norm(a) === norm(v)), null, v);
     }
   },
-  next(){ nextQ(); },
+  next(){ questionSuivante(); },
   stagecontinue(){
     if (!R) return;
     const wasLast = R.stagePending === R.rooms.length - 1;
     R.logStageStart = R.log.length; R.roomIndex++; R.stagePending = null;
-    if (wasLast && R.mode === "dungeon") go("bossgate"); else nextQ();
+    if (wasLast && R.mode === "dungeon") allerA("bossgate"); else questionSuivante();
   },
-  dpot(t){ drinkInDungeon(t.dataset.id); },
-  flee(){ clearTimeout(QTIMER); QTIMER = null; const mode = R ? R.mode : "dungeon"; R = null; if (mode === "training") go("training"); else go("lesson"); },
-  usetime(){ useTimeDilation(); },
-  usesecond(){ useSecondChance(); },
-  fightboss(){ startBoss(R.dId, {acc:accuracy(), maxCombo:R.maxCombo, hp:R.hp}); },
-  retry(){ const r = UI.result; startBoss(r.dId, {acc:r.bless.acc, maxCombo:r.bless.maxCombo}); },
-  bossflee(){ if (B) B.over = true; UI.dId = B ? B.dId : UI.dId; B = null; R = null; go("lesson"); },
-  stat(t){ if (S.points > 0){ S.stats[t.dataset.k]++; S.points--; save(); render(); } },
-  shoptab(t){ UI.shopTab = t.dataset.k; render(); },
+  dpot(t){ boirePotionDonjon(t.dataset.id); },
+  flee(){ clearTimeout(QTIMER); QTIMER = null; const mode = R ? R.mode : "dungeon"; R = null; if (mode === "training") allerA("training"); else allerA("lesson"); },
+  usetime(){ utiliserDilatationTemps(); },
+  usesecond(){ utiliserSecondeChance(); },
+  fightboss(){ demarrerBoss(R.dId, {acc:precisionDonjon(), maxCombo:R.maxCombo, hp:R.hp}); },
+  retry(){ const r = UI.result; demarrerBoss(r.dId, {acc:r.bless.acc, maxCombo:r.bless.maxCombo}); },
+  bossflee(){ if (B) B.over = true; UI.dId = B ? B.dId : UI.dId; B = null; R = null; allerA("lesson"); },
+  stat(t){ if (S.points > 0){ S.stats[t.dataset.k]++; S.points--; sauvegarder(); afficher(); } },
+  shoptab(t){ UI.shopTab = t.dataset.k; afficher(); },
   buy(t){
     const it = item(t.dataset.id);
     if (!it || S.gold < it.price || S.level < it.req) return;
     S.gold -= it.price;
     if (UI.shopTab === "potions") S.inv[it.id] = (S.inv[it.id] || 0) + 1;
-    else { S.owned.push(it.id); if (it.atk !== undefined) S.weapon = it.id; else S.armor = it.id; sys("Objet obtenu", `<p>${it.icon} <strong>${it.name}</strong> est équipé.</p>`); }
-    save(); render();
+    else { S.owned.push(it.id); if (it.atk !== undefined) S.weapon = it.id; else S.armor = it.id; systeme("Objet obtenu", `<p>${it.icon} <strong>${it.name}</strong> est équipé.</p>`); }
+    sauvegarder(); afficher();
   },
-  equip(t){ const it = item(t.dataset.id); if (it.atk !== undefined) S.weapon = it.id; else S.armor = it.id; save(); render(); },
+  equip(t){ const it = item(t.dataset.id); if (it.atk !== undefined) S.weapon = it.id; else S.armor = it.id; sauvegarder(); afficher(); },
   claim(){
     if (!dailyDone() || S.daily.claimed) return;
     S.daily.claimed = true; S.gold += 100; S.points += 1;
-    sys("Quête terminée", "<p>Récompenses : <strong>100 or</strong>, <strong>60 XP</strong> et <strong>1 point de statistique</strong>.</p>");
-    gainXP(60); save(); render();
+    systeme("Quête terminée", "<p>Récompenses : <strong>100 or</strong>, <strong>60 XP</strong> et <strong>1 point de statistique</strong>.</p>");
+    gagnerXP(60); sauvegarder(); afficher();
   },
-  train(){ startTraining(); },
-  introstep(){ UI.introStep++; render(); },
-  introback(){ if (UI.introStep > 0){ UI.introStep--; render(); } },
-  introyes(){ startTrial(); },
-  introno(){ UI.introNo = true; render(); },
-  introcontinue(){ UI.introNo = false; startTrial(); },
+  claimfondquest(){
+    if (!fondamentauxTermines() || S.fondQuestClaimed) return;
+    S.fondQuestClaimed = true; S.gold += 2;
+    systeme("Quête terminée", "<p>Récompense : <strong>2 or</strong>.</p>");
+    sauvegarder(); afficher();
+  },
+  train(){ demarrerEntrainement(); },
+  introstep(){ UI.introStep++; afficher(); },
+  introback(){ if (UI.introStep > 0){ UI.introStep--; afficher(); } },
+  introyes(){ demarrerEpreuve(); },
+  introno(){ UI.introNo = true; afficher(); },
+  introcontinue(){ UI.introNo = false; demarrerEpreuve(); },
   introrestoreskip(){
     UI.introStep = STORY_INTRO.length + 1; UI.introNo = false; UI.introRestore = true;
-    render(); setTimeout(() => { const t = $("#restoreIn"); if (t) t.focus(); }, 50);
+    afficher(); setTimeout(() => { const t = $("#restoreIn"); if (t) t.focus(); }, 50);
   },
-  trialans(t){ const i = +t.dataset.i; resolveTrial(TRIAL.cur.order[i] === 0, i); },
-  trialnext(){ trialNext(); },
-  trialcontinue(){ UI.screen = "intro"; UI.introStep = STORY_INTRO.length + 1; render(); setTimeout(() => { const i = $("#hn"); if (i) i.focus(); }, 50); },
-  restore(){ restoreFrom(($("#restoreIn") || {}).value); },
+  trialans(t){ const i = +t.dataset.i; resoudreEpreuve(TRIAL.cur.order[i] === 0, i); },
+  trialnext(){ epreuveSuivante(); },
+  trialcontinue(){ UI.screen = "intro"; UI.introStep = STORY_INTRO.length + 1; afficher(); setTimeout(() => { const i = $("#hn"); if (i) i.focus(); }, 50); },
+  restore(){ restaurerDepuis(($("#restoreIn") || {}).value); },
   copysave(){
     const code = exportCode();
-    const fallback = () => { UI.showCode = true; render(); const t = $("#codeOut"); if (t){ t.focus(); t.select(); } };
+    const fallback = () => { UI.showCode = true; afficher(); const t = $("#codeOut"); if (t){ t.focus(); t.select(); } };
     if (navigator.clipboard && navigator.clipboard.writeText)
-      navigator.clipboard.writeText(code).then(() => { S.lastBackup = Date.now(); save(); render(); }).then(() => sys("Code copié", "<p>Colle-le dans une note ou un message pour le garder en sécurité.</p>")).catch(fallback);
+      navigator.clipboard.writeText(code).then(() => { S.lastBackup = Date.now(); sauvegarder(); afficher(); }).then(() => systeme("Code copié", "<p>Colle-le dans une note ou un message pour le garder en sécurité.</p>")).catch(fallback);
     else fallback();
   },
   dlsave(){
-    S.lastBackup = Date.now(); save();
+    S.lastBackup = Date.now(); sauvegarder();
     const blob = new Blob([JSON.stringify(S)], {type:"application/json"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "sauvegarde-chasseur-" + S.name.replace(/[^\w-]+/g, "_") + "-" + today() + ".json";
     document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-    render();
-    sys("Fichier créé", "<p>Le fichier de sauvegarde est dans tes <strong>Téléchargements</strong>. Garde-le précieusement.</p>");
+    afficher();
+    systeme("Fichier créé", "<p>Le fichier de sauvegarde est dans tes <strong>Téléchargements</strong>. Garde-le précieusement.</p>");
   },
   sharesave(){
     const code = exportCode();
-    if (navigator.share) navigator.share({title:"Sauvegarde Level Up", text:code}).then(() => { S.lastBackup = Date.now(); save(); render(); }).catch(() => {});
+    if (navigator.share) navigator.share({title:"Sauvegarde Level Up", text:code}).then(() => { S.lastBackup = Date.now(); sauvegarder(); afficher(); }).catch(() => {});
     else ACTIONS.copysave();
   },
   reset(){
-    if (!UI.resetArm){ UI.resetArm = true; render(); return; }
+    if (!UI.resetArm){ UI.resetArm = true; afficher(); return; }
     try { localStorage.removeItem(KEY); } catch (e) {}
-    S = null; R = null; B = null; UI.resetArm = false; UI.screen = "intro"; render();
+    S = null; R = null; B = null; UI.resetArm = false; UI.screen = "intro"; afficher();
   }
 };
 
@@ -2180,14 +2535,14 @@ document.addEventListener("click", e => {
 document.addEventListener("change", e => {
   if (e.target.id !== "restoreFile" || !e.target.files || !e.target.files[0]) return;
   const r = new FileReader();
-  r.onload = () => restoreFrom(r.result);
+  r.onload = () => restaurerDepuis(r.result);
   r.readAsText(e.target.files[0]);
 });
 document.addEventListener("pointerdown", e => {
   const t = e.target.closest("[data-bact]");
   if (!t || t.disabled) return;
   e.preventDefault();
-  bossAct(t.dataset.bact);
+  actionBoss(t.dataset.bact);
 });
 document.addEventListener("keydown", e => {
   if (!$("#sys").hidden) return;
@@ -2196,8 +2551,9 @@ document.addEventListener("keydown", e => {
     e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", {bubbles:true})); return;
   }
   if (UI.screen === "boss"){
+    if (B && B.timing){ if (k === " " || e.key === "Enter"){ e.preventDefault(); if (!e.repeat) actionBoss("hit"); } return; }
     const map = {"j":"atk","1":"atk","k":"s1","2":"s1","l":"s2","3":"s2"," ":"dodge","h":"pot","4":"pot"};
-    if (map[k]){ e.preventDefault(); if (!e.repeat) bossAct(map[k]); }
+    if (map[k]){ e.preventDefault(); if (!e.repeat) actionBoss(map[k]); }
     return;
   }
   if (UI.screen === "intro" && e.key === "Enter" && e.target.id === "hn"){ e.preventDefault(); ACTIONS.start(); return; }
@@ -2205,19 +2561,19 @@ document.addEventListener("keydown", e => {
     if (e.target.id === "ansIn" && e.key === "Enter" && e.target.tagName !== "TEXTAREA"){ e.preventDefault(); ACTIONS.submit(); return; }
     if (R.cur.q.c && /^[1-4]$/.test(e.key) && e.target.tagName !== "INPUT"){
       const i = +e.key - 1;
-      if (i < R.cur.order.length){ e.preventDefault(); resolveAnswer(R.cur.order[i] === 0, i); }
+      if (i < R.cur.order.length){ e.preventDefault(); resoudreReponse(R.cur.order[i] === 0, i); }
     }
   }
 });
 
 /* ===== Démarrage ===== */
-S = loadLocal();
+S = chargerLocal();
 if (!SUBJECTS.length){
   document.getElementById("app").innerHTML = '<div class="win center-win" style="margin-top:20vh"><div class="win-head">Système</div><h2>Portails introuvables</h2><p>Le contenu des cours est absent ou mal écrit dans ce fichier.</p><p class="hint">Ta progression n’est pas touchée.</p></div>';
 } else {
-  if (S){ ensureDaily(); UI.screen = "map"; }
-  render();
-  if (S){ checkNewContent(); save(); }
+  if (S){ assurerQuotidienne(); UI.screen = "map"; }
+  afficher();
+  if (S){ verifierNouveauContenu(); sauvegarder(); }
 }
 /* Prévient d'une mise à jour de l'app — entièrement automatique, rien à
    changer à la main à chaque déploiement. On surveille index.html ET tous
@@ -2242,14 +2598,14 @@ if (typeof fetch === "function"){
     const VKEY = "eveil-chasseur-version";
     const last = localStorage.getItem(VKEY);
     if (last && last !== combined){
-      sys("Mise à jour installée", "<p>Une nouvelle version du Système vient d’être téléchargée.</p>", null, "info");
+      systeme("Mise à jour installée", "<p>Une nouvelle version du Système vient d’être téléchargée.</p>", null, "info");
     }
     localStorage.setItem(VKEY, combined);
   });
 }
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 if (S && S.total.correct >= 10 && Date.now() - (S.lastBackup || 0) > 7 * 864e5)
-  sys("Pense à ta sauvegarde", "<p>Ça fait un moment que tu n’as pas mis ta progression à l’abri.</p><p>Va dans <strong>Statut</strong>, puis <strong>Sauvegarde</strong>.</p>");
+  systeme("Pense à ta sauvegarde", "<p>Ça fait un moment que tu n’as pas mis ta progression à l’abri.</p><p>Va dans <strong>Statut</strong>, puis <strong>Sauvegarde</strong>.</p>");
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>

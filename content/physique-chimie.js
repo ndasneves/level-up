@@ -2,9 +2,9 @@
    CONTENU — Matière : Physique-Chimie
    Un seul fichier par matière : plus simple à relire, à modifier et à
    faire grandir sans risquer de toucher aux autres matières.
-   Règles : ne jamais renommer/supprimer un id existant. Ajouter les
-   nouveaux donjons à la fin du tableau "dungeons". Voir aussi le guide
-   complet dans content/_lisez-moi.js (notamment la partie "images").
+   Règle : ne jamais renommer/supprimer un id existant. Ajouter les
+   nouveaux donjons à la fin du tableau "dungeons". Les images utilisées par
+   les questions vivent dans content/images/ (voir le champ img des questions).
    ===================================================================== */
 window.GAME_CONTENT.subjects.push(
 {
