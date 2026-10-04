@@ -1,0 +1,15 @@
+{
+  "name": "level-up-static",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Jeu scolaire statique, sans dépendance de production",
+  "scripts": {
+    "test": "node --test js/tests/*.test.cjs",
+    "check:content": "node js/tools/check-content.cjs",
+    "check:balance": "node js/tests/balance.cjs",
+    "format": "prettier --write \"js/**/*.js\" \"js/**/*.cjs\" \"css/*.css\" index.html sw.js manifest.webmanifest"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}

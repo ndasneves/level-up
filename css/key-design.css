@@ -1,0 +1,79 @@
+.key-chamber {
+  position: relative;
+  text-align: center;
+  border-color: #796442;
+  background:
+    radial-gradient(ellipse at 50% 45%, #8a632b33, transparent 65%),
+    linear-gradient(160deg, #101d36, #080d19);
+  overflow: hidden;
+  margin: 16px 0;
+  padding: 24px 18px;
+}
+.key-chamber .win-head {
+  justify-content: center;
+}
+.key-caption {
+  display: block;
+  font: 700 11px var(--ui);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #c7aa71;
+  margin: 12px 0;
+}
+.key-display {
+  max-width: 530px;
+  margin: 12px auto;
+}
+.key-display .assembled-key {
+  max-height: none;
+  filter: drop-shadow(0 0 18px #ba95472b);
+}
+.key-progress {
+  display: flex;
+  gap: 6px;
+  max-width: 320px;
+  margin: 16px auto;
+}
+.key-progress span {
+  height: 5px;
+  flex: 1;
+  background: #26344e;
+  border-radius: 3px;
+}
+.key-progress .lit {
+  background: #dfba77;
+  box-shadow: 0 0 8px #dfba7755;
+}
+.key-chamber .key-total {
+  font-size: 17px;
+  margin: 14px 0;
+}
+.key-chamber .fragment-runes {
+  margin: 18px 0;
+}
+.key-chamber .rune.found {
+  box-shadow: 0 0 12px #dfba7722;
+}
+.key-chamber .hint {
+  font-size: 13px;
+  line-height: 1.5;
+}
+@media (max-width: 480px) {
+  .key-chamber {
+    padding: 22px 12px;
+  }
+  .key-chamber .fragment-runes {
+    gap: 5px;
+  }
+  .key-chamber .rune {
+    width: 29px;
+    height: 35px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .key-chamber .key-part {
+    transition:
+      fill 0.5s,
+      stroke 0.5s;
+  }
+}
