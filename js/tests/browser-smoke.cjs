@@ -58,6 +58,7 @@ const mime = {
       S = nouvelleSauvegarde("Chasseur");
       S.dungeons.fondamentaux = { cleared: true, stars: 3, best: 1 };
       S.fondQuestClaimed = true;
+      S.fondStoryDone = true;
       S.level = 3;
       S.gold = 200;
       S.points = 6;

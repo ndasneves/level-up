@@ -1015,28 +1015,18 @@ function htmlFragments() {
 htmlProgressionCle = htmlFragments;
 const oldQuests = SCREENS.quests;
 SCREENS.quests = function () {
-  if (!fondamentauxTermines()) return oldQuests();
+  if (!fondIntroTerminee()) return oldQuests();
   const c = campagne(),
-    m = prochaineMission(),
-    rank = prochainRang(),
-    ready = CG.promotionReady(c, S.level, rank, chapitreActuel());
-  const available = m && missionDisponible(m.id),
-    chapter = CG.CONFIG.chapters[chapitreActuel()];
-  return `<div class="title-row"><h2>Journal du Chasseur</h2><p class="sub">${esc(chapter.title)} · rang ${c.rank} · puissance maximale : niveau ${chapter.cap}</p></div>${htmlFragments()}${!S.fondQuestClaimed ? '<section class="win" style="margin-top:12px"><p>Les Fondamentaux sont validés.</p><button class="btn gold" data-act="claimfondquest">Recevoir la récompense</button></section>' : ""}
-  <section class="win" style="margin-top:16px"><div class="win-head">Quête principale</div>${m ? `<h2>${esc(m.title)}</h2><p>${available ? "Le portail attend ton passage. Prépare-toi à affronter son chef." : m.id === "sanctuary" && !c.keyFound ? "Les fragments sont réunis. Un indice t’attend dans le journal." : m.fragment && CG.CONFIG.fragmentSource !== "campaign" && !portailFragment(m.id) ? "Aucun signal n’a encore localisé ce fragment. Explore les cours et consolide tes connaissances." : "Un signal est attendu à partir du " + dateLisible(portailFragment(m.id)?.boss.availableFrom || m.from) + ". En attendant, renforce ton personnage et tes connaissances."}</p><button class="btn primary" data-act="mission" data-id="${m.id}" ${available ? "" : "disabled"}>Ouvrir le portail</button>` : "<h2>Le Grimoire est protégé</h2><p>Les défis et les révisions restent accessibles. Le Sanctuaire reconnaît ton courage.</p>"}
-  ${c.attempt ? '<button class="btn" data-act="resume">Reprendre l’expédition</button>' : ""}</section>
-  <section class="win" style="margin-top:16px"><div class="win-head">Promotion</div>${rank ? `<h2>Épreuve du rang ${rank}</h2><p>Niveau ${CG.CONFIG.ranks.find((x) => x.id === rank).min} et jalon de l’histoire requis. 80 % au total, 60 % par matière, puis un combat.</p><button class="btn gold" data-act="promote" ${ready ? "" : "disabled"}>${ready ? "Passer l’épreuve" : "Poursuis ton entraînement et ta quête"}</button>` : "<h2>Chasseur de rang S</h2><p>Ton rang S est un accomplissement permanent.</p>"}</section>
-  <section class="win" style="margin-top:16px"><div class="win-head">Messages retrouvés</div>${
-    c.history
-      .slice()
-      .reverse()
-      .map(
-        (h) =>
-          `<details><summary>${esc(titreMessage(h.id))} · ${dateLisible(h.date)}</summary>${h.messages.map((x) => `<p>${esc(x)}</p>`).join("")}${CG.missions.some((m) => m.id === h.id) ? `<button class="btn" data-act="replaystory" data-id="${h.id}">Rejouer ce chef</button>` : ""}</details>`,
-      )
-      .join("") ||
-    '<p class="sub">Les révélations de ta quête seront conservées ici.</p>'
-  }</section>`;
+    found =
+      CG.missions.filter((x) => x.fragment && c.completed.includes(x.id)).length +
+      (c.keyFound ? 1 : 0);
+  return `<div class="title-row"><h2>Quête</h2></div>
+  <section class="win"><div class="win-head">Quête principale</div><div class="task solo"><span class="check ${found >= 9 ? "done" : ""}">${found >= 9 ? "✓" : ""}</span><span>Récolter les 9 fragments de la Clé</span><b class="prog">${found} / 9</b></div>
+  ${c.attempt ? '<button class="btn" style="margin-top:14px" data-act="resume">Reprendre l’expédition</button>' : ""}
+  <button class="btn key-btn" style="margin-top:14px" data-act="keycodex">Codex de la clé</button></section>`;
+};
+ACTIONS.keycodex = function () {
+  systeme("", corpsCodexCle(), null, "codex", "Fermer");
 };
 function dateLisible(date) {
   return new Date(date + "T12:00:00").toLocaleDateString("fr-FR", {
@@ -1046,7 +1036,7 @@ function dateLisible(date) {
 }
 const oldTraining = SCREENS.training;
 SCREENS.training = function () {
-  if (!fondamentauxTermines()) return oldTraining();
+  return oldTraining();
   const c = campagne(),
     pool = poolRevision();
   return `<div class="title-row"><h2>Contrats du Système</h2><p class="sub">Varie tes révisions. Les trois contrats se renouvellent chaque jour, sans pénalité d’absence.</p></div><div class="contract-grid">${CG.CONFIG.contracts
@@ -1088,7 +1078,9 @@ SCREENS.status = function () {
   const extras = `<section class="win" style="margin-top:16px"><details data-panel="powerPanel" ${UI.powerPanel ? "open" : ""}><summary>Pouvoirs, Ombres et apparences</summary><p>Essence : <strong>${c.essence}</strong> · ${CG.CONFIG.chapters[chapitreActuel()].title} · puissance active limitée au niveau ${CG.CONFIG.chapters[chapitreActuel()].cap}</p><p class="sub">Au palier maximal, l’XP devient de l’essence. Les variantes s’équipent une à la fois. Une seule ombre accompagne le combat.</p><h3>Compétences</h3><p>Protection : acquise · Entaille : ${competenceDisponible("s1") ? "acquise" : "niveau 3 + premier fragment"} · Esquive : ${competenceDisponible("dodge") ? "acquise" : "rang D"} · Frappe de l’ombre : ${competenceDisponible("s2") ? "acquise" : "rang C et niveau 10"}</p><h3>Ombres</h3>${CG.CONFIG.shadows.map((v) => `<div class="itemrow power-row"><div><b>${v.name}</b><small>${v.effect} · niveau ${c.shadowLevels[v.id] || 1}/3</small></div><button class="btn" data-act="shadow" data-id="${v.id}" ${!c.shadows.includes(v.id) ? "disabled" : ""}>${c.shadow === v.id ? "Équipée" : c.shadows.includes(v.id) ? "Équiper" : "À découvrir"}</button>${c.shadows.includes(v.id) ? `<button class="btn" data-act="shadowupgrade" data-id="${v.id}" ${(c.shadowLevels[v.id] || 1) >= Math.min(3, chapitreActuel() + 1) || c.essence < 200 * (c.shadowLevels[v.id] || 1) ? "disabled" : ""}>Renforcer · ${200 * (c.shadowLevels[v.id] || 1)} essence</button>` : ""}</div>`).join("")}<h3>Variantes d’Entaille</h3>${CG.CONFIG.variants.map((v) => `<div class="itemrow power-row"><div><b>${v.name}</b><small>${v.desc}</small></div><button class="btn" data-act="variant" data-id="${v.id}" ${chapitreActuel() < v.chapter || (!c.variants.includes(v.id) && c.essence < v.cost) ? "disabled" : ""}>${c.variant === v.id ? "Équipée" : c.variants.includes(v.id) ? "Équiper" : v.cost + " essence"}</button></div>`).join("")}<h3>Apparences sans bonus de puissance</h3>${CG.CONFIG.styles.map((v) => `<div class="itemrow power-row"><b>${v.name}</b><button class="btn" data-act="style" data-id="${v.id}" ${!c.styles.includes(v.id) && c.essence < v.cost ? "disabled" : ""}>${c.style === v.id ? "Équipée" : c.styles.includes(v.id) ? "Équiper" : v.cost + " essence"}</button></div>`).join("")}</details></section>${htmlFragments()}${c.completed.filter((x) => x.startsWith("fragment-")).length === 8 && !c.keyFound ? '<button class="btn" data-act="secret">Analyser le signal résiduel</button>' : ""}`;
   return html + extras;
 };
+const boutiqueVitrine = SCREENS.shop;
 SCREENS.shop = function () {
+  if (!BOUTIQUE_OUVERTE) return boutiqueVitrine();
   let html = SCREENS.shopReal();
   const limit = [1, 2, 3, 4][chapitreActuel()];
   for (const list of [SHOP.weapons, SHOP.armors])
@@ -1098,10 +1090,7 @@ SCREENS.shop = function () {
         `data-act="buy" data-id="${it.id}" disabled`,
       );
     }
-  return (
-    html +
-    '<p class="hint">Les équipements avancés s’ouvrent avec les chapitres. Deux potions maximum par combat, dix exemplaires maximum par type en réserve.</p>'
-  );
+  return html;
 };
 const oldBossScreen = SCREENS.boss;
 SCREENS.boss = function () {

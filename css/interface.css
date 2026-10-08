@@ -37,7 +37,7 @@ button {
   overflow-wrap: anywhere;
 }
 .title-row h2 {
-  font-size: clamp(23px, 6vw, 32px);
+  font-size: var(--fs-titre);
 }
 p,
 .hint,
@@ -67,7 +67,7 @@ main {
 }
 .eyebrow {
   display: block;
-  font: 700 11px var(--ui);
+  font: 700 var(--fs-label) var(--ui);
   letter-spacing: 1.4px;
   text-transform: uppercase;
   color: var(--sys-soft);
@@ -97,6 +97,11 @@ main {
   padding: 0 12px 16px;
   overflow: hidden;
 }
+.subject-island.locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: grayscale(0.7);
+}
 .subject-island svg {
   display: block;
   width: 100%;
@@ -104,12 +109,12 @@ main {
 }
 .subject-island strong {
   display: block;
-  font: 700 18px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
   margin-bottom: 4px;
 }
 .subject-island span {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-legende);
   color: var(--muted);
 }
 .subject-island .subject-progress {
@@ -136,7 +141,7 @@ main {
   margin: 20px 0;
 }
 .map-pagination span {
-  font-size: 13px;
+  font-size: var(--fs-legende);
   color: var(--muted);
 }
 .map-pagination .btn {
@@ -160,7 +165,7 @@ main {
 }
 .search-label {
   display: block;
-  font-size: 13px;
+  font-size: var(--fs-legende);
   color: var(--muted);
   margin-bottom: 6px;
 }
@@ -171,7 +176,7 @@ main {
 .search-row input {
   flex: 1;
   min-width: 0;
-  font-size: 16px;
+  font-size: var(--fs-texte);
 }
 .course-list {
   display: grid;
@@ -191,7 +196,7 @@ main {
 }
 .course-card strong {
   font-family: var(--ui);
-  font-size: 17px;
+  font-size: var(--fs-texte);
 }
 .course-card small {
   display: block;
@@ -211,7 +216,7 @@ main {
 }
 .role-badge {
   display: inline-block;
-  font: 600 11px var(--ui);
+  font: 600 var(--fs-label) var(--ui);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--gate);
@@ -232,7 +237,7 @@ main {
   margin: 18px 0;
 }
 .boss-identity strong {
-  font: 700 18px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
 }
 .chiefgate .boss-preview {
   animation: none;
@@ -267,27 +272,27 @@ main {
     padding: 14px 12px 100px;
   }
   .tab {
-    font-size: 11px;
+    font-size: var(--fs-legende);
     padding: 10px 2px;
   }
   .hud {
     gap: 10px;
   }
   .bname {
-    font-size: 19px;
+    font-size: var(--fs-texte);
   }
   .skill {
     min-height: 62px;
-    font-size: 15px;
+    font-size: var(--fs-texte);
   }
   .skill small {
-    font-size: 11px;
+    font-size: var(--fs-legende);
   }
   .lesson-grid {
     gap: 14px;
   }
   .hname {
-    font-size: 19px;
+    font-size: var(--fs-texte);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -312,7 +317,7 @@ main {
   padding: 0;
   list-style: none;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--fs-legende);
 }
 .artifact-requirements li {
   padding: 5px 0;
@@ -375,13 +380,21 @@ main {
   margin-top: 14px;
 }
 .shoptabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
 }
 .shoptabs .btn {
-  flex: 1;
-  min-width: 88px;
+  position: relative;
+  min-width: 0;
+  padding-inline: 0;
+}
+.shoptabs .soonbadge {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  margin: 0;
+  font-size: 9px;
 }
 /* Predictable two-column action layout, with no empty row on narrow screens. */
 .skills .skill {

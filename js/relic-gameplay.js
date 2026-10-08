@@ -159,6 +159,7 @@ function carteArtefact(artifact) {
 }
 const shopBeforeArtifacts = SCREENS.shop;
 SCREENS.shop = function () {
+  if (!BOUTIQUE_OUVERTE) return shopBeforeArtifacts();
   if (UI.shopTab === "artefacts")
     return `<div class="title-row"><h2>Artefacts du Système</h2><p class="sub">${S.gold} or · Les connaissances ouvrent les sceaux. Seul l’or est dépensé.</p></div>
     <button class="link" data-act="shoptab" data-k="potions">← Potions et équipement</button>

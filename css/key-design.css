@@ -14,7 +14,7 @@
 }
 .key-caption {
   display: block;
-  font: 700 11px var(--ui);
+  font: 700 var(--fs-legende) var(--ui);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #c7aa71;
@@ -55,7 +55,7 @@
   box-shadow: 0 0 12px #dfba7722;
 }
 .key-chamber .hint {
-  font-size: 13px;
+  font-size: var(--fs-legende);
   line-height: 1.5;
 }
 @media (max-width: 480px) {

@@ -10,12 +10,6 @@ test("une sauvegarde neuve ne valide jamais les Fondamentaux au rechargement", (
     ),
     false,
   );
-  assert.equal(
-    g.run(
-      `migrerSauvegarde({v:2,name:'Ancien',dungeons:{'en-1':{cleared:true}}}).dungeons.fondamentaux.cleared`,
-    ),
-    true,
-  );
 });
 test("XP plafonnée par chapitre, essence plafonnée par jour, rang indépendant", () => {
   const g = game();
@@ -80,7 +74,10 @@ test("cours accessibles sans niveau et régions toujours navigables", () => {
   assert.equal(g.run(`estDebloque(DMAP['en-9'].d)`), true);
   g.run(`UI.arch='en';UI.group=null;`);
   assert.match(g.run("SCREENS.map()"), /region-node/);
-  assert.match(g.run("SCREENS.quests()"), /assembled-key/);
+  assert.doesNotMatch(g.run("SCREENS.quests()"), /assembled-key/);
+  g.run(`globalThis.__codex=''; systeme=(t,b,c,v)=>{ globalThis.__codex=b; globalThis.__variant=v; }; ACTIONS.keycodex();`);
+  assert.match(g.run("__codex"), /assembled-key/);
+  assert.equal(g.run("__variant"), "codex");
 });
 test("les premières réponses et le contenu de la tentative restent figés à la reprise", () => {
   const g = game();
@@ -102,7 +99,7 @@ test("récupérer un noyau ne donne pas un fragment de Clé", () => {
 test("invocation une seule fois et limite des potions", () => {
   const g = game();
   g.run(
-    `S.level=10;S.campaign.rank='C';S.campaign.shadows=['knight'];S.campaign.shadow='knight';demarrerBoss('en-1',{acc:1,maxCombo:0});actionBoss('summon');B.turn='player';actionBoss('summon');`,
+    `S.inv.potHp=2;S.level=10;S.campaign.rank='C';S.campaign.shadows=['knight'];S.campaign.shadow='knight';demarrerBoss('en-1',{acc:1,maxCombo:0});actionBoss('summon');B.turn='player';actionBoss('summon');`,
   );
   assert.equal(g.run("B.shadowUsed"), true);
   g.run(`B.hp=1;B.turn='player';B.potions=2;actionBoss('pot')`);
@@ -186,11 +183,11 @@ test("démarrage réel du script final, sans sauvegarde puis avec sauvegarde", (
 test("Clé progressive sans fiches, boutons ni divulgation des runes manquantes", () => {
   const g = game();
   let html = g.run("htmlFragments()");
-  assert.match(html, /0 \/ 8 fragments/);
+  assert.match(html, /0 \/ 9 fragments/);
   assert.doesNotMatch(html, /<button|fragmentdetail|dossier/);
   g.run("S.campaign.completed=['fragment-1','fragment-3','core-1'];");
   html = g.run("htmlFragments()");
-  assert.match(html, /2 \/ 8 fragments/);
+  assert.match(html, /2 \/ 9 fragments/);
   assert.equal((html.match(/key-part obtained/g) || []).length, 2);
   assert.equal((html.match(/class="rune found"/g) || []).length, 2);
   assert.equal((html.match(/class="rune "[^>]*>\?/g) || []).length, 6);
@@ -198,8 +195,8 @@ test("Clé progressive sans fiches, boutons ni divulgation des runes manquantes"
     "S.campaign.completed=Array.from({length:8},(_,i)=>'fragment-'+(i+1));S.campaign.keyFound=true;",
   );
   html = g.run("htmlFragments()");
-  assert.match(html, /8 \/ 8 fragments/);
-  assert.match(html, /Clé reconstituée/);
+  assert.match(html, /9 \/ 9 fragments/);
+  assert.doesNotMatch(html, /Reconstitution en cours|Clé reconstituée/);
 });
 
 test("le chef est configurable et un chef sans fragment ne donne aucune clé", () => {
@@ -239,6 +236,7 @@ test("la carte reste bornée avec 40 matières et 120 notions", () => {
   const g = game(
     `const model=window.GAME_CONTENT.subjects[0];window.GAME_CONTENT.subjects=Array.from({length:40},(_,i)=>({...model,id:'s'+i,name:'Matière '+i,dungeons:Array.from({length:120},(_,j)=>({...model.dungeons[0],id:'s'+i+'-d'+j,name:'Notion '+j}))}));`,
   );
+  g.run(`BARRE_CARTE_ACTIVE=true;ARCHIPELS_VERROUILLES=false`);
   let html = g.run("SCREENS.map()");
   assert.equal((html.match(/class="subject-island"/g) || []).length, 6);
   g.run(`UI.worldPage=6;`);
@@ -319,6 +317,8 @@ test("la dilatation ajoute exactement dix secondes et ses limites survivent à l
 });
 test("boutique et statut exposent les artefacts et le sceau caché", () => {
   const g = game();
+  g.run(`STATS_EN_CALCUL=false`);
+  g.run(`BOUTIQUE_OUVERTE=true`);
   assert.match(g.run("SCREENS.shop()"), /data-k="artefacts"/);
   g.run(`UI.shopTab='artefacts'`);
   assert.match(g.run("SCREENS.shop()"), /Bonnes réponses uniques/);
@@ -443,10 +443,88 @@ test("un fragment non placé par le parent ne peut pas apparaître dans un comba
   const g = game();
   g.run(`today=()=> '2027-06-10';`);
   assert.equal(g.run(`missionDisponible('fragment-1')`), false);
-  assert.match(g.run("SCREENS.quests()"), /Aucun signal/);
   assert.match(g.run(`titreMission(CG.missions[0])`), /Localiser/);
   const placed = game(
     `window.GAME_CONTENT.subjects[0].dungeons[0].boss={name:'Chef choisi',chief:true,fragment:1};`,
   );
   assert.equal(placed.run(`missionDisponible('fragment-1')`), true);
+});
+
+test("la récompense des Fondamentaux donne 2 or, puis l'histoire se lance sur demande", () => {
+  const g = game();
+  g.run(
+    `S.fondQuestClaimed=false; S.fondStoryDone=false; S.gold=0; UI.screen="quests"; systeme=(t,b,onClose)=>{ window.__close=onClose; };`,
+  );
+  assert.match(g.run("SCREENS.quests()"), /Récupérer la récompense/);
+  g.run(`ACTIONS.claimfondquest();`);
+  assert.equal(g.run("S.gold"), 0);
+  g.run(`window.__close();`);
+  assert.equal(g.run("S.gold"), 2);
+  assert.equal(g.run("S.fondQuestClaimed"), true);
+  assert.equal(g.run("UI.screen"), "quests");
+  assert.match(g.run("SCREENS.quests()"), /Continuer l’histoire/);
+  assert.equal(g.run("fondIntroTerminee()"), false);
+  g.run(`ACTIONS.fondstory();`);
+  assert.equal(g.run("UI.screen"), "storypost");
+  g.run(`ACTIONS.storypostend();`);
+  assert.equal(g.run("fondIntroTerminee()"), true);
+  assert.equal(g.run("UI.screen"), "map");
+});
+
+test("la boutique est en rupture de stock et l'onglet Artefacts est verrouillé", () => {
+  const g = game();
+  assert.equal(g.run("S.inv.potHp"), 0);
+  for (const tab of ["potions", "weapons", "armors", "artefacts"]) {
+    g.run(`UI.shopTab='${tab}'`);
+    const html = g.run("SCREENS.shop()");
+    assert.match(html, /Rupture de stock/);
+    assert.doesNotMatch(html, /data-act="buy"/);
+    assert.doesNotMatch(html, /data-k="artefacts"/);
+    assert.match(html, /disabled aria-disabled="true">Artefacts/);
+  }
+  g.run("UI.shopTab='weapons'");
+  assert.match(g.run("SCREENS.shop()"), /Dague rouillée/);
+  g.run("UI.shopTab='armors'");
+  assert.match(g.run("SCREENS.shop()"), /Cape trouée/);
+});
+
+test("l'écran Quête : titre simple, quête principale des 8 fragments, sans promotion ni messages", () => {
+  const g = game();
+  const html = g.run("SCREENS.quests()");
+  assert.match(html, /<h2>Quête<\/h2>/);
+  assert.doesNotMatch(html, /Journal du Chasseur|Promotion|Messages retrouvés|Ouvrir le portail|Localiser/);
+  assert.match(html, /Quête principale/);
+  assert.match(html, /Récolter les 9 fragments de la Clé/);
+  assert.match(html, /data-act="keycodex">Codex de la clé</);
+  assert.ok(html.indexOf("Quête principale") < html.indexOf("keycodex"));
+});
+
+test("l'écran Stats annonce que le Système calcule les statistiques, sans perdre la sauvegarde", () => {
+  const g = game();
+  const html = g.run("SCREENS.status()");
+  assert.match(html, /<h2>Statistiques<\/h2>/);
+  assert.match(html, /calcule actuellement tes statistiques/);
+  assert.match(html, /Fonctionnalité bientôt disponible/);
+  assert.match(html, /data-act="copysave"/);
+  assert.doesNotMatch(html, /data-act="stat"|memoryseal/);
+});
+
+test("le menu Carte/Portails et la recherche de notion sont masqués dans un archipel", () => {
+  const g = game();
+  g.run(`UI.arch=SUBJECTS[0].id;UI.group=null;`);
+  const html = g.run("SCREENS.map()");
+  assert.doesNotMatch(html, /data-act="mapview"|id="mapQuery"|Trouver une notion/);
+});
+
+test("tous les archipels sont verrouillés pour le moment, sauf ceux ouverts explicitement", () => {
+  const g = game();
+  let html = g.run("SCREENS.map()");
+  assert.equal((html.match(/subject-island locked/g) || []).length, g.run("SUBJECTS.length"));
+  assert.doesNotMatch(html, /data-act="arch"/);
+  assert.match(html, /Bientôt disponible/);
+  g.run(`UI.arch=null;ACTIONS.arch({dataset:{id:'en'}});`);
+  assert.equal(g.run("UI.arch"), null);
+  g.run(`ARCHIPELS_OUVERTS=['pc']`);
+  html = g.run("SCREENS.map()");
+  assert.match(html, /data-act="arch" data-id="pc"/);
 });

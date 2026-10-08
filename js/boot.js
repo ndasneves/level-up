@@ -62,7 +62,7 @@ if (navigator.storage && navigator.storage.persist)
 if (S && S.total.correct >= 10 && Date.now() - (S.lastBackup || 0) > 7 * 864e5)
   systeme(
     "Pense à ta sauvegarde",
-    "<p>Ça fait un moment que tu n’as pas mis ta progression à l’abri.</p><p>Va dans <strong>Statut</strong>, puis <strong>Sauvegarde</strong>.</p>",
+    "<p>Ça fait un moment que tu n’as pas mis ta progression à l’abri.</p><p>Va dans <strong>Stats</strong>, puis <strong>Sauvegarde</strong>.</p>",
   );
 if ("serviceWorker" in navigator && location.protocol.startsWith("http"))
   navigator.serviceWorker

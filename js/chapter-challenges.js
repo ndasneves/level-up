@@ -213,9 +213,24 @@ SCREENS.status = function () {
     `<section class="win"><h3>Redistribuer les statistiques</h3><p class="sub">Une redistribution gratuite par chapitre. Ensuite : 80 pièces, au plus une fois tous les 7 jours. Les artefacts déjà ouverts restent acquis.</p>${UI.confirmRespec && info.available ? `<p>${info.spent} points seront rendus ; les quatre statistiques reviendront à 5. Coût : ${info.free ? "gratuit" : "80 pièces"}.</p><div class="btnrow"><button class="btn gold" data-act="respecconfirm">Confirmer</button><button class="btn" data-act="respec">Annuler</button></div>` : `<button class="btn" data-act="respec" ${info.available ? "" : "disabled"}>Redistribuer · ${info.free ? "gratuit" : "80 pièces"}</button>${!info.free && info.wait ? `<p class="hint">Disponible dans ${info.wait} jour(s).</p>` : ""}`}</section>`
   );
 };
-const trainingBeforeChallenges = SCREENS.training;
-SCREENS.training = function () {
-  return trainingBeforeChallenges() + htmlDefisChapitre();
+/* Écran Stats en refonte : le Système calcule les statistiques. Mettre à false
+   pour retrouver l'ancien écran (statistiques, équipement, défis, sceau…). */
+let STATS_EN_CALCUL = true;
+const statusComplet = SCREENS.status;
+SCREENS.status = function () {
+  if (!STATS_EN_CALCUL) return statusComplet();
+  const stat = (nom) =>
+    `<div class="stats-cell"><span>${nom}</span><b>—</b></div>`;
+  return `<div class="title-row"><h2>Statistiques</h2></div>
+    <section class="win stats-wait">
+      <div class="stats-hex">${iconeLevelUp(84, campagne().rank)}</div>
+      <p class="stats-label">Calcul en cours</p>
+      <p class="stats-msg">Le Système calcule actuellement tes statistiques.</p>
+      <div class="stats-bar" aria-hidden="true"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+      <div class="stats-grid">${stat("Force")}${stat("Agilité")}${stat("Vitalité")}${stat("Intelligence")}</div>
+      <p class="stats-soon">Fonctionnalité bientôt disponible</p>
+    </section>
+    <div style="margin-top:16px">${htmlSauvegarde()}</div>`;
 };
 const resultBeforeChallenges = SCREENS.result;
 SCREENS.result = function () {

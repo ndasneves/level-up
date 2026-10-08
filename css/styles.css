@@ -1,5 +1,11 @@
 /* ===== Jetons de design ===== */
 :root {
+  /* Échelle typographique unique : tout le texte du jeu en dérive. */
+  --fs-texte: 16px; /* texte courant, boutons, questions, texte des pop-ups */
+  --fs-titre: clamp(23px, 6vw, 32px); /* titres d'écran (Salle d'entraînement…) */
+  --fs-sous-titre: 20px; /* titres de cartes et de pop-ups */
+  --fs-label: 13px; /* libellé en tête de pop-up (ÉCHEC, NOTIFICATION…) */
+  --fs-legende: 12px; /* légendes (Dernière réussite…) */
   --abyss: #050814;
   --deep: #0a1230;
   --panel: rgba(11, 22, 54, 0.82);
@@ -12,8 +18,9 @@
   --heal: #3ddc97;
   --text: #e8f1ff;
   --muted: #8fa3c8;
-  --ui: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
-  --read: "Atkinson Hyperlegible", Verdana, Tahoma, sans-serif;
+  --ui: "Barlow Semi Condensed", "Segoe UI", system-ui, sans-serif;
+  --read: var(--ui); /* une seule police pour tout le jeu */
+  --font-texte: var(--ui); /* police des boutons et du récit */
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -59,7 +66,7 @@ body {
   background-attachment: fixed;
   color: var(--text);
   font-family: var(--read);
-  font-size: 17px;
+  font-size: var(--fs-texte);
   line-height: 1.55;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -72,15 +79,12 @@ button {
 }
 input.txt,
 textarea.txt {
-  font-size: 16px;
+  font-size: var(--fs-texte);
 }
 textarea.txt {
   min-height: 90px;
   resize: vertical;
-  font:
-    400 14px/1.4 ui-monospace,
-    Menlo,
-    monospace;
+  font: 400 var(--fs-texte)/1.4 var(--read);
   word-break: break-all;
 }
 #app {
@@ -96,10 +100,10 @@ h3 {
   margin: 0 0 0.5em;
 }
 h2 {
-  font-size: 1.6rem;
+  font-size: var(--fs-sous-titre);
 }
 h3 {
-  font-size: 1.15rem;
+  font-size: var(--fs-sous-titre);
 }
 p {
   margin: 0 0 0.8em;
@@ -118,7 +122,7 @@ kbd {
 
 /* ===== Boutons ===== */
 .btn {
-  font: 600 16px var(--ui);
+  font: 600 var(--fs-texte) var(--font-texte);
   color: var(--text);
   background: rgba(77, 181, 255, 0.07);
   border: 1px solid rgba(77, 181, 255, 0.7);
@@ -153,12 +157,11 @@ kbd {
   background: rgba(255, 77, 109, 0.08);
 }
 .btn.big {
-  font-size: 18px;
+  font-size: var(--fs-texte);
   padding: 14px 22px;
   width: 100%;
 }
 .btn.wide {
-  font-size: 17px;
   padding: 13px 30px;
   min-width: 210px;
 }
@@ -174,7 +177,7 @@ kbd {
   background: none;
   border: 0;
   color: var(--sys-soft);
-  font: 600 15px var(--ui);
+  font: 600 var(--fs-texte) var(--font-texte);
   cursor: pointer;
   padding: 8px 0;
   min-height: 40px;
@@ -216,7 +219,7 @@ kbd {
   border-top: 0;
 }
 .win-head {
-  font: 600 14px var(--ui);
+  font: 600 var(--fs-label) var(--ui);
   color: var(--sys-soft);
   margin: -4px 0 12px;
   display: flex;
@@ -281,10 +284,10 @@ kbd {
   color: var(--muted);
 }
 .hname {
-  font: 700 18px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
 }
 .hlvl {
-  font: 500 14px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
 }
 .xpbox {
@@ -292,7 +295,7 @@ kbd {
   order: 3;
 }
 .xpbox span {
-  font: 500 13px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
 }
 .bar {
@@ -323,7 +326,7 @@ kbd {
   transition: width 0.12s;
 }
 .gold-count {
-  font: 700 18px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
   color: var(--gold);
   white-space: nowrap;
 }
@@ -339,13 +342,12 @@ kbd {
 .okbadge {
   display: inline-grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--heal);
-  color: #05230f;
-  font-size: 15px;
-  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--sys);
+  background: var(--sys);
+  color: #fff;
+  font-size: 11px;
   vertical-align: middle;
   margin-left: 4px;
 }
@@ -387,7 +389,7 @@ kbd {
   display: grid;
   justify-items: center;
   gap: 2px;
-  font: 600 11px var(--ui);
+  font: 600 var(--fs-legende) var(--ui);
   background: none;
   border: 0;
   border-top: 2px solid transparent;
@@ -491,7 +493,7 @@ kbd {
   gap: 6px;
   text-align: left;
   margin: 22px 0 14px;
-  font: 600 15px var(--ui);
+  font: 600 var(--fs-texte) var(--ui);
 }
 .orb.small {
   width: 90px;
@@ -499,7 +501,7 @@ kbd {
   margin-bottom: 6px;
 }
 .wordmark {
-  font: 800 15px var(--ui);
+  font: 800 var(--fs-label) var(--ui);
   letter-spacing: 0.14em;
   color: #8fcbff;
   text-align: center;
@@ -507,7 +509,7 @@ kbd {
   animation: storyIn 0.5s ease both;
 }
 .intro p.sysalert {
-  font: 700 14px var(--ui);
+  font: 700 var(--fs-label) var(--ui);
   letter-spacing: 0.08em;
   color: var(--blood);
   margin: 0 0 14px;
@@ -516,7 +518,7 @@ kbd {
     alertBlink 1.8s ease-in-out 0.5s infinite;
 }
 .story .storytxt {
-  font: 600 20px/1.5 var(--ui);
+  font: 600 var(--fs-texte)/1.5 var(--font-texte);
   color: #fff;
   margin: 0 0 26px;
   animation: storyIn 0.6s ease 0.05s both;
@@ -583,7 +585,7 @@ kbd {
 }
 input.txt,
 textarea.txt {
-  font: 400 18px var(--read);
+  font: 400 var(--fs-texte) var(--read);
   color: var(--text);
   background: rgba(5, 8, 20, 0.8);
   border: 1px solid rgba(77, 181, 255, 0.55);
@@ -624,13 +626,13 @@ textarea.txt:focus {
   flex-wrap: wrap;
 }
 .region h3 {
-  font-size: 1.4rem;
+  font-size: var(--fs-sous-titre);
   margin: 0;
   color: var(--c);
 }
 .region header span {
   color: var(--muted);
-  font: 500 14px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
 }
 .trail {
   list-style: none;
@@ -710,11 +712,11 @@ textarea.txt:focus {
 }
 .gname {
   display: block;
-  font: 600 17px var(--ui);
+  font: 600 var(--fs-texte) var(--ui);
 }
 .gmeta {
   display: block;
-  font-size: 14px;
+  font-size: var(--fs-legende);
   color: var(--muted);
 }
 .stars {
@@ -752,7 +754,7 @@ textarea.txt:focus {
   stroke-linejoin: round;
 }
 .seamap .lbl.meta {
-  font: 500 12.5px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   fill: var(--muted);
 }
 .seamap .lbl.big {
@@ -798,7 +800,7 @@ table {
   border-collapse: collapse;
   width: 100%;
   min-width: 520px;
-  font-size: 16px;
+  font-size: var(--fs-texte);
 }
 th,
 td {
@@ -808,7 +810,7 @@ td {
   vertical-align: top;
 }
 th {
-  font: 600 14px var(--ui);
+  font: 600 var(--fs-legende) var(--ui);
   color: var(--sys-soft);
 }
 .memo {
@@ -831,14 +833,14 @@ dl.info {
 }
 dl.info dt {
   color: var(--muted);
-  font: 500 14px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
 }
 dl.info dd {
   margin: 0;
-  font: 600 15px var(--ui);
+  font: 600 var(--fs-texte) var(--ui);
 }
 .hint {
-  font-size: 14px;
+  font-size: var(--fs-legende);
   color: var(--muted);
   margin-top: 12px;
 }
@@ -889,7 +891,7 @@ dl.info dd {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font: 700 14px var(--ui);
+  font: 700 var(--fs-legende) var(--ui);
   border: 2px solid var(--muted);
   color: var(--muted);
   background: rgba(8, 16, 40, 0.7);
@@ -929,7 +931,7 @@ dl.info dd {
   box-shadow: 0 0 4px var(--gold);
 }
 .stagelbl {
-  font: 600 11px var(--ui);
+  font: 600 var(--fs-legende) var(--ui);
   color: var(--muted);
   white-space: nowrap;
 }
@@ -959,7 +961,7 @@ dl.info dd {
   display: flex;
   gap: 16px;
   justify-content: center;
-  font: 700 15px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
   margin-bottom: 10px;
 }
 .recaphead .rok {
@@ -1005,21 +1007,21 @@ dl.info dd {
 }
 .recaplist .qt {
   display: block;
-  font-size: 14px;
+  font-size: var(--fs-legende);
   line-height: 1.35;
 }
 .recaplist .ca {
   display: block;
-  font-size: 12.5px;
+  font-size: var(--fs-legende);
   color: var(--sys-soft);
   margin-top: 2px;
 }
 .dtitle {
-  font: 700 18px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
 }
 .dtitle small {
   display: block;
-  font: 500 13px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
 }
 .pips {
@@ -1042,6 +1044,57 @@ dl.info dd {
   background: var(--sys);
   box-shadow: 0 0 8px var(--sys);
 }
+.fondmeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.fondmeta .sub {
+  margin: 0;
+  line-height: 20px;
+}
+.hearts {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+}
+.heart {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+.heart.full {
+  fill: var(--blood);
+  stroke: none;
+}
+.heart.lost {
+  fill: none;
+  stroke: var(--sys);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.fondpips {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 6px 0 20px;
+}
+.fondpips .pip {
+  width: 11px;
+  height: 11px;
+  margin: 0 2px;
+}
+.pip.ok {
+  background: var(--sys);
+  box-shadow: 0 0 8px var(--sys);
+}
+.pip.ko {
+  background: var(--blood);
+  border-color: var(--blood);
+  box-shadow: 0 0 8px var(--blood);
+}
 .pip.boss {
   border-color: var(--blood);
   width: 16px;
@@ -1054,13 +1107,13 @@ dl.info dd {
   align-items: center;
 }
 .dstats .lbl {
-  font: 500 13px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
   display: flex;
   justify-content: space-between;
 }
 .combo {
-  font: 700 16px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
   color: var(--gold);
   min-width: 90px;
   text-align: right;
@@ -1091,11 +1144,11 @@ dl.info dd {
 .mobname {
   position: absolute;
   bottom: 4px;
-  font: 600 14px var(--ui);
+  font: 600 var(--fs-legende) var(--ui);
   color: var(--muted);
 }
 .q {
-  font: 700 20px/1.45 var(--read);
+  font: 700 var(--fs-texte)/1.45 var(--read);
   margin: 0 0 16px;
 }
 .qtimer {
@@ -1176,14 +1229,14 @@ dl.info dd {
   gap: 6px;
 }
 .ans-icon small {
-  font: 500 13px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
   white-space: normal;
   text-align: center;
 }
 .ans {
   text-align: left;
-  font: 400 17px var(--read);
+  font: 400 var(--fs-texte) var(--read);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1212,7 +1265,7 @@ dl.info dd {
   line-height: 1.4;
 }
 .kw {
-  font: 600 13px var(--ui);
+  font: 600 var(--fs-legende) var(--ui);
   color: var(--sys-soft);
   margin: -4px 0 8px;
 }
@@ -1253,19 +1306,6 @@ dl.info dd {
 .center-win {
   max-width: 640px;
   margin: 0 auto;
-}
-.center-win.fail {
-  border-color: rgba(255, 77, 109, 0.6);
-  box-shadow:
-    0 0 30px rgba(255, 77, 109, 0.2),
-    inset 0 0 40px rgba(255, 77, 109, 0.06);
-}
-.center-win.fail .win-head {
-  color: #ffb4c2;
-}
-.center-win.fail .win-head::before {
-  background: var(--blood);
-  box-shadow: 0 0 8px var(--blood);
 }
 .boss-preview {
   font-size: 110px;
@@ -1321,7 +1361,7 @@ dl.info dd {
 }
 .fragmentget {
   text-align: center;
-  font: 700 14px/1.5 var(--ui);
+  font: 700 var(--fs-legende)/1.5 var(--ui);
   color: var(--gold);
   background: rgba(245, 196, 81, 0.1);
   border: 1px solid rgba(245, 196, 81, 0.4);
@@ -1349,11 +1389,11 @@ dl.info dd {
   padding: 10px 4px 8px;
 }
 .codexcard b {
-  font-size: 12px;
+  font-size: var(--fs-legende);
   line-height: 1.25;
 }
 .codexcard small {
-  font-size: 10px;
+  font-size: var(--fs-legende);
   color: var(--muted);
 }
 .codexcard .cicon {
@@ -1375,7 +1415,7 @@ dl.info dd {
   position: absolute;
   top: 3px;
   right: 4px;
-  font-size: 13px;
+  font-size: var(--fs-legende);
 }
 /* Clé ancestrale : se remplit visuellement à mesure que les fragments arrivent */
 .keywrap {
@@ -1401,13 +1441,13 @@ dl.info dd {
   fill: #070b1a;
 }
 .keycount {
-  font: 700 14px var(--ui);
+  font: 700 var(--fs-legende) var(--ui);
   color: var(--gold);
   margin-top: 10px;
 }
 .ctrl td:first-child {
   white-space: nowrap;
-  font: 600 15px var(--ui);
+  font: 600 var(--fs-texte) var(--ui);
   color: var(--gold);
 }
 .boss-screen {
@@ -1424,17 +1464,17 @@ dl.info dd {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font: 700 20px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
 }
 .specialwarn {
-  font: 700 13px var(--ui);
+  font: 700 var(--fs-legende) var(--ui);
   color: var(--blood);
   text-align: center;
   margin: 6px 0 0;
   animation: alertBlink 1.2s ease-in-out infinite;
 }
 .streak {
-  font: 700 13px var(--ui);
+  font: 700 var(--fs-legende) var(--ui);
   color: var(--gold);
   text-align: center;
   margin: 8px 0 0;
@@ -1452,7 +1492,7 @@ dl.info dd {
   gap: 6px;
 }
 .bname span {
-  font: 500 14px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
 }
 .arena {
@@ -1659,7 +1699,7 @@ dl.info dd {
   gap: 14px;
 }
 .pbars .lbl {
-  font: 500 13px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
   display: flex;
   justify-content: space-between;
@@ -1675,7 +1715,7 @@ dl.info dd {
   animation: storyIn 0.25s ease both;
 }
 .timelabel {
-  font: 600 14px/1.4 var(--ui);
+  font: 600 var(--fs-legende)/1.4 var(--ui);
   color: var(--sys-soft);
   text-align: center;
   margin: 0;
@@ -1734,7 +1774,7 @@ dl.info dd {
   position: relative;
   overflow: hidden;
   min-height: 68px;
-  font: 600 15px var(--ui);
+  font: 600 var(--fs-texte) var(--font-texte);
   color: var(--text);
   cursor: pointer;
   background: rgba(77, 181, 255, 0.08);
@@ -1751,7 +1791,7 @@ dl.info dd {
 }
 .skill small {
   display: block;
-  font: 500 12px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
   color: var(--muted);
 }
 .skill.nomp {
@@ -1790,7 +1830,7 @@ dl.info dd {
   border: 1px solid rgba(77, 181, 255, 0.25);
   background: rgba(8, 16, 40, 0.55);
   border-radius: 3px;
-  font: 500 13px var(--ui);
+  font: 500 var(--fs-legende) var(--ui);
 }
 .battlelog p {
   margin: 0;
@@ -1887,12 +1927,12 @@ dl.info dd {
   border-bottom: 1px solid rgba(77, 181, 255, 0.15);
 }
 .statrow b {
-  font: 600 16px var(--ui);
+  font: 600 var(--fs-texte) var(--ui);
 }
 .statrow small {
   display: block;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--fs-legende);
 }
 .statval {
   font: 700 22px var(--ui);
@@ -1907,7 +1947,7 @@ dl.info dd {
   font-size: 22px;
 }
 .points {
-  font: 700 16px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
   color: var(--gold);
   margin-bottom: 8px;
 }
@@ -1915,7 +1955,7 @@ dl.info dd {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 6px 14px;
-  font: 500 15px var(--ui);
+  font: 500 var(--fs-texte) var(--ui);
 }
 .derived span:nth-child(even) {
   text-align: right;
@@ -1953,7 +1993,7 @@ dl.info dd {
   gap: 14px;
 }
 .trainblock h2 {
-  font-size: 1.2rem;
+  font-size: var(--fs-sous-titre);
   margin: 0;
 }
 .trainblock.locked {
@@ -1963,7 +2003,7 @@ dl.info dd {
   padding: 16px 20px;
 }
 .trainblock.locked h2 {
-  font-size: 1.05rem;
+  font-size: var(--fs-sous-titre);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1973,12 +2013,12 @@ dl.info dd {
   text-align: center;
 }
 .itemrow b {
-  font: 600 17px var(--ui);
+  font: 600 var(--fs-texte) var(--ui);
   display: block;
 }
 .itemrow small {
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-legende);
 }
 .itemrow .buy {
   grid-column: 1/-1;
@@ -1987,7 +2027,7 @@ dl.info dd {
   width: 100%;
 }
 .price {
-  font: 700 15px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
   color: var(--gold);
   display: block;
   text-align: left;
@@ -2001,6 +2041,9 @@ dl.info dd {
   padding: 10px 0;
   border-bottom: 1px solid rgba(77, 181, 255, 0.15);
 }
+.task.solo {
+  border-bottom: 0;
+}
 .check {
   width: 22px;
   height: 22px;
@@ -2010,12 +2053,12 @@ dl.info dd {
   font-size: 14px;
 }
 .check.done {
-  background: var(--heal);
-  border-color: var(--heal);
-  color: #05230f;
+  background: var(--sys);
+  border-color: var(--sys);
+  color: #fff;
 }
 .prog {
-  font: 700 15px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
   color: var(--sys-soft);
 }
 .weak {
@@ -2027,7 +2070,7 @@ dl.info dd {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  font-size: 15px;
+  font-size: var(--fs-texte);
   border-bottom: 1px solid rgba(77, 181, 255, 0.12);
   padding-bottom: 6px;
 }
@@ -2045,7 +2088,7 @@ dl.info dd {
   gap: 22px;
   flex-wrap: wrap;
   margin: 14px 0 20px;
-  font: 700 18px var(--ui);
+  font: 700 var(--fs-texte) var(--ui);
 }
 .rewards .x {
   color: var(--sys-soft);
@@ -2088,12 +2131,13 @@ dl.info dd {
   content: none;
 }
 .sys-win h2 {
-  font-size: 1.45rem;
+  font-size: var(--fs-sous-titre);
   color: #fff;
   margin: 0 0 10px;
 }
 .sys-body {
-  color: var(--sys-soft);
+  font-size: var(--fs-texte);
+  color: #fff;
   margin-bottom: 16px;
 }
 .sysline {
@@ -2119,7 +2163,7 @@ dl.info dd {
   bottom: 6px;
 }
 .sys-label {
-  font: 700 13px var(--ui);
+  font: 700 var(--fs-label) var(--ui);
   letter-spacing: 0.08em;
   color: var(--blood);
   margin: 10px 0 16px;
@@ -2166,6 +2210,43 @@ dl.info dd {
 }
 .sys-win.error .sys-label {
   color: #ffb4c2;
+}
+.sys-gain {
+  font: 700 28px var(--ui);
+  color: var(--gold);
+  margin: 4px 0 0;
+}
+.sys-gain small {
+  font-size: var(--fs-legende);
+  font-weight: 500;
+  color: var(--muted);
+}
+.sys-win.codex {
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  border-color: rgba(223, 186, 119, 0.7);
+  box-shadow:
+    0 0 40px rgba(223, 186, 119, 0.25),
+    inset 0 0 60px rgba(223, 186, 119, 0.08);
+}
+.sys-win.codex .sysline {
+  background: linear-gradient(90deg, transparent, #dfba77 20%, #dfba77 80%, transparent);
+  box-shadow:
+    0 0 12px #dfba77,
+    0 0 24px #dfba77;
+}
+.sys-win.codex .sys-label {
+  color: #dfba77;
+  animation: none;
+}
+.btn.key-btn {
+  border-color: #c7aa71;
+  color: #dfba77;
+  background: rgba(199, 170, 113, 0.08);
+}
+.btn.key-btn:hover:not(:disabled) {
+  background: rgba(223, 186, 119, 0.18);
+  box-shadow: 0 0 14px rgba(223, 186, 119, 0.3);
 }
 .sys-win.info .sys-label {
   color: var(--sys);
@@ -2449,10 +2530,83 @@ dl.info dd {
   cursor: pointer;
 }
 .intent {
-  font-size: 13px;
+  font-size: var(--fs-legende);
   line-height: 1.5;
 }
 .campaign-actions .btn {
   flex: 1;
   min-width: 140px;
+}
+.okline {
+  color: var(--sys);
+  font: 500 var(--fs-legende) var(--ui);
+  margin: 2px 0 6px;
+}
+
+/* ===== Écran Stats (en calcul) ===== */
+.stats-wait {
+  text-align: center;
+  padding: 24px 18px;
+}
+.stats-hex {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 10px;
+  filter: drop-shadow(0 0 14px rgba(77, 181, 255, 0.45));
+}
+.stats-label {
+  font: 700 var(--fs-label) var(--ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sys);
+  margin: 0 0 8px;
+}
+.stats-msg {
+  font: 500 var(--fs-texte)/1.4 var(--ui);
+  color: #fff;
+  margin: 0 0 16px;
+}
+.stats-bar {
+  display: flex;
+  gap: 6px;
+  max-width: 260px;
+  margin: 0 auto 20px;
+}
+.stats-bar span {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: #26344e;
+}
+.stats-bar .on {
+  background: var(--sys);
+  box-shadow: 0 0 8px rgba(77, 181, 255, 0.5);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.stats-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(77, 181, 255, 0.3);
+  border-radius: 6px;
+  background: rgba(77, 181, 255, 0.05);
+}
+.stats-cell span {
+  font: 500 var(--fs-legende) var(--ui);
+  color: var(--muted);
+}
+.stats-cell b {
+  font: 700 var(--fs-texte) var(--ui);
+  color: var(--sys-soft);
+}
+.stats-soon {
+  font: 500 var(--fs-legende) var(--ui);
+  color: var(--muted);
+  margin: 0;
 }

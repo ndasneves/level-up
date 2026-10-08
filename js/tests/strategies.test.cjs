@@ -11,6 +11,7 @@ function chief(mechanic) {
 }
 test("le parent choisit la tactique, y compris son absence", () => {
   const g = chief("none");
+  g.run(`STATS_EN_CALCUL=false`);
   assert.equal(g.run("B.mechanic"), "none");
   assert.match(
     g.run("SCREENS.status()"),
@@ -89,6 +90,7 @@ test("le Messager annonce son alternance et la bonne défense compte", () => {
 });
 test("l’Élite reste adaptée après défaite et ne se multiplie pas deux fois", () => {
   const g = game();
+  g.run(`STATS_EN_CALCUL=false`);
   g.run(
     "S.level=9;S.stats.str=20;demarrerBoss('en-1',{acc:1,maxCombo:0});adapterBossElite();",
   );

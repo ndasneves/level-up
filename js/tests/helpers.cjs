@@ -61,7 +61,7 @@ function game(configure = "") {
   ])
     vm.runInContext(fs.readFileSync(path.join(root, f), "utf8"), ctx);
   vm.runInContext(
-    `afficher=()=>{}; systeme=()=>{}; S=nouvelleSauvegarde('Test'); S.dungeons.fondamentaux={cleared:true,stars:3,best:1}; today=()=> '2026-10-03'; campagne();`,
+    `afficher=()=>{}; systeme=()=>{}; S=nouvelleSauvegarde('Test'); S.dungeons.fondamentaux={cleared:true,stars:3,best:1}; S.fondQuestClaimed=true; S.fondStoryDone=true; today=()=> '2026-10-03'; campagne();`,
     ctx,
   );
   return {

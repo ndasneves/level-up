@@ -26,6 +26,13 @@ function badgeChef(d) {
     : '<span class="role-badge">Sentinelle</span>';
 }
 
+/* Archipels fermés pour le moment : tous. Pour en ouvrir un, ajouter son id
+   dans ARCHIPELS_OUVERTS (ex. ["pc"]) ; ARCHIPELS_VERROUILLES=false ouvre tout. */
+let ARCHIPELS_VERROUILLES = true;
+let ARCHIPELS_OUVERTS = [];
+function archipelBloque(id) {
+  return ARCHIPELS_VERROUILLES && !ARCHIPELS_OUVERTS.includes(id);
+}
 function carteMatiereCompacte(subject) {
   // Five decorative islands are enough to represent any size of archipelago.
   const islands = subject.dungeons
@@ -42,6 +49,12 @@ function carteMatiereCompacte(subject) {
     )
     .join("");
   const done = subject.dungeons.filter((d) => S.dungeons[d.id]?.cleared).length;
+  if (archipelBloque(subject.id))
+    return `<button class="subject-island locked" disabled aria-disabled="true">
+    <svg viewBox="0 0 300 135" aria-hidden="true">${defsOcean(300, 135, hacherTexte(subject.id))}${islands}</svg>
+    <strong>${esc(subject.name)} <span class="soonbadge">🔒</span></strong><span>${esc(subject.region || "Archipel du Savoir")}</span>
+    <span class="subject-progress">Bientôt disponible</span>
+  </button>`;
   return `<button class="subject-island" data-act="arch" data-id="${esc(subject.id)}">
     <svg viewBox="0 0 300 135" aria-hidden="true">${defsOcean(300, 135, hacherTexte(subject.id))}${islands}</svg>
     <strong>${esc(subject.name)}</strong><span>${esc(subject.region || "Archipel du Savoir")}</span>
@@ -84,13 +97,6 @@ function prochainObjectif() {
   };
 }
 
-function htmlObjectif() {
-  const objective = prochainObjectif();
-  return `<section class="win next-objective"><span class="eyebrow">Ton prochain pas</span>
-    <h3>${esc(objective.title)}</h3><p class="sub">${esc(objective.text)}</p>
-    <button class="btn primary" data-act="${objective.action}" ${objective.id ? `data-id="${objective.id}"` : ""} ${objective.to ? `data-to="${objective.to}"` : ""}>Continuer l’aventure</button></section>`;
-}
-
 function listeCours(subject, courses) {
   const page = pageIndex(UI.coursePage, courses.length, COURSE_PAGE_SIZE);
   return `<div class="course-list">${
@@ -107,12 +113,14 @@ function listeCours(subject, courses) {
   }</div>${pagination(page, courses.length, COURSE_PAGE_SIZE, "coursePage")}`;
 }
 
+/* Menu Carte / Portails et recherche de notion : masqués pour le moment. */
+let BARRE_CARTE_ACTIVE = false;
 SCREENS.map = function () {
   const subject = SUBJECTS.find((s) => s.id === UI.arch);
   if (!subject) {
     const page = pageIndex(UI.worldPage, SUBJECTS.length, MAP_PAGE_SIZE);
     return `<div class="title-row"><h2>La Mer des Portails</h2><p class="sub">Choisis un archipel. Chaque matière ouvre un territoire.</p></div>
-      ${htmlObjectif()}<div class="subject-grid">${SUBJECTS.slice(
+      <div class="subject-grid">${SUBJECTS.slice(
         page * MAP_PAGE_SIZE,
         (page + 1) * MAP_PAGE_SIZE,
       )
@@ -125,12 +133,14 @@ SCREENS.map = function () {
       norm(d.name).includes(norm(query)),
     );
   const groups = groupesMatiere(subject);
-  const toolbar = `<div class="map-toolbar"><div class="view-switch" aria-label="Présentation des cours">
+  const toolbar = !BARRE_CARTE_ACTIVE
+    ? ""
+    : `<div class="map-toolbar"><div class="view-switch" aria-label="Présentation des cours">
     <button class="btn" data-act="mapview" data-view="map" aria-pressed="${UI.mapView !== "list"}">Carte</button>
     <button class="btn" data-act="mapview" data-view="list" aria-pressed="${UI.mapView === "list"}">Portails</button></div>
     <label class="search-label" for="mapQuery">Trouver une notion</label><div class="search-row"><input class="txt" id="mapQuery" type="search" value="${esc(query)}" placeholder="Nom d’une notion" maxlength="120"><button class="btn" data-act="mapsearch">Chercher</button></div></div>`;
   const header = `<button class="link" data-act="world">← La Mer des Portails</button><div class="title-row"><h2>${esc(subject.region || subject.name)}</h2><p class="sub">${subject.dungeons.filter((d) => S.dungeons[d.id]?.cleared).length} / ${subject.dungeons.length} portails libérés · ${esc(subject.name)}</p></div>${toolbar}`;
-  if (UI.mapView === "list" || query)
+  if (BARRE_CARTE_ACTIVE && (UI.mapView === "list" || query))
     return header + listeCours(subject, filtered);
   if (groups.length > 1 && UI.group === null) {
     const page = pageIndex(UI.regionPage, groups.length, MAP_PAGE_SIZE);
@@ -174,6 +184,7 @@ ACTIONS.mapsearch = function () {
 };
 const choisirArchipel = ACTIONS.arch;
 ACTIONS.arch = function (target) {
+  if (archipelBloque(target.dataset.id)) return;
   UI.mapQuery = "";
   UI.regionPage = 0;
   UI.coursePage = 0;

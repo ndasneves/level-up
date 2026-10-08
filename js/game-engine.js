@@ -217,7 +217,7 @@ const SHOP = {
     },
   ],
   weapons: [
-    { id: "w0", icon: "🗡️", name: "Dague rouillée", atk: 3, price: 0, req: 1 },
+    { id: "w0", icon: "", name: "Aucune arme", atk: 0, price: 0, req: 1 },
     { id: "w1", icon: "🗡️", name: "Dague d’acier", atk: 8, price: 120, req: 3 },
     { id: "w2", icon: "⚔️", name: "Épée runique", atk: 15, price: 300, req: 6 },
     {
@@ -240,8 +240,8 @@ const SHOP = {
   armors: [
     {
       id: "a0",
-      icon: "👕",
-      name: "Tunique de novice",
+      icon: "",
+      name: "Aucune armure",
       def: 0,
       price: 0,
       req: 1,
@@ -278,6 +278,8 @@ const SHOP = {
    envie, en attendant de décider comment l'équilibrer pour de vrai. Données
    volontairement séparées de SHOP (qui reste la vraie boutique, prête à être
    réactivée d'un coup en remettant shop() = shopReal() dans SCREENS). */
+/* Tant que la boutique n'est pas équilibrée : tout est en rupture de stock. */
+let BOUTIQUE_OUVERTE = false;
 const SHOP_TEASER = {
   potions: [
     { icon: "🧪", name: "Potion de soin" },
@@ -632,6 +634,7 @@ function demarrerFondamentaux() {
     idx: 0,
     correct: 0,
     wrong: 0,
+    results: [],
     cur: null,
     fb: null,
   };
@@ -669,6 +672,7 @@ function resoudreFond(ok, pick) {
     h.lastResult = "wrong";
     FONDTEST.wrong++;
   }
+  FONDTEST.results[FONDTEST.idx] = ok;
   FONDTEST.fb = { ok, pick };
   sauvegarder();
   afficher();
@@ -676,28 +680,47 @@ function resoudreFond(ok, pick) {
 function fondSuivant() {
   if (!FONDTEST || !FONDTEST.fb) return;
   if (FONDTEST.wrong > FOND_MAX_ERRORS) {
-    UI.fondResult = {
-      total: FONDTEST.correct,
-      wrong: FONDTEST.wrong,
-      passed: false,
-    };
     FONDTEST = null;
-    allerA("fondresult");
+    allerA("training");
+    systeme(
+      "",
+      "<p>Tu as dépassé le nombre d’erreurs autorisées.</p><p>Retente quand tu es prêt.</p>",
+      null,
+      "fail",
+      "Retour à l’entraînement",
+    );
     return;
   }
   FONDTEST.idx++;
   if (FONDTEST.idx >= FONDTEST.queue.length) {
     const firstTime = !fondamentauxTermines();
-    UI.fondResult = {
-      total: FONDTEST.correct,
-      wrong: FONDTEST.wrong,
-      passed: true,
-      firstTime,
-    };
-    S.dungeons.fondamentaux = { cleared: true, stars: 3, best: 1 };
-    sauvegarder();
+    const score = FONDTEST.correct;
     FONDTEST = null;
-    allerA("fondresult");
+    allerA("training");
+    S.dungeons.fondamentaux = {
+      cleared: true,
+      stars: 3,
+      best: 1,
+      at: Date.now(),
+      score,
+    };
+    sauvegarder();
+    if (firstTime)
+      systeme(
+        "",
+        "<p>Le Système confirme : tes bases sont solides. Tu peux désormais l’aider.</p>",
+        () => allerA("quests"),
+        "success",
+        "Voir mes quêtes",
+      );
+    else
+      systeme(
+        "",
+        "<p>Bien joué — tes fondamentaux sont toujours solides.</p>",
+        null,
+        "success",
+        "Retour à l’entraînement",
+      );
     return;
   }
   preparerQuestionFond();
@@ -710,7 +733,6 @@ const UI = {
   introNo: false,
   storyStep: 0,
   storyPostStep: 0,
-  fondResult: null,
   arch: null,
   group: null,
   dId: null,
@@ -735,7 +757,7 @@ function nouvelleSauvegarde(name) {
     gold: 0,
     points: 0,
     stats: { str: 5, agi: 5, vit: 5, int: 5 },
-    inv: { potHp: 2, potHpL: 0, potSecond: 0, potTime: 0 },
+    inv: { potHp: 0, potHpL: 0, potSecond: 0, potTime: 0 },
     owned: ["w0", "a0"],
     weapon: "w0",
     armor: "a0",
@@ -754,6 +776,7 @@ function nouvelleSauvegarde(name) {
     fondHist: {},
     fondAttempt: 0,
     fondQuestClaimed: false,
+    fondStoryDone: false,
     keyFragments: 0,
     codex: {},
     lastBackup: 0,
@@ -790,20 +813,8 @@ function migrerSauvegarde(o) {
   if (!Array.isArray(m.owned)) m.owned = ["w0", "a0"];
   if (o.seen === null || o.seen === undefined) m.seen = null;
   if (!Array.isArray(o.seenSubjects)) m.seenSubjects = null;
-  // Sauvegarde antérieure à l'introduction des Fondamentaux : on considère
-  // qu'elle est déjà passée par l'onboarding, pour ne pas la lui refaire faire
-  // — y compris la petite récompense de cette toute première quête.
-  if (
-    o.v < 3 &&
-    !o.onboardingVersion &&
-    !m.dungeons.fondamentaux &&
-    (Object.values(o.dungeons || {}).some((d) => d.cleared) ||
-      (o.total && o.total.bosses > 0))
-  ) {
-    m.dungeons.fondamentaux = { cleared: true, stars: 3, best: 1 };
-    m.fondQuestClaimed = true;
-  }
   if (m.fondQuestClaimed === undefined) m.fondQuestClaimed = false;
+  m.fondStoryDone = !!o.fondStoryDone;
   m.v = 3;
   m.onboardingVersion = 3;
   m.campaign = Object.assign(window.SchoolCampaign.fresh(), o.campaign || {});
@@ -978,19 +989,19 @@ function raisonVerrouillage(d) {
 
 /* ===== Notifications "Système" ===== */
 const sysQ = [];
-function systeme(title, body, onClose, variant) {
-  sysQ.push({ title, body, onClose, variant });
+function systeme(title, body, onClose, variant, btnLabel) {
+  sysQ.push({ title, body, onClose, variant, btnLabel });
   if ($("#sys").hidden) messageSuivant();
 }
 let sysCurrent = null;
 /* Icône "Level Up" : le logo de l'app (hexagone + flèche), redessiné en SVG
    pour rester net à toute taille. Réutilisée uniquement au moment où elle a
    vraiment du sens : quand le joueur monte de niveau pour de vrai. */
-function iconeLevelUp(size) {
+function iconeLevelUp(size, lettre) {
   const s = size || 110;
   return `<svg class="lvlicon" width="${s}" height="${s}" viewBox="0 0 100 100" aria-hidden="true">
     <polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="#0a1130" stroke="#4DB5FF" stroke-width="5"/>
-    <text x="50" y="68" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="52" fill="#E8F1FF">E</text>
+    <text x="50" y="65" text-anchor="middle" font-family="'Barlow Semi Condensed', Arial, Helvetica, sans-serif" font-weight="600" font-size="44" fill="#E8F1FF">${lettre || "E"}</text>
   </svg>`;
 }
 /* Petit bloc logo + mot-symbole, utilisé en haut de tous les écrans de récit.
@@ -1014,14 +1025,19 @@ function messageSuivant() {
     default: { cls: "", icon: "!", label: "ALERTE DU SYSTÈME" },
     levelup: { cls: "levelup", icon: "▲", label: "NIVEAU SUPÉRIEUR" },
     error: { cls: "error", icon: "✕", label: "ERREUR" },
+    fail: { cls: "error", icon: "✕", label: "ENTRAÎNEMENT NON VALIDÉ" },
+    denied: { cls: "error", icon: "✕", label: "ACCÈS INTERDIT" },
+    success: { cls: "info", icon: "✓", label: "ÉPREUVE VALIDÉE" },
+    codex: { cls: "codex", icon: "◆", label: "CODEX DE LA CLÉ" },
+    quest: { cls: "info", icon: "✓", label: "QUÊTE TERMINÉE" },
     info: { cls: "info", icon: "i", label: "NOTIFICATION" },
   }[v];
-  el.innerHTML = `<div class="win sys-win ${meta.cls}" role="alertdialog" aria-modal="true" aria-labelledby="systitle">
+  el.innerHTML = `<div class="win sys-win ${meta.cls}" role="alertdialog" aria-modal="true" aria-labelledby="${sysCurrent.title ? "systitle" : "syslabel"}">
     <i class="sysline top" aria-hidden="true"></i>
-    <p class="sys-label">${meta.icon} ${meta.label}</p>
-    <h2 id="systitle">${sysCurrent.title}</h2>
+    <p class="sys-label" id="syslabel">${meta.icon} ${meta.label}</p>
+    ${sysCurrent.title ? `<h2 id="systitle">${sysCurrent.title}</h2>` : ""}
     <div class="sys-body">${sysCurrent.body}</div>
-    <button class="btn primary" data-act="sysok">Compris</button>
+    <button class="btn primary" data-act="sysok">${sysCurrent.btnLabel || "Compris"}</button>
     <i class="sysline bottom" aria-hidden="true"></i>
   </div>`;
   setTimeout(() => {
@@ -1067,11 +1083,31 @@ function gagnerXP(n) {
    retirer sa clé de cette liste. */
 const SOON = []; // aucun onglet volontairement désactivé pour l'instant
 /* ===== Rendu ===== */
+function dateReussiteFond() {
+  const f = S.dungeons.fondamentaux;
+  const at = f && f.at;
+  if (!at) return "";
+  const d = new Date(at);
+  const jour = d.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const heure = d.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const note = f.score != null ? ` · ${f.score} / 15 bonnes réponses` : "";
+  return `<p class="okline">Dernière réussite : ${jour} à ${heure}${note}</p>`;
+}
+function fondIntroTerminee() {
+  return fondamentauxTermines() && !!S.fondQuestClaimed && !!S.fondStoryDone;
+}
 function fondamentauxTermines() {
   return !!(S && S.dungeons.fondamentaux && S.dungeons.fondamentaux.cleared);
 }
 function enteteJeu() {
-  const classed = fondamentauxTermines();
+  const classed = fondIntroTerminee();
   const r = rangDe(S.level),
     need = xpNeed(S.level);
   const badgeRank = classed ? r : "unranked";
@@ -1080,7 +1116,7 @@ function enteteJeu() {
     UI.screen === "lesson" || UI.screen === "result" ? "map" : UI.screen;
   const tabs = [
     ["map", "Carte", "🗺️"],
-    ["status", "Statut", "📜"],
+    ["status", "Stats", "📜"],
     ["shop", "Boutique", "🛒"],
     ["training", "Entraînement", "🎯"],
     ["quests", "Quête", "⭐"],
@@ -1091,7 +1127,9 @@ function enteteJeu() {
       ? '<span class="dot" aria-label="nouveau"></span>'
       : "";
   const locked = (k) =>
-    classed ? SOON.includes(k) : k !== "training" && k !== "quests";
+    classed && fondIntroTerminee()
+      ? SOON.includes(k)
+      : k !== "training" && k !== "quests";
   return `<header class="hud">
     <div class="hunter"><div class="rank rank-${badgeRank}" title="${classed ? "Rang " + r : "Non classé"}">${badgeLabel}</div>
       <div><div class="hname">${esc(S.name)}</div><div class="hlvl">${classed ? "Chasseur de rang " + r + " · niveau " + S.level : "Non classé · niveau 0"}</div></div></div>
@@ -1149,6 +1187,24 @@ function fenetreRecit(label, innerHtml, extra) {
     <i class="sysline bottom" aria-hidden="true"></i>
   </div>`;
 }
+/* Bloc « Sauvegarde et restauration » : réutilisé par l'écran Stats. */
+function htmlSauvegarde() {
+  return `<section class="win"><details data-panel="savePanel" ${UI.savePanel || UI.showCode || UI.resetArm ? "open" : ""}><summary>Sauvegarde et restauration</summary>
+        <p class="sub">La progression est enregistrée sur ce téléphone. Garde une copie du code de temps en temps : il permet de tout récupérer sur un autre appareil.</p>
+        <div class="btnrow" style="justify-content:flex-start">
+          <button class="btn" data-act="copysave">Copier le code</button>
+          <button class="btn" data-act="sharesave">Envoyer le code</button>
+        </div>
+        <p class="hint">${S.lastBackup ? "Dernière sauvegarde : " + new Date(S.lastBackup).toLocaleDateString("fr-FR") : "Aucune sauvegarde faite pour l’instant."}</p>
+        ${UI.showCode ? `<label class="field">Ton code (sélectionne et copie)<textarea class="txt" readonly id="codeOut">${exportCode()}</textarea></label>` : ""}
+        <label class="field">Restaurer depuis un code<textarea id="restoreIn" class="txt" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Colle un code ici"></textarea></label>
+        <div class="btnrow" style="justify-content:flex-start">
+          <button class="btn" data-act="restore">Restaurer ce code</button>
+        </div>
+        <p class="hint">Contenu chargé : ${CONTENT_STATS.nDungeons} donjons, ${CONTENT_STATS.nQuestions} questions (empreinte ${CONTENT_STATS.print})</p>
+        <button class="btn danger" style="margin-top:8px" data-act="reset">${UI.resetArm ? "Confirmer : tout effacer" : "Recommencer à zéro"}</button>
+      </details></section>`;
+}
 const SCREENS = {
   intro() {
     if (UI.introStep < STORY_INTRO.length) {
@@ -1198,8 +1254,7 @@ const SCREENS = {
       ${
         UI.introRestore
           ? `<label class="field">Colle ton code de sauvegarde<textarea id="restoreIn" class="txt" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></label>
-        <button class="btn big" data-act="restore">Restaurer ma progression</button>
-        <label class="btn big" style="display:grid;place-items:center;margin-top:10px">Choisir un fichier de sauvegarde<input type="file" id="restoreFile" accept=".json,.txt,application/json,text/plain" hidden></label>`
+        <button class="btn big" data-act="restore">Restaurer ma progression</button>`
           : ""
       }
     </div></section>`;
@@ -1256,9 +1311,21 @@ const SCREENS = {
       fb = FONDTEST.fb;
     const idx = FONDTEST.idx,
       total = FONDTEST.queue.length;
-    const subjLabel =
-      q.subject === "francais" ? "📘 Français" : "🔢 Mathématiques";
+    const subjLabel = q.subject === "francais" ? "Français" : "Mathématiques";
     const errLeft = FOND_MAX_ERRORS - FONDTEST.wrong;
+    const hearts = Array.from(
+      { length: FOND_MAX_ERRORS },
+      (_, i) =>
+        `<svg class="heart ${i < errLeft ? "full" : "lost"}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21 3.5 12.6a5.4 5.4 0 0 1 7.6-7.7l.9.9.9-.9a5.4 5.4 0 0 1 7.6 7.7L12 21Z"/></svg>`,
+    ).join("");
+    const pips = FONDTEST.queue
+      .map((_, i) => {
+        const r = FONDTEST.results[i];
+        const cls =
+          r === true ? "ok" : r === false ? "ko" : i === idx ? "cur" : "";
+        return `<span class="pip ${cls}"></span>`;
+      })
+      .join("");
     const isEnd = FONDTEST.wrong > FOND_MAX_ERRORS || idx + 1 >= total;
     const body = `<div class="answers">${order
       .map((oi, i) => {
@@ -1271,39 +1338,18 @@ const SCREENS = {
       })
       .join("")}</div>`;
     return `<div class="title-row"><h2>Épreuve des Fondamentaux</h2>
-      <p class="sub">${subjLabel} · Question ${idx + 1} / ${total} · ${Math.max(0, errLeft)} erreur${errLeft <= 1 ? "" : "s"} autorisée${errLeft <= 1 ? "" : "s"}</p></div>
-      <div class="bar" style="margin-bottom:18px" role="progressbar" aria-valuenow="${idx}" aria-valuemax="${total}"><i style="width:${(idx / total) * 100}%"></i></div>
+      <div class="fondmeta"><p class="sub">${subjLabel} · Question ${idx + 1} / ${total}</p>
+      <span class="hearts" role="img" aria-label="${Math.max(0, errLeft)} erreur${errLeft <= 1 ? "" : "s"} autorisée${errLeft <= 1 ? "" : "s"}">${hearts}</span></div></div>
+      <div class="pips fondpips" role="progressbar" aria-valuenow="${idx + 1}" aria-valuemax="${total}" aria-label="Question ${idx + 1} sur ${total}">${pips}</div>
       <div class="win"><p class="q">${esc(q.q)}</p>${body}
       ${
         fb
           ? `<div class="fb ${fb.ok ? "ok" : "ko"}" role="status"><h3>${fb.ok ? "Correct" : "Pas tout à fait"}</h3>
         ${!fb.ok ? `<p>La bonne réponse était : <strong>${esc(q.c[0])}</strong></p>` : ""}
         <p class="ex">${q.ex}</p></div>
-      <div class="fbrow"><span></span><button class="btn primary" data-act="fondnext" id="nextBtn">${isEnd ? "Voir le résultat" : "Question suivante"}</button></div>`
+      <div class="fbrow"><span></span><button class="btn primary" data-act="fondnext" id="nextBtn">${isEnd ? "Continuer" : "Question suivante"}</button></div>`
           : ""
       }
-      </div>`;
-  },
-  fondresult() {
-    const r = UI.fondResult;
-    return `<div class="title-row"><h2>Résultat de l’épreuve</h2></div>
-      <div class="win center-win ${r.passed ? "" : "fail"}">
-        <div class="win-head" style="justify-content:center">${r.passed ? "Épreuve validée" : "Épreuve non validée"}</div>
-        <h2>${r.total} / 15</h2>
-        <p class="sub">${
-          r.passed
-            ? r.firstTime
-              ? "Le Système confirme : tes bases sont solides. Tu peux désormais l’aider."
-              : "Bien joué — tes fondamentaux sont toujours solides."
-            : "Tu as dépassé les 3 erreurs autorisées. Retente Les Fondamentaux quand tu es prêt."
-        }</p>
-        ${
-          r.passed
-            ? r.firstTime
-              ? `<button class="btn primary wide" data-act="fondcontinue">Continuer →</button>`
-              : `<button class="link" data-act="fondretry">Retour à l’entraînement</button>`
-            : `<button class="link" data-act="fondretry">Retour vers les entraînements</button>`
-        }
       </div>`;
   },
   storygrim() {
@@ -1645,23 +1691,7 @@ const SCREENS = {
         </div>
       </section>
       ${htmlCodexOmbres()}
-      <section class="win"><details data-panel="savePanel" ${UI.savePanel || UI.showCode || UI.resetArm ? "open" : ""}><summary>Sauvegarde et restauration</summary>
-        <p class="sub">La progression est enregistrée sur ce téléphone. Garde une copie du code de temps en temps : il permet de tout récupérer sur un autre appareil.</p>
-        <div class="btnrow" style="justify-content:flex-start">
-          <button class="btn" data-act="dlsave">Télécharger un fichier</button>
-          <button class="btn" data-act="copysave">Copier le code</button>
-          <button class="btn" data-act="sharesave">Envoyer le code</button>
-        </div>
-        <p class="hint">${S.lastBackup ? "Dernière sauvegarde : " + new Date(S.lastBackup).toLocaleDateString("fr-FR") : "Aucune sauvegarde faite pour l’instant."}</p>
-        ${UI.showCode ? `<label class="field">Ton code (sélectionne et copie)<textarea class="txt" readonly id="codeOut">${exportCode()}</textarea></label>` : ""}
-        <label class="field">Restaurer depuis un code<textarea id="restoreIn" class="txt" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Colle un code ici"></textarea></label>
-        <div class="btnrow" style="justify-content:flex-start">
-          <button class="btn" data-act="restore">Restaurer ce code</button>
-          <label class="btn" style="display:inline-grid;place-items:center">Choisir un fichier<input type="file" id="restoreFile" accept=".json,.txt,application/json,text/plain" hidden></label>
-        </div>
-        <p class="hint">Contenu chargé : ${CONTENT_STATS.nDungeons} donjons, ${CONTENT_STATS.nQuestions} questions (empreinte ${CONTENT_STATS.print})</p>
-        <button class="btn danger" style="margin-top:8px" data-act="reset">${UI.resetArm ? "Confirmer : tout effacer" : "Recommencer à zéro"}</button>
-      </details></section>
+      ${htmlSauvegarde()}
     </div>`;
   },
 
@@ -1670,16 +1700,17 @@ const SCREENS = {
       ["potions", "Potions"],
       ["weapons", "Armes"],
       ["armors", "Armures"],
-      ["artefacts", "Artefact"],
+      ["artefacts", "Artefacts"],
     ];
-    const list = SHOP_TEASER[UI.shopTab] || SHOP_TEASER.potions;
+    const tab = SHOP_TEASER[UI.shopTab] && UI.shopTab !== "artefacts" ? UI.shopTab : "potions";
+    const list = SHOP_TEASER[tab];
     const row = (
       it,
     ) => `<div class="itemrow lock"><div class="icon" aria-hidden="true">${it.icon}</div>
-      <div><b>${it.name}</b><small>Indisponible — en rupture de stock · tu en as 0</small></div>
-      <div class="buy"><button class="btn" disabled>Indisponible</button></div></div>`;
-    return `<div class="title-row"><h2>Boutique du Système</h2><p class="sub">Le Système prépare ses réserves. Reviens plus tard.</p></div>
-      <div class="shoptabs">${tabs.map(([k, l]) => `<button class="btn ${UI.shopTab === k ? "on" : ""}" data-act="shoptab" data-k="${k}">${l}</button>`).join("")}</div>
+      <div><b>${it.name}</b><small>Tu en as 0</small></div>
+      <div class="buy"><button class="btn" disabled>Rupture de stock</button></div></div>`;
+    return `<div class="title-row"><h2>Boutique du Système</h2></div>
+      <div class="shoptabs">${tabs.map(([k, l]) => (k === "artefacts" ? `<button class="btn" disabled aria-disabled="true">${l}<span class="soonbadge">🔒</span></button>` : `<button class="btn ${tab === k ? "on" : ""}" data-act="shoptab" data-k="${k}">${l}</button>`)).join("")}</div>
       <div class="items">${list.map(row).join("")}</div>`;
   },
   shopReal() {
@@ -1688,7 +1719,7 @@ const SCREENS = {
       ["weapons", "Armes"],
       ["armors", "Armures"],
     ];
-    const list = SHOP[UI.shopTab];
+    const list = SHOP[UI.shopTab].filter((it) => it.id !== "w0" && it.id !== "a0");
     const row = (it) => {
       const lock = UI.shopTab !== "potions" && S.level < it.req;
       let action;
@@ -1714,7 +1745,7 @@ const SCREENS = {
       return `<div class="itemrow ${lock ? "lock" : ""}"><div class="icon" aria-hidden="true">${it.icon}</div>
         <div><b>${it.name}</b><small>${desc}${extra}${lock ? " · niveau " + it.req + " requis" : ""}</small></div><div class="buy">${action}</div></div>`;
     };
-    return `<div class="title-row"><h2>Boutique du Système</h2><p class="sub">Tu as ◈ ${S.gold} or. Gagne-en en battant des créatures et des boss.</p></div>
+    return `<div class="title-row"><h2>Boutique du Système</h2></div>
       <div class="shoptabs">${tabs.map(([k, l]) => `<button class="btn ${UI.shopTab === k ? "on" : ""}" data-act="shoptab" data-k="${k}">${l}</button>`).join("")}</div>
       <div class="items">${list.map(row).join("")}</div>`;
   },
@@ -1722,17 +1753,20 @@ const SCREENS = {
   quests() {
     let mainBody;
     if (!fondamentauxTermines()) {
-      mainBody = `<div class="task"><span class="check"></span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>`;
+      mainBody = `<div class="task solo"><span class="check"></span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>`;
     } else if (!S.fondQuestClaimed) {
-      mainBody = `<div class="task"><span class="check done">✓</span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>
-        <button class="btn primary wide" data-act="claimfondquest">Récompense</button>`;
+      mainBody = `<div class="task solo"><span class="check done">✓</span><span>Réaliser l’entraînement « Les Fondamentaux »</span></div>
+        <button class="btn primary wide" style="margin-top:14px" data-act="claimfondquest">Récupérer la récompense</button>`;
+    } else if (!S.fondStoryDone) {
+      mainBody = `<div class="task solo"><span class="check"></span><span>Découvrir la suite de l’histoire</span></div>
+        <button class="btn primary wide" style="margin-top:14px" data-act="fondstory">Continuer l’histoire</button>`;
     } else {
       mainBody = htmlProgressionCle();
     }
     return `<div class="title-row"><h2>Quête</h2></div>
       <div class="win center-win" style="margin:0"><div class="win-head">Quête principale</div>${mainBody}</div>
       ${
-        fondamentauxTermines() && S.fondQuestClaimed
+        fondIntroTerminee()
           ? `<div class="win center-win" style="margin-top:14px">
         <div class="win-head">Quête éphémère</div>${corpsQueteEphemere()}
       </div>`
@@ -1752,7 +1786,7 @@ const SCREENS = {
             <div class="win-head">Entraînement</div>
             <h2>Les Fondamentaux</h2>
             <p>Retrouve ici les fondamentaux avant d’acquérir de nouvelles connaissances : français et mathématiques.</p>
-            <p><span class="warn">Condition de réussite :<br>3 erreurs maximum.</span></p>
+            <p><span class="warn">Condition de réussite :<br>3 erreurs autorisées.</span></p>
             <button class="btn primary wide" data-act="storystart">Commencer l’entraînement</button>
           </div>
           ${locked.map((name) => `<div class="win trainblock locked"><h2>${name} <span class="soonbadge">🔒</span></h2></div>`).join("")}
@@ -1764,8 +1798,9 @@ const SCREENS = {
         <div class="win trainblock">
           <div class="win-head">Entraînement</div>
           <h2>Les Fondamentaux <span class="okbadge" title="Épreuve validée" aria-label="Épreuve validée">✓</span></h2>
+          ${dateReussiteFond()}
           <p>Tu peux retenter cette épreuve quand tu veux, dans les mêmes conditions.</p>
-          <p><span class="warn">Condition de réussite :<br>3 erreurs maximum.</span></p>
+          <p><span class="warn">Condition de réussite :<br>3 erreurs autorisées.</span></p>
           <button class="btn primary wide" data-act="storystart">Recommencer l’entraînement</button>
         </div>
         ${locked.map((name) => `<div class="win trainblock locked"><h2>${name} <span class="soonbadge">🔒</span></h2></div>`).join("")}
@@ -3158,11 +3193,7 @@ const ACTIONS = {
     afficher();
   },
   storystart() {
-    systeme(
-      "Épreuve des Fondamentaux",
-      "<p>Tu répondras d’abord aux questions de <strong>français</strong>, puis à celles de <strong>mathématiques</strong>.</p>",
-      () => demarrerFondamentaux(),
-    );
+    demarrerFondamentaux();
   },
   fondans(t) {
     const i = +t.dataset.i;
@@ -3170,13 +3201,6 @@ const ACTIONS = {
   },
   fondnext() {
     fondSuivant();
-  },
-  fondretry() {
-    allerA("training");
-  },
-  fondcontinue() {
-    UI.storyPostStep = 0;
-    allerA("storypost");
   },
   storypoststep() {
     UI.storyPostStep++;
@@ -3188,19 +3212,29 @@ const ACTIONS = {
       afficher();
     }
   },
+  fondstory() {
+    if (!fondamentauxTermines() || !S.fondQuestClaimed) return;
+    UI.storyPostStep = 0;
+    allerA("storypost");
+  },
   storypostend() {
+    S.fondStoryDone = true;
+    sauvegarder();
     UI.screen = "map";
     window.scrollTo(0, 0);
     afficher();
   },
   allerA(t) {
     const to = t.dataset.to;
-    if (["map", "status", "shop"].includes(to) && !fondamentauxTermines()) {
+    if (
+      ["map", "status", "shop"].includes(to) &&
+      !fondIntroTerminee()
+    ) {
       systeme(
-        "Accès interdit",
-        "<p>Termine d’abord <strong>Les Fondamentaux</strong>, dans l’onglet Entraînement.</p>",
+        "",
+        "<p>Rends-toi dans l’onglet Quête pour continuer l’histoire.</p>",
         null,
-        "error",
+        "denied",
       );
       return;
     }
@@ -3367,12 +3401,21 @@ const ACTIONS = {
     afficher();
   },
   claimfondquest() {
-    if (!fondamentauxTermines() || S.fondQuestClaimed) return;
-    S.fondQuestClaimed = true;
-    S.gold += 2;
-    systeme("Quête terminée", "<p>Récompense : <strong>2 or</strong>.</p>");
-    sauvegarder();
-    afficher();
+    if (!fondamentauxTermines() || S.fondQuestClaimed || !$("#sys").hidden)
+      return;
+    systeme(
+      "",
+      '<p>Récompense</p><p class="sys-gain">◈ 2 <small>or</small></p>',
+      () => {
+        if (S.fondQuestClaimed) return;
+        S.fondQuestClaimed = true;
+        S.gold += 2;
+        sauvegarder();
+        afficher();
+      },
+      "quest",
+      "Récupérer",
+    );
   },
   train() {
     demarrerEntrainement();
@@ -3455,30 +3498,6 @@ const ACTIONS = {
         .catch(fallback);
     else fallback();
   },
-  dlsave() {
-    S.lastBackup = Date.now();
-    sauvegarder();
-    const blob = new Blob([JSON.stringify(S)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download =
-      "sauvegarde-chasseur-" +
-      S.name.replace(/[^\w-]+/g, "_") +
-      "-" +
-      today() +
-      ".json";
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-      a.remove();
-    }, 1000);
-    afficher();
-    systeme(
-      "Fichier créé",
-      "<p>Le fichier de sauvegarde est dans tes <strong>Téléchargements</strong>. Garde-le précieusement.</p>",
-    );
-  },
   sharesave() {
     const code = exportCode();
     if (navigator.share)
@@ -3521,13 +3540,6 @@ document.addEventListener("click", (e) => {
   if (!t || t.disabled) return;
   const f = ACTIONS[t.dataset.act];
   if (f) f(t);
-});
-document.addEventListener("change", (e) => {
-  if (e.target.id !== "restoreFile" || !e.target.files || !e.target.files[0])
-    return;
-  const r = new FileReader();
-  r.onload = () => restaurerDepuis(r.result);
-  r.readAsText(e.target.files[0]);
 });
 document.addEventListener("pointerdown", (e) => {
   const t = e.target.closest("[data-bact]");
