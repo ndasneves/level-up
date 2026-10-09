@@ -1,15 +1,20 @@
 
 /*
- * LEVEL UP — MER DES PORTAILS V14
- * Carte V13 conservée.
- * Brume légèrement atténuée via CSS.
- * Espacements sous la carte corrigés via CSS.
+ * LEVEL UP — MER DES PORTAILS V15
+ *
+ * Design V14 conservé.
+ * Déblocage centralisé dans navigation.js.
+ *
+ * Ce fichier ne décide plus quelles
+ * matières sont débloquées.
  */
 
 (function () {
   'use strict';
 
-  const FORCE_UNLOCKED = new Set(['en', 'hi', 'hg']);
+  /* ==========================================
+     MATIÈRES : CONFIGURATION VISUELLE
+     ========================================== */
 
   const MATIERES = [
     {
@@ -64,23 +69,38 @@
     }
   ];
 
+  /* ==========================================
+     MINI-ÎLES DÉCORATIVES
+     ========================================== */
+
   const MINI_ILES = [
     { x: 10, y: 24, kind: 'mini-c' },
     { x: 15, y: 38, kind: 'mini-a' },
+
     { x: 84, y: 236, kind: 'mini-b' },
     { x: 88, y: 249, kind: 'mini-c' },
+
     { x: 12, y: 255, kind: 'mini-d' },
     { x: 16, y: 271, kind: 'mini-c' },
+
     { x: 74, y: 340, kind: 'mini-a' },
     { x: 79, y: 351, kind: 'mini-c' },
+
     { x: 85, y: 427, kind: 'mini-b' },
     { x: 89, y: 443, kind: 'mini-c' },
+
     { x: 17, y: 481, kind: 'mini-d' },
     { x: 22, y: 491, kind: 'mini-c' },
+
     { x: 48, y: 690, kind: 'mini-b' },
     { x: 54, y: 704, kind: 'mini-a' },
+
     { x: 89, y: 735, kind: 'mini-c' }
   ];
+
+  /* ==========================================
+     FORMES DES ARCHIPELS V14
+     ========================================== */
 
   const ARCHIPEL_SHAPES = {
     alpha: {
@@ -146,9 +166,14 @@
     }
   };
 
+  /* ==========================================
+     INITIALISATION
+     ========================================== */
+
   if (
     typeof SCREENS === 'undefined' ||
-    typeof SUBJECTS === 'undefined'
+    typeof SUBJECTS === 'undefined' ||
+    typeof archipelBloque !== 'function'
   ) {
     console.warn(
       '[Level Up] Charger navigation.js avant map-design.js.'
@@ -158,6 +183,10 @@
 
   const ancienneCarte = SCREENS.map;
 
+  /* ==========================================
+     ÉTAT DES MATIÈRES
+     ========================================== */
+
   function getSubject(matiere) {
     return SUBJECTS.find(
       s => matiere.ids.includes(s.id)
@@ -166,21 +195,23 @@
 
   function getPrimaryId(matiere) {
     const subject = getSubject(matiere);
-    return subject ? subject.id : matiere.ids[0];
+
+    return subject
+      ? subject.id
+      : matiere.ids[0];
   }
+
+  /*
+   * Aucune liste de déblocage dans ce fichier.
+   * On consulte uniquement navigation.js.
+   */
 
   function estVerrouillee(matiere) {
     const subject = getSubject(matiere);
 
     if (!subject) return true;
 
-    if (matiere.ids.some(id => FORCE_UNLOCKED.has(id))) {
-      return false;
-    }
-
-    return typeof archipelBloque === 'function'
-      ? archipelBloque(subject.id)
-      : true;
+    return archipelBloque(subject.id);
   }
 
   function progression(matiere) {
@@ -203,7 +234,9 @@
   }
 
   function estTerminee(matiere) {
-    if (estVerrouillee(matiere)) return false;
+    if (estVerrouillee(matiere)) {
+      return false;
+    }
 
     const p = progression(matiere);
 
@@ -211,28 +244,43 @@
   }
 
   function etatMatiere(matiere) {
-    if (estVerrouillee(matiere)) return 'is-locked';
-    if (estTerminee(matiere)) return 'is-complete';
+    if (estVerrouillee(matiere)) {
+      return 'is-locked';
+    }
+
+    if (estTerminee(matiere)) {
+      return 'is-complete';
+    }
+
     return 'is-unlocked';
   }
+
+  /* ==========================================
+     DESSIN DES ÎLES
+     ========================================== */
 
   function ilesHtml(shapeName) {
     const config =
       ARCHIPEL_SHAPES[shapeName] ||
       ARCHIPEL_SHAPES.alpha;
 
-    const chemins = config.islands.map((path, index) => `
-      <path
-        d="${path}"
-        class="ld-island-shore"
-      ></path>
-      <path
-        d="${path}"
-        class="ld-island-land ${
-          index === config.main ? 'ld-island-main' : ''
-        }"
-      ></path>
-    `).join('');
+    const chemins = config.islands.map(
+      (path, index) => `
+        <path
+          d="${path}"
+          class="ld-island-shore"
+        ></path>
+
+        <path
+          d="${path}"
+          class="ld-island-land ${
+            index === config.main
+              ? 'ld-island-main'
+              : ''
+          }"
+        ></path>
+      `
+    ).join('');
 
     return `
       <svg
@@ -250,14 +298,23 @@
   }
 
   function miniIlesHtml() {
-    return MINI_ILES.map(ile => `
-      <span
-        class="ld-mini-island ${ile.kind}"
-        style="left:${ile.x}%;top:${ile.y}px"
-        aria-hidden="true"
-      ></span>
-    `).join('');
+    return MINI_ILES.map(
+      ile => `
+        <span
+          class="ld-mini-island ${ile.kind}"
+          style="
+            left:${ile.x}%;
+            top:${ile.y}px;
+          "
+          aria-hidden="true"
+        ></span>
+      `
+    ).join('');
   }
+
+  /* ==========================================
+     AFFICHAGE DES MATIÈRES
+     ========================================== */
 
   function fiche(matiere) {
     const etat = etatMatiere(matiere);
@@ -269,8 +326,8 @@
       : `data-act="arch" data-id="${id}"`;
 
     const symbole = verrouille
-      ? '<span class="ld-padlock">🔒</span>'
-      : '<span class="ld-chevron"></span>';
+      ? '<span class="ld-padlock" aria-hidden="true">🔒</span>'
+      : '<span class="ld-chevron" aria-hidden="true"></span>';
 
     return `
       <button
@@ -284,7 +341,9 @@
         "
         ${action}
         aria-label="${matiere.nom}${
-          verrouille ? ', verrouillé' : ', accessible'
+          verrouille
+            ? ', verrouillé'
+            : ', accessible'
         }"
       >
         <span class="ld-card">
@@ -304,9 +363,13 @@
 
         <span class="ld-archipelago-art">
           ${ilesHtml(matiere.shape)}
+
           ${
             verrouille
-              ? `<span class="ld-fog" aria-hidden="true">
+              ? `<span
+                   class="ld-fog"
+                   aria-hidden="true"
+                 >
                    <span class="ld-fog-layer"></span>
                  </span>`
               : ''
@@ -316,18 +379,31 @@
     `;
   }
 
+  /* ==========================================
+     MER DES PORTAILS
+     ========================================== */
+
   SCREENS.map = function () {
+    /*
+     * Si on explore une matière,
+     * on conserve le rendu intérieur existant.
+     */
+
     if (
       typeof UI !== 'undefined' &&
-      SUBJECTS.some(s => s.id === UI.arch)
+      SUBJECTS.some(
+        s => s.id === UI.arch
+      )
     ) {
       return ancienneCarte();
     }
 
     return `
       <section class="ld-world">
+
         <div class="title-row">
           <h2>La Mer des Portails</h2>
+
           <p class="sub">
             Chaque archipel représente une matière.
             Choisis une matière pour explorer ses îles.
@@ -338,12 +414,17 @@
           class="ld-sea"
           aria-label="Carte de la Mer des Portails"
         >
-          <span class="ld-compass" aria-hidden="true">
+          <span
+            class="ld-compass"
+            aria-hidden="true"
+          >
             <small>N</small>✧
           </span>
 
           ${miniIlesHtml()}
+
           ${MATIERES.map(fiche).join('')}
+
         </div>
       </section>
     `;
