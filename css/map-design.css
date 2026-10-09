@@ -1,0 +1,478 @@
+/*
+ * LEVEL UP — MER DES PORTAILS V9
+ */
+
+.ld-world {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+.ld-world .title-row {
+  margin-bottom: 16px;
+}
+
+.ld-world .title-row h2 {
+  margin: 0 0 8px;
+}
+
+.ld-world .sub {
+  line-height: 1.55;
+}
+
+/* MER */
+
+.ld-sea {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  height: 780px;
+  border: 1px solid #243d62;
+  border-radius: 17px;
+  background: radial-gradient(
+    ellipse at 52% 40%,
+    #0b2853 0%,
+    #081b3d 65%,
+    #07152e 100%
+  );
+}
+
+.ld-sea::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.36;
+  background-image:
+    linear-gradient(#38628c33 1px, transparent 1px),
+    linear-gradient(90deg, #38628c33 1px, transparent 1px);
+  background-size: 82px 82px;
+}
+
+.ld-sea::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 43%,
+    transparent 35%,
+    #05132955 100%
+  );
+}
+
+/* BOUSSOLE */
+
+.ld-compass {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  right: 18px;
+  font-size: 35px;
+  line-height: 1;
+  font-weight: 400;
+  color: #a7c8e8;
+  pointer-events: none;
+}
+
+.ld-compass small {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  font-size: 10px;
+}
+
+/* MINI-ÎLES */
+
+.ld-mini-island {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  box-sizing: border-box;
+  pointer-events: none;
+  opacity: 0.58;
+  background: #193455;
+  border: 1.5px solid rgba(150, 180, 215, 0.35);
+  box-shadow:
+    0 0 0 5px rgba(90, 125, 168, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ld-mini-island.mini-a {
+  width: 19px;
+  height: 11px;
+  border-radius: 58% 42% 52% 48% / 45% 55% 44% 56%;
+  transform: rotate(-16deg);
+}
+
+.ld-mini-island.mini-b {
+  width: 27px;
+  height: 15px;
+  border-radius: 44% 56% 48% 52% / 52% 42% 58% 48%;
+  transform: rotate(22deg);
+}
+
+.ld-mini-island.mini-c {
+  width: 13px;
+  height: 9px;
+  border-radius: 58% 42% 50% 50% / 46% 54% 44% 56%;
+  transform: rotate(-12deg);
+}
+
+.ld-mini-island.mini-d {
+  width: 23px;
+  height: 13px;
+  border-radius: 42% 58% 55% 45% / 56% 44% 52% 48%;
+  transform: rotate(8deg);
+}
+
+/* ARCHIPELS */
+
+.ld-archipelago {
+  all: unset;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 3;
+  left: var(--ld-x);
+  transform: translateX(-50%);
+  width: 168px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #eaf1fc;
+  cursor: pointer;
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.ld-archipelago:disabled {
+  cursor: default;
+}
+
+.ld-archipelago:focus-visible {
+  outline: 2px solid #f0f6ff;
+  outline-offset: 5px;
+  border-radius: 7px;
+}
+
+.ld-archipelago:not(:disabled):active {
+  transform: translateX(-50%) scale(0.985);
+}
+
+/* CARTOUCHE */
+
+.ld-card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  width: 100%;
+  min-height: 49px;
+  padding: 7px 9px;
+  border: 1px solid rgba(220, 231, 240, 0.7);
+  border-radius: 7px;
+  background: rgba(7, 19, 38, 0.92);
+  box-shadow: 0 3px 7px rgba(2, 12, 27, 0.35);
+}
+
+.ld-card-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.ld-card-copy strong {
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.12;
+  color: #f2f5fa;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.ld-card-copy small {
+  font-size: 10px;
+  line-height: 1.25;
+  color: #b9c9df;
+}
+
+.ld-card-end {
+  display: grid;
+  place-items: center;
+  flex: 0 0 15px;
+  width: 15px;
+  height: 18px;
+}
+
+.ld-padlock {
+  font-size: 13px;
+  line-height: 1;
+  filter: grayscale(1) brightness(1.8);
+}
+
+.ld-chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid currentColor;
+  border-top: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.ld-archipelago.is-locked .ld-card {
+  border-color: rgba(220, 231, 240, 0.65);
+}
+
+.ld-archipelago.is-locked .ld-card-copy strong,
+.ld-archipelago.is-locked .ld-card-copy small {
+  color: #f2f5fa;
+}
+
+.ld-archipelago.is-unlocked .ld-card,
+.ld-archipelago.is-complete .ld-card {
+  border-color: var(--ld-accent);
+}
+
+.ld-archipelago.is-unlocked .ld-card-copy strong,
+.ld-archipelago.is-complete .ld-card-copy strong,
+.ld-archipelago.is-unlocked .ld-chevron,
+.ld-archipelago.is-complete .ld-chevron {
+  color: var(--ld-accent);
+}
+
+.ld-archipelago:not(:disabled):hover .ld-card {
+  background: #0c213c;
+}
+
+/* LOSANGE ET TRAIT */
+
+.ld-rune-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 30px;
+  margin-top: 6px;
+  color: #dfeaf8;
+}
+
+.ld-rune-wrap::after {
+  content: "";
+  position: absolute;
+  left: var(--ld-rune-x, 50%);
+  top: 12px;
+  width: 1.5px;
+  height: 65px;
+  transform: translateX(-50%);
+  background: currentColor;
+  opacity: 0.68;
+  pointer-events: none;
+}
+
+.ld-rune {
+  position: absolute;
+  z-index: 2;
+  left: var(--ld-rune-x, 50%);
+  top: 0;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  translate: -50% 0;
+  transform: rotate(45deg);
+  border: 1.5px solid currentColor;
+  background: #091b39;
+  box-shadow: 0 0 0 2px rgba(9, 27, 57, 0.48);
+}
+
+.ld-rune::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border: 1px solid currentColor;
+  opacity: 0.7;
+}
+
+.ld-archipelago.is-locked .ld-rune-wrap {
+  color: #dfeaf8;
+}
+
+.ld-archipelago.is-unlocked .ld-rune-wrap,
+.ld-archipelago.is-complete .ld-rune-wrap {
+  color: var(--ld-accent);
+}
+
+.ld-archipelago.is-unlocked .ld-rune,
+.ld-archipelago.is-complete .ld-rune {
+  box-shadow:
+    0 0 0 2px rgba(9, 27, 57, 0.48),
+    0 0 7px var(--ld-accent);
+}
+
+/* DESSIN DES ARCHIPELS */
+
+.ld-archipelago-art {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 104px;
+  margin-top: 0;
+  pointer-events: none;
+}
+
+.ld-islands {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ld-islands-group {
+  transform-origin: center;
+}
+
+.ld-island-shore {
+  fill: #6385ae;
+  stroke: #6f91ba;
+  stroke-width: 10;
+  stroke-linejoin: round;
+  opacity: 0.13;
+}
+
+.ld-island-land {
+  fill: #27364c;
+  stroke: #7d8ba0;
+  stroke-width: 2.9;
+  stroke-linejoin: round;
+  opacity: 0.72;
+}
+
+.ld-island-main {
+  fill: #29465a;
+  stroke: #8da5b6;
+}
+
+/* GLOW DOUX */
+
+.ld-archipelago.is-unlocked .ld-island-main,
+.ld-archipelago.is-complete .ld-island-main {
+  fill: #23675f;
+  stroke: var(--ld-accent);
+  opacity: 1;
+  filter:
+    drop-shadow(
+      0 0 5px
+      color-mix(in srgb, var(--ld-accent) 32%, transparent)
+    )
+    drop-shadow(
+      0 0 10px
+      color-mix(in srgb, var(--ld-accent) 14%, transparent)
+    );
+}
+
+.ld-archipelago.is-complete .ld-island-main {
+  filter: drop-shadow(
+    0 0 7px
+    color-mix(in srgb, var(--ld-accent) 42%, transparent)
+  );
+}
+
+/* ARCHIPEL VERROUILLÉ */
+
+.ld-archipelago.is-locked .ld-islands {
+  opacity: 0.82;
+}
+
+.ld-archipelago.is-locked .ld-archipelago-art::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(186, 200, 213, 0.13),
+    transparent 70%
+  );
+  filter: blur(7px);
+  pointer-events: none;
+}
+
+/* FORMES PARTICULIÈRES */
+
+.ld-shape-alpha .ld-islands-group {
+  transform: rotate(-4deg);
+}
+
+.ld-shape-beta .ld-islands-group {
+  transform: rotate(3deg);
+}
+
+.ld-shape-gamma .ld-islands-group {
+  transform: rotate(-6deg) scale(0.84, 0.94);
+  transform-origin: 44% 50%;
+}
+
+.ld-shape-delta .ld-islands-group {
+  transform: rotate(4deg);
+}
+
+.ld-shape-epsilon-small .ld-islands-group {
+  transform: scale(0.80);
+  transform-origin: 50% 50%;
+}
+
+/* RESPONSIVE */
+
+@media (min-width: 600px) {
+  .ld-archipelago {
+    width: 185px;
+  }
+
+  .ld-card-copy strong {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .ld-archipelago {
+    width: 158px;
+  }
+
+  .ld-card {
+    padding: 7px 8px;
+  }
+
+  .ld-card-copy strong {
+    font-size: 12px;
+  }
+
+  .ld-card-copy small {
+    font-size: 9px;
+  }
+
+  .ld-archipelago-art {
+    height: 100px;
+  }
+}
+
+@media (max-width: 340px) {
+  .ld-archipelago {
+    width: 145px;
+  }
+
+  .ld-card-copy strong {
+    font-size: 11px;
+  }
+
+  .ld-card-copy small {
+    font-size: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-archipelago {
+    transition: none;
+  }
+}
