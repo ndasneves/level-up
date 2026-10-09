@@ -498,3 +498,117 @@ details[data-panel] > summary {
   line-height: 1.4;
   padding: 12px 0;
 }
+
+
+/* === Mer des Portails : carte exploratoire sobre, compatible iPhone === */
+.portal-sea {
+  position: relative;
+  width: 100%;
+  min-height: 900px;
+  padding: 26px 0 45px;
+  overflow: hidden;
+  border: 1px solid rgba(77,181,255,.12);
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at 48% 32%, rgba(22,57,100,.3), transparent 56%),
+    repeating-radial-gradient(ellipse at 38% 48%, transparent 0 75px,rgba(46,104,152,.08) 77px,transparent 79px),
+    linear-gradient(180deg,#07101e,#050814 86%);
+}
+.sea-territory {
+  position: absolute;
+  width: 45%;
+  height: 205px;
+  color: var(--text);
+  isolation: isolate;
+}
+.sea-pos-0 { top: 20px; left: 6%; }
+.sea-pos-1 { top: 105px; right: 2%; }
+.sea-pos-2 { top: 275px; left: 4%; }
+.sea-pos-3 { top: 400px; right: 3%; }
+.sea-pos-4 { top: 580px; left: 7%; }
+.sea-pos-5 { top: 675px; right: 4%; }
+.sea-pos-6 { top: 815px; left: 3%; }
+.sea-pos-7 { top: 840px; right: 4%; }
+.sea-islands { width: 100%; height: 150px; display: block; opacity: .88; }
+.sea-territory.sea-open { cursor: pointer; }
+.sea-open .sea-islands { filter: drop-shadow(0 0 7px rgba(245,196,81,.24)); }
+.sea-locked .sea-islands { opacity: .32; filter: grayscale(1) brightness(.55); }
+.sea-fog {
+  position: absolute; inset: -12px -7px 22px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(ellipse at 50% 46%,rgba(107,124,145,.65),rgba(55,68,90,.48) 42%,transparent 74%);
+  filter: blur(16px);
+  z-index: 1;
+}
+.sea-locked .sea-fog { opacity: 1; }
+.sea-territory-label {
+  position: relative;
+  z-index: 2;
+  margin: -14px auto 0;
+  width: max-content;
+  max-width: 100%;
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 11px;
+  border: 1px solid rgba(120,143,172,.65);
+  border-radius: 5px;
+  background: rgba(8,16,34,.94);
+  box-shadow: 0 4px 18px rgba(0,0,0,.4);
+}
+.sea-open .sea-territory-label { border-color: #f5c451; }
+.sea-label-text { display: grid; min-width: 0; line-height: 1.25; }
+.sea-label-text strong { font: 700 16px var(--ui); }
+.sea-label-text small { font: 500 11px var(--ui); color: var(--muted); margin-top: 4px; }
+.sea-diamond { width: 12px; height: 12px; flex: none; transform: rotate(45deg); border: 2px solid #79869b; }
+.sea-open .sea-diamond { border-color: #f5c451; background: #f5c451; box-shadow: 0 0 9px rgba(245,196,81,.6); }
+.sea-lock { font-size: 15px; filter: grayscale(1); opacity: .65; }
+.sea-arrow { font-size: 26px; color: #f5c451; }
+.sea-open:focus-visible { outline: 2px solid #f5c451; outline-offset: 3px; }
+@media (min-width: 700px) {
+  .portal-sea { min-height: 1100px; }
+  .sea-territory { max-width: 380px; height: 250px; }
+  .sea-pos-0 { top: 50px; left: 10%; }
+  .sea-pos-1 { top: 160px; right: 8%; }
+  .sea-pos-2 { top: 390px; left: 12%; }
+  .sea-pos-3 { top: 510px; right: 9%; }
+  .sea-pos-4 { top: 730px; left: 12%; }
+  .sea-pos-5 { top: 820px; right: 8%; }
+}
+
+/* Boutons de territoire : neutraliser les styles natifs iOS. */
+button.sea-territory {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  text-align: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+/* Contours et reliefs discrets, sans révéler la couleur des régions fermées. */
+.sea-locked .sea-territory-label {
+  border-color: #4d5b73;
+  color: #cad2e0;
+}
+.sea-locked .sea-diamond {
+  background: transparent;
+  border-color: #738199;
+  box-shadow: none;
+}
+.sea-locked .sea-islands {
+  filter: grayscale(1) brightness(.48);
+}
+@media (max-width: 480px) {
+  .portal-sea { min-height: 1130px; }
+  .sea-territory { width: 69%; height: 195px; }
+  .sea-pos-0 { top: 15px; left: 2%; }
+  .sea-pos-1 { top: 185px; right: 1%; }
+  .sea-pos-2 { top: 370px; left: 2%; }
+  .sea-pos-3 { top: 550px; right: 1%; }
+  .sea-pos-4 { top: 735px; left: 2%; }
+  .sea-pos-5 { top: 920px; right: 1%; }
+  .sea-pos-6 { top: 1105px; left: 2%; }
+  .sea-pos-7 { top: 1290px; right: 1%; }
+  .sea-territory-label { margin-top: -18px; padding: 8px; }
+  .sea-label-text strong { font-size: 15px; }
+}

@@ -26,41 +26,43 @@ function badgeChef(d) {
     : '<span class="role-badge">Sentinelle</span>';
 }
 
-/* Archipels fermés pour le moment : tous. Pour en ouvrir un, ajouter son id
-   dans ARCHIPELS_OUVERTS (ex. ["pc"]) ; ARCHIPELS_VERROUILLES=false ouvre tout. */
+/* Les seuls archipels accessibles sur la Mer des Portails. */
 let ARCHIPELS_VERROUILLES = true;
-let ARCHIPELS_OUVERTS = [];
+let ARCHIPELS_OUVERTS = ["hi"];
+const COULEUR_HISTOIRE = "#f5c451";
+const COULEUR_ARCHIPEL_CACHE = "#536177";
+
 function archipelBloque(id) {
   return ARCHIPELS_VERROUILLES && !ARCHIPELS_OUVERTS.includes(id);
 }
-function carteMatiereCompacte(subject) {
-  // Five decorative islands are enough to represent any size of archipelago.
-  const islands = subject.dungeons
-    .slice(0, 5)
-    .map((d, i) =>
-      svgIle(
-        62 + i * 42,
-        72 + (i % 2) * 16,
-        20,
-        hacherTexte(d.id),
-        S.dungeons[d.id]?.cleared ? GOLD : subject.color,
-        false,
-      ),
+
+/* Dessin sobre : les autres territoires ne révèlent ni leur couleur ni leurs détails. */
+function ilesDeMatiere(subject, verrouille) {
+  const couleur = verrouille ? COULEUR_ARCHIPEL_CACHE
+    : subject.id === "hi" ? COULEUR_HISTOIRE : subject.color;
+  const nombre = Math.min(5, Math.max(3, subject.dungeons.length));
+  return Array.from({ length: nombre }, (_, i) =>
+    svgIle(
+      58 + i * 46,
+      75 + (i % 3 === 1 ? -18 : i % 3 === 2 ? 15 : 0),
+      16 + (i % 3) * 2,
+      hacherTexte(`${subject.id}-${i}`),
+      couleur,
+      false,
     )
-    .join("");
+  ).join("");
+}
+
+function carteMatiereCompacte(subject, index = 0) {
+  const verrouille = archipelBloque(subject.id);
   const done = subject.dungeons.filter((d) => S.dungeons[d.id]?.cleared).length;
-  if (archipelBloque(subject.id))
-    return `<button class="subject-island locked" disabled aria-disabled="true">
-    <svg viewBox="0 0 300 135" aria-hidden="true">${defsOcean(300, 135, hacherTexte(subject.id))}${islands}</svg>
-    <strong>${esc(subject.name)} <span class="soonbadge">🔒</span></strong><span>${esc(subject.region || "Archipel du Savoir")}</span>
-    <span class="subject-progress">Bientôt disponible</span>
-  </button>`;
-  return `<button class="subject-island" data-act="arch" data-id="${esc(subject.id)}">
-    <svg viewBox="0 0 300 135" aria-hidden="true">${defsOcean(300, 135, hacherTexte(subject.id))}${islands}</svg>
-    <strong>${esc(subject.name)}</strong><span>${esc(subject.region || "Archipel du Savoir")}</span>
-    <span class="subject-progress">${done} / ${subject.dungeons.length} portails libérés</span>
-    <span class="mini-progress" aria-hidden="true"><i style="width:${(done / subject.dungeons.length) * 100}%"></i></span>
-  </button>`;
+  const ile = `<svg class="sea-islands" viewBox="0 0 300 135" aria-hidden="true">${defsOcean(300, 135, hacherTexte(subject.id))}${ilesDeMatiere(subject, verrouille)}</svg>`;
+  const titre = `<span class="sea-territory-label"><span class="sea-diamond" aria-hidden="true"></span><span class="sea-label-text"><strong>${esc(subject.name)}</strong><small>${verrouille ? "Archipel verrouillé" : `${done} / ${subject.dungeons.length} portails libérés`}</small></span>${verrouille ? '<span class="sea-lock" aria-hidden="true">🔒</span>' : '<span class="sea-arrow" aria-hidden="true">›</span>'}</span>`;
+  const classes = `sea-territory sea-pos-${index % 8} ${verrouille ? "sea-locked" : "sea-open"}`;
+  if (verrouille) {
+    return `<div class="${classes}" aria-label="${esc(subject.name)} : archipel verrouillé">${ile}<span class="sea-fog" aria-hidden="true"></span>${titre}</div>`;
+  }
+  return `<button type="button" class="${classes}" data-act="arch" data-id="${esc(subject.id)}" aria-label="Explorer ${esc(subject.name)}">${ile}${titre}</button>`;
 }
 
 function prochainObjectif() {
@@ -118,15 +120,10 @@ let BARRE_CARTE_ACTIVE = false;
 SCREENS.map = function () {
   const subject = SUBJECTS.find((s) => s.id === UI.arch);
   if (!subject) {
-    const page = pageIndex(UI.worldPage, SUBJECTS.length, MAP_PAGE_SIZE);
-    return `<div class="title-row"><h2>La Mer des Portails</h2><p class="sub">Choisis un archipel. Chaque matière ouvre un territoire.</p></div>
-      <div class="subject-grid">${SUBJECTS.slice(
-        page * MAP_PAGE_SIZE,
-        (page + 1) * MAP_PAGE_SIZE,
-      )
-        .map(carteMatiereCompacte)
-        .join("")}</div>
-      ${pagination(page, SUBJECTS.length, MAP_PAGE_SIZE, "worldPage")}`;
+    return `<div class="title-row"><h2>La Mer des Portails</h2><p class="sub">Les fragments de la clé sont dispersés à travers les archipels. Explore les territoires accessibles.</p></div>
+      <div class="portal-sea" aria-label="Carte des archipels">
+        ${SUBJECTS.map((subject, index) => carteMatiereCompacte(subject, index)).join("")}
+      </div>`;
   }
   const query = UI.mapQuery || "",
     filtered = subject.dungeons.filter((d) =>
