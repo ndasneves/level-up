@@ -1,10 +1,11 @@
+
 /*
- * LEVEL UP — MER DES PORTAILS V9
+ * LEVEL UP — MER DES PORTAILS V13
  *
- * Ajustements :
- * - Français : trait/losange un peu plus à gauche
- * - Espagnol : un peu plus bas et un peu plus à droite
- *   pour l'éloigner de Physique-Chimie
+ * Positions et silhouettes V12 conservées.
+ * Brume enveloppante et irrégulière sur les archipels verrouillés.
+ *
+ * Charger après navigation.js, avant boot.js.
  */
 
 (function () {
@@ -68,28 +69,22 @@
   const MINI_ILES = [
     { x: 10, y: 24, kind: 'mini-c' },
     { x: 15, y: 38, kind: 'mini-a' },
-
     { x: 84, y: 236, kind: 'mini-b' },
     { x: 88, y: 249, kind: 'mini-c' },
-
     { x: 12, y: 255, kind: 'mini-d' },
     { x: 16, y: 271, kind: 'mini-c' },
-
     { x: 74, y: 340, kind: 'mini-a' },
     { x: 79, y: 351, kind: 'mini-c' },
-
     { x: 85, y: 427, kind: 'mini-b' },
     { x: 89, y: 443, kind: 'mini-c' },
-
     { x: 17, y: 481, kind: 'mini-d' },
     { x: 22, y: 491, kind: 'mini-c' },
-
     { x: 48, y: 690, kind: 'mini-b' },
     { x: 54, y: 704, kind: 'mini-a' },
-
     { x: 89, y: 735, kind: 'mini-c' }
   ];
 
+  // Silhouettes conservées sans modification.
   const ARCHIPEL_SHAPES = {
     alpha: {
       main: 0,
@@ -103,7 +98,6 @@
         'M194 28 C188 24 189 16 195 14 C204 11 210 18 208 26 C206 33 199 33 194 28 Z'
       ]
     },
-
     beta: {
       main: 3,
       islands: [
@@ -117,7 +111,6 @@
         'M192 56 C186 51 188 43 197 42 C206 41 210 48 208 55 C205 63 197 62 192 56 Z'
       ]
     },
-
     gamma: {
       main: 2,
       islands: [
@@ -130,7 +123,6 @@
         'M188 42 C182 33 187 24 195 27 C204 29 208 40 203 47 C199 52 191 50 188 42 Z'
       ]
     },
-
     delta: {
       main: 0,
       islands: [
@@ -142,7 +134,6 @@
         'M189 24 C182 18 186 8 197 8 C207 8 211 19 206 26 C202 32 194 30 189 24 Z'
       ]
     },
-
     'epsilon-small': {
       main: 0,
       islands: [
@@ -159,13 +150,13 @@
     typeof SUBJECTS === 'undefined'
   ) {
     console.warn(
-      '[Level Up] navigation.js doit être chargé avant map-design.js.'
+      '[Level Up] Charger navigation.js avant map-design.js.'
     );
     return;
   }
 
-  if (window.__levelUpMapV9Loaded) return;
-  window.__levelUpMapV9Loaded = true;
+  if (window.__levelUpMapV13Loaded) return;
+  window.__levelUpMapV13Loaded = true;
 
   const ancienneCarte = SCREENS.map;
 
@@ -180,15 +171,14 @@
     return subject ? subject.id : matiere.ids[0];
   }
 
-  function estForceeDebloquee(matiere) {
-    return matiere.ids.some(id => FORCE_UNLOCKED.has(id));
-  }
-
   function estVerrouillee(matiere) {
     const subject = getSubject(matiere);
 
     if (!subject) return true;
-    if (estForceeDebloquee(matiere)) return false;
+
+    if (matiere.ids.some(id => FORCE_UNLOCKED.has(id))) {
+      return false;
+    }
 
     return typeof archipelBloque === 'function'
       ? archipelBloque(subject.id)
@@ -199,13 +189,13 @@
     const subject = getSubject(matiere);
     const donjons = subject?.dungeons || [];
 
-    const progressionDonjons =
+    const sauvegarde =
       typeof S !== 'undefined'
         ? S.dungeons || {}
         : {};
 
     const reussis = donjons.filter(
-      d => progressionDonjons[d.id]?.cleared
+      d => sauvegarde[d.id]?.cleared
     ).length;
 
     return { total: donjons.length, reussis };
@@ -215,6 +205,7 @@
     if (estVerrouillee(matiere)) return false;
 
     const p = progression(matiere);
+
     return p.total > 0 && p.reussis === p.total;
   }
 
@@ -228,18 +219,18 @@
     const config =
       ARCHIPEL_SHAPES[shapeName] || ARCHIPEL_SHAPES.alpha;
 
-    const chemins = config.islands
-      .map((path, index) => `
-        <path
-          d="${path}"
-          class="ld-island-shore"
-        ></path>
-        <path
-          d="${path}"
-          class="ld-island-land ${index === config.main ? 'ld-island-main' : ''}"
-        ></path>
-      `)
-      .join('');
+    const chemins = config.islands.map((path, index) => `
+      <path
+        d="${path}"
+        class="ld-island-shore"
+      ></path>
+      <path
+        d="${path}"
+        class="ld-island-land ${
+          index === config.main ? 'ld-island-main' : ''
+        }"
+      ></path>
+    `).join('');
 
     return `
       <svg
@@ -290,7 +281,9 @@
           top:${matiere.top}px;
         "
         ${action}
-        aria-label="${matiere.nom}${verrouille ? ', verrouillé' : ', accessible'}"
+        aria-label="${matiere.nom}${
+          verrouille ? ', verrouillé' : ', accessible'
+        }"
       >
         <span class="ld-card">
           <span class="ld-card-copy">
@@ -308,6 +301,14 @@
 
         <span class="ld-archipelago-art">
           ${ilesHtml(matiere.shape)}
+
+          ${
+            verrouille
+              ? `<span class="ld-fog" aria-hidden="true">
+                   <span class="ld-fog-layer"></span>
+                 </span>`
+              : ''
+          }
         </span>
       </button>
     `;

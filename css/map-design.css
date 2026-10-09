@@ -1,6 +1,14 @@
+
 /*
- * LEVEL UP — MER DES PORTAILS V9
+ * LEVEL UP — MER DES PORTAILS V13
+ *
+ * Positions et formes V12 inchangées.
+ * Brume enveloppante, irrégulière, sans bande blanche.
  */
+
+/* =========================================
+   PAGE
+   ========================================= */
 
 .ld-world {
   max-width: 760px;
@@ -20,7 +28,9 @@
   line-height: 1.55;
 }
 
-/* MER */
+/* =========================================
+   MER
+   ========================================= */
 
 .ld-sea {
   position: relative;
@@ -28,8 +38,10 @@
   overflow: hidden;
   width: 100%;
   height: 780px;
+
   border: 1px solid #243d62;
   border-radius: 17px;
+
   background: radial-gradient(
     ellipse at 52% 40%,
     #0b2853 0%,
@@ -45,9 +57,11 @@
   z-index: 0;
   pointer-events: none;
   opacity: 0.36;
+
   background-image:
     linear-gradient(#38628c33 1px, transparent 1px),
     linear-gradient(90deg, #38628c33 1px, transparent 1px);
+
   background-size: 82px 82px;
 }
 
@@ -57,6 +71,7 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
+
   background: radial-gradient(
     ellipse at 50% 43%,
     transparent 35%,
@@ -64,7 +79,9 @@
   );
 }
 
-/* BOUSSOLE */
+/* =========================================
+   BOUSSOLE
+   ========================================= */
 
 .ld-compass {
   position: absolute;
@@ -85,7 +102,9 @@
   font-size: 10px;
 }
 
-/* MINI-ÎLES */
+/* =========================================
+   MINI-ÎLES DÉCORATIVES
+   ========================================= */
 
 .ld-mini-island {
   position: absolute;
@@ -93,9 +112,11 @@
   display: block;
   box-sizing: border-box;
   pointer-events: none;
+
   opacity: 0.58;
   background: #193455;
   border: 1.5px solid rgba(150, 180, 215, 0.35);
+
   box-shadow:
     0 0 0 5px rgba(90, 125, 168, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -129,22 +150,30 @@
   transform: rotate(8deg);
 }
 
-/* ARCHIPELS */
+/* =========================================
+   ARCHIPELS
+   ========================================= */
 
 .ld-archipelago {
   all: unset;
   box-sizing: border-box;
   position: absolute;
   z-index: 3;
+
   left: var(--ld-x);
   transform: translateX(-50%);
   width: 168px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
+
   color: #eaf1fc;
   cursor: pointer;
-  transition: transform 0.16s ease, filter 0.16s ease;
+
+  transition:
+    transform 0.16s ease,
+    filter 0.16s ease;
 }
 
 .ld-archipelago:disabled {
@@ -161,7 +190,9 @@
   transform: translateX(-50%) scale(0.985);
 }
 
-/* CARTOUCHE */
+/* =========================================
+   CARTOUCHE
+   ========================================= */
 
 .ld-card {
   box-sizing: border-box;
@@ -169,12 +200,15 @@
   align-items: center;
   justify-content: space-between;
   gap: 7px;
+
   width: 100%;
   min-height: 49px;
   padding: 7px 9px;
+
   border: 1px solid rgba(220, 231, 240, 0.7);
   border-radius: 7px;
   background: rgba(7, 19, 38, 0.92);
+
   box-shadow: 0 3px 7px rgba(2, 12, 27, 0.35);
 }
 
@@ -224,6 +258,8 @@
   transform: rotate(45deg);
 }
 
+/* Verrouillé : blanc */
+
 .ld-archipelago.is-locked .ld-card {
   border-color: rgba(220, 231, 240, 0.65);
 }
@@ -232,6 +268,8 @@
 .ld-archipelago.is-locked .ld-card-copy small {
   color: #f2f5fa;
 }
+
+/* Accessible : couleur du planning */
 
 .ld-archipelago.is-unlocked .ld-card,
 .ld-archipelago.is-complete .ld-card {
@@ -249,7 +287,9 @@
   background: #0c213c;
 }
 
-/* LOSANGE ET TRAIT */
+/* =========================================
+   LOSANGE ET TRAIT
+   ========================================= */
 
 .ld-rune-wrap {
   position: relative;
@@ -278,13 +318,17 @@
   z-index: 2;
   left: var(--ld-rune-x, 50%);
   top: 0;
+
   box-sizing: border-box;
   width: 10px;
   height: 10px;
+
   translate: -50% 0;
   transform: rotate(45deg);
+
   border: 1.5px solid currentColor;
   background: #091b39;
+
   box-shadow: 0 0 0 2px rgba(9, 27, 57, 0.48);
 }
 
@@ -312,7 +356,9 @@
     0 0 7px var(--ld-accent);
 }
 
-/* DESSIN DES ARCHIPELS */
+/* =========================================
+   DESSIN DES ARCHIPELS
+   ========================================= */
 
 .ld-archipelago-art {
   position: relative;
@@ -355,13 +401,16 @@
   stroke: #8da5b6;
 }
 
-/* GLOW DOUX */
+/* =========================================
+   GLOW DOUX
+   ========================================= */
 
 .ld-archipelago.is-unlocked .ld-island-main,
 .ld-archipelago.is-complete .ld-island-main {
   fill: #23675f;
   stroke: var(--ld-accent);
   opacity: 1;
+
   filter:
     drop-shadow(
       0 0 5px
@@ -380,26 +429,223 @@
   );
 }
 
-/* ARCHIPEL VERROUILLÉ */
+/* =========================================
+   ÎLES VERROUILLÉES
+   ========================================= */
+
+/*
+ * On conserve le niveau de visibilité V12.
+ * Les formes restent suggérées, sans contours nets.
+ */
 
 .ld-archipelago.is-locked .ld-islands {
-  opacity: 0.82;
+  opacity: 0.42;
+  filter: blur(4px);
 }
 
-.ld-archipelago.is-locked .ld-archipelago-art::after {
+.ld-archipelago.is-locked .ld-island-land {
+  fill: #314660;
+  stroke: #7185a0;
+  stroke-width: 2;
+}
+
+.ld-archipelago.is-locked .ld-island-shore {
+  opacity: 0.08;
+}
+
+/* =========================================
+   BRUME V13
+   ========================================= */
+
+/*
+ * Cinq nappes principales autour des îles :
+ * en haut, au milieu et sur les côtés.
+ *
+ * Pas de grande bande lumineuse en bas.
+ */
+
+.ld-fog {
+  position: absolute;
+  z-index: 2;
+
+  left: -18px;
+  right: -18px;
+  top: -18px;
+  bottom: -15px;
+
+  display: block;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse 34% 28% at 22% 30%,
+      rgba(143, 164, 194, 0.23) 0%,
+      rgba(112, 136, 172, 0.12) 55%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 32% 32% at 53% 39%,
+      rgba(171, 186, 210, 0.21) 0%,
+      rgba(128, 151, 184, 0.11) 55%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 34% 29% at 79% 45%,
+      rgba(146, 168, 196, 0.22) 0%,
+      rgba(112, 138, 171, 0.12) 54%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 35% 29% at 37% 72%,
+      rgba(139, 162, 191, 0.18) 0%,
+      rgba(113, 136, 165, 0.08) 55%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 28% 25% at 73% 75%,
+      rgba(152, 171, 199, 0.16) 0%,
+      rgba(111, 134, 165, 0.07) 56%,
+      transparent 100%
+    );
+
+  filter: blur(7px);
+}
+
+/*
+ * Nappes irrégulières plus petites.
+ * Elles évitent l'aspect d'un nuage ovale unique.
+ */
+
+.ld-fog::before {
   content: "";
   position: absolute;
-  inset: -4px;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(186, 200, 213, 0.13),
-    transparent 70%
-  );
-  filter: blur(7px);
+
+  inset: -6px -3px;
+
   pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse 24% 27% at 13% 52%,
+      rgba(168, 185, 210, 0.16),
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 21% 24% at 43% 16%,
+      rgba(171, 188, 212, 0.17),
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 26% 30% at 66% 58%,
+      rgba(155, 175, 203, 0.18),
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 21% 24% at 91% 32%,
+      rgba(159, 179, 206, 0.15),
+      transparent 100%
+    );
+
+  filter: blur(8px);
 }
 
-/* FORMES PARTICULIÈRES */
+/*
+ * Ombres dispersées sous la brume :
+ * elles donnent de la profondeur sans créer
+ * de bande claire en bas.
+ */
+
+.ld-fog::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse 27% 29% at 30% 58%,
+      rgba(27, 49, 79, 0.20),
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 24% 28% at 68% 36%,
+      rgba(26, 46, 75, 0.17),
+      transparent 100%
+    );
+
+  filter: blur(6px);
+}
+
+/*
+ * Une nappe additionnelle par-dessus les autres,
+ * visible surtout autour de l'île principale.
+ */
+
+.ld-fog-layer {
+  position: absolute;
+  inset: 5% 8% 7%;
+  display: block;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse 35% 38% at 45% 48%,
+      rgba(168, 187, 213, 0.23),
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 29% 34% at 67% 66%,
+      rgba(149, 171, 199, 0.17),
+      transparent 100%
+    );
+
+  filter: blur(9px);
+}
+
+/* =========================================
+   VARIATIONS SELON LA MATIÈRE
+   ========================================= */
+
+/*
+ * Physique-Chimie : brume plutôt verticale,
+ * adaptée à sa silhouette allongée.
+ */
+
+.ld-shape-gamma.is-locked .ld-fog {
+  transform: rotate(-7deg) scale(0.91, 1.07);
+  transform-origin: 46% 50%;
+}
+
+/*
+ * Français : brume légèrement plus large
+ * autour de ses deux grandes îles.
+ */
+
+.ld-shape-delta.is-locked .ld-fog {
+  transform: rotate(5deg) scale(1.06, 0.94);
+  transform-origin: center;
+}
+
+/*
+ * Espagnol : brume plus petite,
+ * adaptée à son archipel de quatre îles.
+ */
+
+.ld-shape-epsilon-small.is-locked .ld-fog {
+  transform: rotate(-9deg) scale(0.84, 0.87);
+  transform-origin: center;
+}
+
+/* Pas de brume sur les matières accessibles */
+
+.ld-archipelago.is-unlocked .ld-fog,
+.ld-archipelago.is-complete .ld-fog {
+  display: none;
+}
+
+/* =========================================
+   FORMES D'ARCHIPELS — INCHANGÉES
+   ========================================= */
 
 .ld-shape-alpha .ld-islands-group {
   transform: rotate(-4deg);
@@ -423,7 +669,9 @@
   transform-origin: 50% 50%;
 }
 
-/* RESPONSIVE */
+/* =========================================
+   RESPONSIVE
+   ========================================= */
 
 @media (min-width: 600px) {
   .ld-archipelago {
