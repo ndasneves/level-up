@@ -22,8 +22,6 @@
   --read: var(--ui); /* une seule police pour tout le jeu */
   --font-texte: var(--ui); /* police des boutons et du récit */
   box-sizing: border-box;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
   color-scheme: dark;
 }
 /* Le jeu garde son univers sombre quel que soit le thème du lecteur */
@@ -50,19 +48,9 @@ body {
   margin: 0;
   min-height: 100%;
 }
-/* iPhone (appli installée) : le document doit toujours remplir tout l'écran, sinon
-   la barre d'onglets fixée en bas flotte au-dessus du bas de l'écran quand la
-   page est courte. */
-html {
-  height: 100%;
-  height: -webkit-fill-available;
-}
 body {
   min-height: 100vh;
   min-height: 100dvh;
-  min-height: -webkit-fill-available;
-}
-body {
   background:
     radial-gradient(
       ellipse 80% 50% at 50% -10%,
