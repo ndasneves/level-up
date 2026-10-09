@@ -1,11 +1,9 @@
 
 /*
- * LEVEL UP — MER DES PORTAILS V13
- *
- * Positions et silhouettes V12 conservées.
- * Brume enveloppante et irrégulière sur les archipels verrouillés.
- *
- * Charger après navigation.js, avant boot.js.
+ * LEVEL UP — MER DES PORTAILS V14
+ * Carte V13 conservée.
+ * Brume légèrement atténuée via CSS.
+ * Espacements sous la carte corrigés via CSS.
  */
 
 (function () {
@@ -84,7 +82,6 @@
     { x: 89, y: 735, kind: 'mini-c' }
   ];
 
-  // Silhouettes conservées sans modification.
   const ARCHIPEL_SHAPES = {
     alpha: {
       main: 0,
@@ -98,6 +95,7 @@
         'M194 28 C188 24 189 16 195 14 C204 11 210 18 208 26 C206 33 199 33 194 28 Z'
       ]
     },
+
     beta: {
       main: 3,
       islands: [
@@ -111,6 +109,7 @@
         'M192 56 C186 51 188 43 197 42 C206 41 210 48 208 55 C205 63 197 62 192 56 Z'
       ]
     },
+
     gamma: {
       main: 2,
       islands: [
@@ -123,6 +122,7 @@
         'M188 42 C182 33 187 24 195 27 C204 29 208 40 203 47 C199 52 191 50 188 42 Z'
       ]
     },
+
     delta: {
       main: 0,
       islands: [
@@ -134,6 +134,7 @@
         'M189 24 C182 18 186 8 197 8 C207 8 211 19 206 26 C202 32 194 30 189 24 Z'
       ]
     },
+
     'epsilon-small': {
       main: 0,
       islands: [
@@ -154,9 +155,6 @@
     );
     return;
   }
-
-  if (window.__levelUpMapV13Loaded) return;
-  window.__levelUpMapV13Loaded = true;
 
   const ancienneCarte = SCREENS.map;
 
@@ -198,7 +196,10 @@
       d => sauvegarde[d.id]?.cleared
     ).length;
 
-    return { total: donjons.length, reussis };
+    return {
+      total: donjons.length,
+      reussis
+    };
   }
 
   function estTerminee(matiere) {
@@ -217,7 +218,8 @@
 
   function ilesHtml(shapeName) {
     const config =
-      ARCHIPEL_SHAPES[shapeName] || ARCHIPEL_SHAPES.alpha;
+      ARCHIPEL_SHAPES[shapeName] ||
+      ARCHIPEL_SHAPES.alpha;
 
     const chemins = config.islands.map((path, index) => `
       <path
@@ -267,8 +269,8 @@
       : `data-act="arch" data-id="${id}"`;
 
     const symbole = verrouille
-      ? '<span class="ld-padlock" aria-hidden="true">🔒</span>'
-      : '<span class="ld-chevron" aria-hidden="true"></span>';
+      ? '<span class="ld-padlock">🔒</span>'
+      : '<span class="ld-chevron"></span>';
 
     return `
       <button
@@ -290,6 +292,7 @@
             <strong>${matiere.nom}</strong>
             <small>${matiere.zone}</small>
           </span>
+
           <span class="ld-card-end" aria-hidden="true">
             ${symbole}
           </span>
@@ -301,7 +304,6 @@
 
         <span class="ld-archipelago-art">
           ${ilesHtml(matiere.shape)}
-
           ${
             verrouille
               ? `<span class="ld-fog" aria-hidden="true">

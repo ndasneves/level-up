@@ -1,19 +1,18 @@
 
 /*
- * LEVEL UP — MER DES PORTAILS V13
- *
- * Positions et formes V12 inchangées.
- * Brume enveloppante, irrégulière, sans bande blanche.
+ * LEVEL UP — MER DES PORTAILS V14
+ * Brume V13 légèrement atténuée.
+ * Espacements sous la carte corrigés.
  */
 
 /* =========================================
-   PAGE
+   PAGE ET ESPACEMENTS
    ========================================= */
 
 .ld-world {
   max-width: 760px;
   margin: 0 auto;
-  padding-bottom: 20px;
+  padding-bottom: 0;
 }
 
 .ld-world .title-row {
@@ -28,6 +27,26 @@
   line-height: 1.55;
 }
 
+/*
+ * Corrections propres à l'écran Carte.
+ *
+ * On conserve une marge de sécurité pour
+ * le menu fixe, mais on supprime l'excès
+ * d'espacement des conteneurs.
+ *
+ * :has() est pris en charge par Safari iOS
+ * moderne.
+ */
+
+#app:has(.ld-world) {
+  padding-bottom:
+    calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+#app:has(.ld-world) main {
+  padding-bottom: 0;
+}
+
 /* =========================================
    MER
    ========================================= */
@@ -38,7 +57,6 @@
   overflow: hidden;
   width: 100%;
   height: 780px;
-
   border: 1px solid #243d62;
   border-radius: 17px;
 
@@ -57,11 +75,9 @@
   z-index: 0;
   pointer-events: none;
   opacity: 0.36;
-
   background-image:
     linear-gradient(#38628c33 1px, transparent 1px),
     linear-gradient(90deg, #38628c33 1px, transparent 1px);
-
   background-size: 82px 82px;
 }
 
@@ -103,7 +119,7 @@
 }
 
 /* =========================================
-   MINI-ÎLES DÉCORATIVES
+   MINI-ÎLES
    ========================================= */
 
 .ld-mini-island {
@@ -112,7 +128,6 @@
   display: block;
   box-sizing: border-box;
   pointer-events: none;
-
   opacity: 0.58;
   background: #193455;
   border: 1.5px solid rgba(150, 180, 215, 0.35);
@@ -125,28 +140,36 @@
 .ld-mini-island.mini-a {
   width: 19px;
   height: 11px;
-  border-radius: 58% 42% 52% 48% / 45% 55% 44% 56%;
+  border-radius:
+    58% 42% 52% 48% /
+    45% 55% 44% 56%;
   transform: rotate(-16deg);
 }
 
 .ld-mini-island.mini-b {
   width: 27px;
   height: 15px;
-  border-radius: 44% 56% 48% 52% / 52% 42% 58% 48%;
+  border-radius:
+    44% 56% 48% 52% /
+    52% 42% 58% 48%;
   transform: rotate(22deg);
 }
 
 .ld-mini-island.mini-c {
   width: 13px;
   height: 9px;
-  border-radius: 58% 42% 50% 50% / 46% 54% 44% 56%;
+  border-radius:
+    58% 42% 50% 50% /
+    46% 54% 44% 56%;
   transform: rotate(-12deg);
 }
 
 .ld-mini-island.mini-d {
   width: 23px;
   height: 13px;
-  border-radius: 42% 58% 55% 45% / 56% 44% 52% 48%;
+  border-radius:
+    42% 58% 55% 45% /
+    56% 44% 52% 48%;
   transform: rotate(8deg);
 }
 
@@ -191,7 +214,7 @@
 }
 
 /* =========================================
-   CARTOUCHE
+   CARTOUCHES
    ========================================= */
 
 .ld-card {
@@ -208,7 +231,6 @@
   border: 1px solid rgba(220, 231, 240, 0.7);
   border-radius: 7px;
   background: rgba(7, 19, 38, 0.92);
-
   box-shadow: 0 3px 7px rgba(2, 12, 27, 0.35);
 }
 
@@ -220,11 +242,14 @@
 }
 
 .ld-card-copy strong {
-  font-family: 'Barlow Semi Condensed', sans-serif;
+  font-family:
+    'Barlow Semi Condensed',
+    sans-serif;
   font-size: 14px;
   font-weight: 750;
   line-height: 1.12;
   color: #f2f5fa;
+
   overflow-wrap: normal;
   word-break: normal;
   hyphens: none;
@@ -258,8 +283,6 @@
   transform: rotate(45deg);
 }
 
-/* Verrouillé : blanc */
-
 .ld-archipelago.is-locked .ld-card {
   border-color: rgba(220, 231, 240, 0.65);
 }
@@ -268,8 +291,6 @@
 .ld-archipelago.is-locked .ld-card-copy small {
   color: #f2f5fa;
 }
-
-/* Accessible : couleur du planning */
 
 .ld-archipelago.is-unlocked .ld-card,
 .ld-archipelago.is-complete .ld-card {
@@ -288,7 +309,7 @@
 }
 
 /* =========================================
-   LOSANGE ET TRAIT
+   LOSANGES ET TRAITS
    ========================================= */
 
 .ld-rune-wrap {
@@ -303,11 +324,14 @@
 .ld-rune-wrap::after {
   content: "";
   position: absolute;
+
   left: var(--ld-rune-x, 50%);
   top: 12px;
+
   width: 1.5px;
   height: 65px;
   transform: translateX(-50%);
+
   background: currentColor;
   opacity: 0.68;
   pointer-events: none;
@@ -316,6 +340,7 @@
 .ld-rune {
   position: absolute;
   z-index: 2;
+
   left: var(--ld-rune-x, 50%);
   top: 0;
 
@@ -329,7 +354,8 @@
   border: 1.5px solid currentColor;
   background: #091b39;
 
-  box-shadow: 0 0 0 2px rgba(9, 27, 57, 0.48);
+  box-shadow:
+    0 0 0 2px rgba(9, 27, 57, 0.48);
 }
 
 .ld-rune::after {
@@ -357,7 +383,7 @@
 }
 
 /* =========================================
-   DESSIN DES ARCHIPELS
+   ÎLES
    ========================================= */
 
 .ld-archipelago-art {
@@ -402,7 +428,7 @@
 }
 
 /* =========================================
-   GLOW DOUX
+   GLOW DOUX DES MATIÈRES DÉBLOQUÉES
    ========================================= */
 
 .ld-archipelago.is-unlocked .ld-island-main,
@@ -414,29 +440,36 @@
   filter:
     drop-shadow(
       0 0 5px
-      color-mix(in srgb, var(--ld-accent) 32%, transparent)
+      color-mix(
+        in srgb,
+        var(--ld-accent) 32%,
+        transparent
+      )
     )
     drop-shadow(
       0 0 10px
-      color-mix(in srgb, var(--ld-accent) 14%, transparent)
+      color-mix(
+        in srgb,
+        var(--ld-accent) 14%,
+        transparent
+      )
     );
 }
 
 .ld-archipelago.is-complete .ld-island-main {
   filter: drop-shadow(
     0 0 7px
-    color-mix(in srgb, var(--ld-accent) 42%, transparent)
+    color-mix(
+      in srgb,
+      var(--ld-accent) 42%,
+      transparent
+    )
   );
 }
 
 /* =========================================
    ÎLES VERROUILLÉES
    ========================================= */
-
-/*
- * On conserve le niveau de visibilité V12.
- * Les formes restent suggérées, sans contours nets.
- */
 
 .ld-archipelago.is-locked .ld-islands {
   opacity: 0.42;
@@ -454,14 +487,16 @@
 }
 
 /* =========================================
-   BRUME V13
+   BRUME V14
    ========================================= */
 
 /*
- * Cinq nappes principales autour des îles :
- * en haut, au milieu et sur les côtés.
+ * Brume V13 conservée.
+ * Seule la luminosité du voile est réduite
+ * d'environ 15 %.
  *
- * Pas de grande bande lumineuse en bas.
+ * Les contours des îles restent au même
+ * niveau de visibilité.
  */
 
 .ld-fog {
@@ -475,6 +510,8 @@
 
   display: block;
   pointer-events: none;
+
+  opacity: 0.85;
 
   background:
     radial-gradient(
@@ -511,17 +548,10 @@
   filter: blur(7px);
 }
 
-/*
- * Nappes irrégulières plus petites.
- * Elles évitent l'aspect d'un nuage ovale unique.
- */
-
 .ld-fog::before {
   content: "";
   position: absolute;
-
   inset: -6px -3px;
-
   pointer-events: none;
 
   background:
@@ -549,12 +579,6 @@
   filter: blur(8px);
 }
 
-/*
- * Ombres dispersées sous la brume :
- * elles donnent de la profondeur sans créer
- * de bande claire en bas.
- */
-
 .ld-fog::after {
   content: "";
   position: absolute;
@@ -575,11 +599,6 @@
 
   filter: blur(6px);
 }
-
-/*
- * Une nappe additionnelle par-dessus les autres,
- * visible surtout autour de l'île principale.
- */
 
 .ld-fog-layer {
   position: absolute;
@@ -603,40 +622,29 @@
 }
 
 /* =========================================
-   VARIATIONS SELON LA MATIÈRE
+   VARIATIONS DE BRUME
    ========================================= */
 
-/*
- * Physique-Chimie : brume plutôt verticale,
- * adaptée à sa silhouette allongée.
- */
-
 .ld-shape-gamma.is-locked .ld-fog {
-  transform: rotate(-7deg) scale(0.91, 1.07);
+  transform:
+    rotate(-7deg)
+    scale(0.91, 1.07);
   transform-origin: 46% 50%;
 }
 
-/*
- * Français : brume légèrement plus large
- * autour de ses deux grandes îles.
- */
-
 .ld-shape-delta.is-locked .ld-fog {
-  transform: rotate(5deg) scale(1.06, 0.94);
+  transform:
+    rotate(5deg)
+    scale(1.06, 0.94);
   transform-origin: center;
 }
-
-/*
- * Espagnol : brume plus petite,
- * adaptée à son archipel de quatre îles.
- */
 
 .ld-shape-epsilon-small.is-locked .ld-fog {
-  transform: rotate(-9deg) scale(0.84, 0.87);
+  transform:
+    rotate(-9deg)
+    scale(0.84, 0.87);
   transform-origin: center;
 }
-
-/* Pas de brume sur les matières accessibles */
 
 .ld-archipelago.is-unlocked .ld-fog,
 .ld-archipelago.is-complete .ld-fog {
@@ -644,7 +652,7 @@
 }
 
 /* =========================================
-   FORMES D'ARCHIPELS — INCHANGÉES
+   FORMES DES ARCHIPELS
    ========================================= */
 
 .ld-shape-alpha .ld-islands-group {
@@ -656,7 +664,9 @@
 }
 
 .ld-shape-gamma .ld-islands-group {
-  transform: rotate(-6deg) scale(0.84, 0.94);
+  transform:
+    rotate(-6deg)
+    scale(0.84, 0.94);
   transform-origin: 44% 50%;
 }
 
