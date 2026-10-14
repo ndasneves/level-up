@@ -98,7 +98,7 @@ test("l’Élite reste adaptée après défaite et ne se multiplie pas deux fois
   assert.ok(hp >= g.run("atkVal()*12+B.L*22"));
   g.run("adapterBossElite()");
   assert.equal(g.run("B.bossMax"), hp);
-  g.run("defaiteBoss();ACTIONS.retry()");
+  g.run("defaiteBoss();S.inv.potHpL=2;ACTIONS.healout();ACTIONS.retry()");
   assert.equal(g.run("B.elite"), true);
   assert.equal(g.run("B.temper"), "insaisissable");
   assert.equal(g.run("B.bossMax"), hp);

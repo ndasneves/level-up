@@ -755,6 +755,7 @@ function nouvelleSauvegarde(name) {
     level: 1,
     xp: 0,
     gold: 0,
+    hp: 130,
     points: 0,
     stats: { str: 5, agi: 5, vit: 5, int: 5 },
     inv: { potHp: 0, potHpL: 0, potSecond: 0, potTime: 0 },
@@ -797,6 +798,7 @@ function migrerSauvegarde(o) {
   const base = nouvelleSauvegarde(o.name);
   const m = Object.assign(base, o);
   m.stats = Object.assign(base.stats, o.stats || {});
+  m.hp = Number.isFinite(o.hp) ? Math.max(0, Math.min(maxHpForStats(m.stats), Math.round(o.hp))) : maxHpForStats(m.stats);
   m.inv = Object.assign(
     { potHp: 0, potHpL: 0, potSecond: 0, potTime: 0 },
     o.inv || {},
@@ -934,7 +936,11 @@ function verifierNouveauContenu() {
 }
 
 /* ===== Statistiques dérivées ===== */
-let maxHp = () => 80 + S.stats.vit * 10;
+function maxHpForStats(stats) { return 80 + stats.vit * 10; }
+let maxHp = () => maxHpForStats(S.stats);
+function pvActuels() { return Math.max(0, Math.min(maxHp(), Number.isFinite(S.hp) ? S.hp : maxHp())); }
+function enregistrerPV(hp) { S.hp = Math.max(0, Math.min(maxHp(), Math.round(hp))); sauvegarder(); }
+function soinEntrainement() { return 35; }
 let maxMp = () => 30 + S.stats.int * 5;
 let atkVal = () => item(S.weapon).atk + S.stats.str * 2;
 let defVal = () => item(S.armor).def;
@@ -1139,6 +1145,7 @@ function enteteJeu() {
       <span>${S.xp} / ${need} XP avant le niveau ${S.level + 1}</span></div>`
         : ""
     }
+    ${classed ? `<div class="hud-health"><div class="hud-health-label"><span>PV</span><strong>${pvActuels()} / ${maxHp()}</strong></div><div class="bar hp" role="progressbar" aria-label="Points de vie" aria-valuemin="0" aria-valuenow="${pvActuels()}" aria-valuemax="${maxHp()}"><i style="width:${Math.round(100 * pvActuels() / maxHp())}%"></i></div>${(S.inv.potHp || 0)+(S.inv.potHpL || 0)>0 && pvActuels()<maxHp() ? `<button type="button" class="hud-heal" data-act="healout">Utiliser une potion (${(S.inv.potHp || 0)+(S.inv.potHpL || 0)})</button>` : ""}</div>` : ""}
     <div class="gold-count">◈ ${S.gold} <small>or</small></div>
   </header>
   <nav class="tabs" aria-label="Menu">${tabs.map(([k, l, ic]) => `<button class="tab ${on === k ? "on" : ""} ${locked(k) ? "soon" : ""}" data-act="allerA" data-to="${k}" ${on === k ? 'aria-current="page"' : ""}><span class="ti" aria-hidden="true">${ic}</span><span>${l}</span>${locked(k) ? '<span class="soonbadge">🔒</span>' : dot(k)}</button>`).join("")}</nav>`;
@@ -1415,6 +1422,7 @@ const SCREENS = {
       <aside class="win sticky"><div class="win-head">Portail de rang ${d.rank}</div>
         <dl class="info">
           <dt>Matière</dt><dd>${DMAP[d.id].s.name}</dd>
+        <dt>Région</dt><dd>${esc(regionDuDonjon(DMAP[d.id].s, d)?.name || "Région 1")}</dd>
           <dt>Niveau</dt><dd>${d.req}</dd>
           <dt>Créatures</dt><dd>${construireSalles(d).reduce((n, r) => n + r.ids.length, 0)}</dd>
           <dt>Boss</dt><dd>${rec.cleared ? d.boss.icon + " " + d.boss.name : "???"}</dd>
@@ -1589,12 +1597,13 @@ const SCREENS = {
         </div>`
             : B.timing
               ? `<div class="timegame">
-          <p class="timelabel">Appuie sur <strong>Frapper</strong> quand le curseur passe par le centre !</p>
-          <div class="timebar" data-bact="hit">
+          <p class="timelabel">Vise la <strong>zone verte</strong> pour un coup parfait, ou la <strong>zone dorée</strong> pour toucher.</p>
+          <div class="timebar" role="img" aria-label="Jauge de frappe : zone dorée pour toucher, zone verte pour coup parfait">
             <div class="tzone good" style="left:${50 + B.timing.offset - B.timing.goodHalf}%;width:${B.timing.goodHalf * 2}%"></div>
             <div class="tzone crit" style="left:${50 + B.timing.offset - B.timing.half}%;width:${B.timing.half * 2}%"></div>
             <div class="tmarker" style="animation-duration:${B.timing.period * 2}ms;--timing-cycle:${B.timing.period * 2}ms"></div>
           </div>
+          <div class="timelegend" aria-hidden="true"><span><i class="legend-hit"></i> Touché</span><span><i class="legend-perfect"></i> Parfait</span></div>
           <button class="btn primary big" data-bact="hit">Frapper !</button>
         </div>`
               : `<div class="skills">
@@ -1628,9 +1637,9 @@ const SCREENS = {
     if (r.type === "lose") {
       return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Défaite</div>
         <h2>Le boss t’a mis à terre</h2>
-        <p>Il lui restait ${r.left} % de ses PV. Ta bénédiction du donjon est conservée, et tu recommences avec tous tes PV.</p>
+        <p>Il lui restait ${r.left} % de ses PV. Ta bénédiction du donjon est conservée. Tes PV sont à zéro : soigne-toi pour repartir.</p>
         <div class="memo" style="text-align:left"><b>Conseils</b>Observe l’intention du boss. Protège-toi contre ses coups puissants, garde du mana et équipe une compétence adaptée. Une esquive parfaite prépare une contre-attaque.</div>
-        <div class="btnrow"><button class="btn primary" data-act="retry">Retenter le boss</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
+        <div class="btnrow"><button class="btn primary" data-act="retry" ${pvActuels() <= 0 ? "disabled" : ""}>Retenter le boss</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
     }
     if (r.type === "faint") {
       return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Évanoui</div>
@@ -1641,7 +1650,7 @@ const SCREENS = {
     }
     return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Entraînement terminé</div>
       <h2>${r.correct} bonnes réponses sur ${r.correct + r.wrong} essais</h2>
-      <div class="rewards"><span class="x">+${r.xp} XP</span><span class="g">+${r.gold} or</span></div>
+      <div class="rewards"><span class="x">+${r.xp} XP</span><span class="g">+${r.gold} or</span><span class="l">+${r.healed || 0} PV</span></div>
       <p>${r.wrong ? "Les questions ratées sont notées : elles reviendront au prochain entraînement." : "Sans faute. Tes points faibles fondent."}</p>
       <div class="btnrow"><button class="btn primary" data-act="train">Encore un entraînement</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
   },
@@ -1934,17 +1943,24 @@ function etatDonjon(d) {
       : "locked";
 }
 
-/* Regroupe les donjons d'une matière par paquets de GROUP_SIZE, dans l'ordre
-   où ils existent déjà — jamais par thème (impossible à deviner à l'avance
-   pour du contenu pas encore écrit). Une matière avec peu de donjons ne
-   produit qu'un seul groupe, et l'étape de sélection de groupe est alors
-   sautée automatiquement (voir map()). */
-const GROUP_SIZE = 5;
+/* Régions explicites : une notion rejoint sa région par son regionId.
+   Les IDs existants ne changent pas, donc les sauvegardes restent valables. */
+function regionsMatiere(s) {
+  const declared = Array.isArray(s.regions) && s.regions.length
+    ? s.regions : [{ id: s.id + "-r1", name: "Région 1", subtitle: "" }];
+  const regions = declared.map(r => ({ ...r, dungeons: [] }));
+  const byId = new Map(regions.map(r => [r.id, r]));
+  for (const dungeon of s.dungeons) {
+    const region = byId.get(dungeon.regionId) || regions[0];
+    region.dungeons.push(dungeon);
+  }
+  return regions.filter(r => r.dungeons.length);
+}
 function groupesMatiere(s) {
-  const groups = [];
-  for (let i = 0; i < s.dungeons.length; i += GROUP_SIZE)
-    groups.push(s.dungeons.slice(i, i + GROUP_SIZE));
-  return groups;
+  return regionsMatiere(s).map(r => r.dungeons);
+}
+function regionDuDonjon(s, dungeon) {
+  return regionsMatiere(s).find(r => r.dungeons.some(d => d.id === dungeon.id));
 }
 /* Positions "planisphère" pour 1 à GROUP_SIZE îles : dispersées dans la zone
    comme sur une vraie carte, pas alignées le long d'un chemin. Comme un
@@ -1979,7 +1995,8 @@ function carteArchipel(s, list) {
   list = list || s.dungeons;
   const W = 400,
     n = list.length;
-  const slots = ARCH_SLOTS[n] || ARCH_SLOTS[GROUP_SIZE].slice(0, n);
+  const slots = ARCH_SLOTS[n] || Array.from({length:n}, (_,i) => [i % 2 ? 285 : 115, 125 + i * 135]);
+  if (!n) return `<p class="hint">Aucun donjon dans cette région.</p>`;
   const H = Math.max(...slots.map((p) => p[1])) + 150;
   const nodes = list.map((d, i) => {
     const R = generateurAleatoire(hacherTexte(d.id));
@@ -1998,6 +2015,10 @@ function carteArchipel(s, list) {
   if (boatAt < 0) {
     const lastC = nodes.map((o) => o.st).lastIndexOf("cleared");
     boatAt = lastC;
+  }
+  // Chemin chronologique : s'allonge automatiquement à chaque nouveau donjon.
+  if (nodes.length > 1) {
+    svg += `<path d="${nodes.map((o,i) => `${i?'L':'M'}${f1(o.x)} ${f1(o.y)}`).join(' ')}" stroke="${s.color}" stroke-opacity=".52" stroke-width="2" stroke-dasharray="5 9" fill="none"/>`;
   }
   nodes.forEach((o, i) => {
     const { d, st, x, y, r } = o;
@@ -2209,6 +2230,10 @@ function creerSalle(dId, ids, label, recap, mobs, mobStart) {
   };
 }
 function demarrerDonjon(dId) {
+  if (pvActuels() <= 0) {
+    systeme("PV insuffisants", "<p>Tu n’as plus de PV. Utilise une potion ou termine un entraînement pour récupérer.</p>");
+    return;
+  }
   const d = DMAP[dId].d;
   const mobs = shuffle(MOBS);
   const defs = construireSalles(d);
@@ -2229,7 +2254,7 @@ function demarrerDonjon(dId) {
     combo: 0,
     maxCombo: 0,
     hpMax: maxHp(),
-    hp: maxHp(),
+    hp: pvActuels(),
     qtimeBonus: 0,
     xp: 0,
     gold: 0,
@@ -2356,6 +2381,7 @@ function utiliserSecondeChance() {
     if (S.mistakes[qid] <= 0) delete S.mistakes[qid];
   }
   R.hp = Math.min(R.hpMax, R.hp + (R.fb.dmg || 0));
+  if (R.mode === "dungeon") enregistrerPV(R.hp);
   R.log.pop();
   sauvegarder();
   preparerQuestion();
@@ -2479,6 +2505,7 @@ function resoudreReponse(ok, pick, typed, defInfo) {
     const dmg =
       R.mode === "training" ? 0 : Math.max(4, 12 + R.lvl * 2 - defVal());
     R.hp = Math.max(0, R.hp - dmg);
+    if (R.mode === "dungeon") enregistrerPV(R.hp);
     room.queue.push(room.queue.shift());
     R.fb = { ok: false, pick, typed, dmg, defInfo };
   }
@@ -2502,8 +2529,11 @@ function questionSuivante() {
     }
     if (R.mode === "training") {
       S.daily.trainings++;
+      const healed = Math.min(soinEntrainement(), maxHp() - pvActuels());
+      enregistrerPV(pvActuels() + healed);
       UI.result = {
         type: "training",
+        healed,
         correct: R.correct,
         wrong: R.wrong,
         xp: R.xp,
@@ -2522,6 +2552,7 @@ function boirePotionDonjon(id) {
   if (!R || !(S.inv[id] > 0) || R.hp >= R.hpMax) return;
   S.inv[id]--;
   R.hp = Math.min(R.hpMax, R.hp + item(id).heal);
+  enregistrerPV(R.hp);
   sauvegarder();
   afficher();
 }
@@ -2634,7 +2665,11 @@ function demarrerBoss(dId, bless) {
   const d = DMAP[dId].d,
     L = d.req;
   const chief = estChef(d);
-  const hpStart = bless.hp !== undefined ? bless.hp : maxHp();
+  const hpStart = Math.min(pvActuels(), bless.hp !== undefined ? bless.hp : pvActuels());
+  if (hpStart <= 0) {
+    systeme("PV insuffisants", "<p>Soigne-toi avec une potion ou termine un entraînement avant de combattre.</p>");
+    return;
+  }
   const temper = temperamentBoss(dId);
   B = {
     dId,
@@ -2974,6 +3009,7 @@ function potionJoueur() {
   S.inv[id]--;
   const heal = Math.min(B.hpMax - B.hp, item(id).heal);
   B.hp += heal;
+  enregistrerPV(B.hp);
   ajouterJournal(`Tu bois ${item(id).name.toLowerCase()} : +${heal} PV.`, "me");
   B.anim = { actor: "hero", kind: "heal" };
   B.fx = [
@@ -3030,6 +3066,7 @@ function tourBoss(playerDodging) {
     }
     B.guarding = false;
     B.hp = Math.max(0, B.hp - dmg);
+    enregistrerPV(B.hp);
     ajouterJournal(
       special
         ? `${DMAP[B.dId].d.boss.name} déchaîne son attaque spéciale : −${dmg} PV !`
@@ -3095,6 +3132,7 @@ function tourBoss(playerDodging) {
   }, 650);
 }
 function victoireBoss() {
+  enregistrerPV(B.hp);
   B.over = true;
   const d = DMAP[B.dId].d,
     rec = S.dungeons[d.id] || {};
@@ -3147,6 +3185,7 @@ function victoireBoss() {
   planifierCombat(() => allerA("result"), 700);
 }
 function defaiteBoss() {
+  enregistrerPV(0);
   B.over = true;
   UI.result = {
     type: "lose",
@@ -3162,6 +3201,15 @@ function defaiteBoss() {
 
 /* ===== Actions ===== */
 const ACTIONS = {
+  healout() {
+    if (!S || pvActuels() >= maxHp()) return;
+    const id = S.inv.potHp > 0 ? "potHp" : S.inv.potHpL > 0 ? "potHpL" : null;
+    if (!id) return;
+    S.inv[id]--;
+    const healed = Math.min(maxHp() - pvActuels(), item(id).heal);
+    enregistrerPV(pvActuels() + healed);
+    afficher();
+  },
   sysok() {
     messageSuivant();
   },
@@ -3340,10 +3388,12 @@ const ACTIONS = {
     });
   },
   retry() {
+    if (pvActuels() <= 0) { systeme("PV insuffisants", "<p>Utilise une potion ou termine un entraînement.</p>"); return; }
     const r = UI.result;
     demarrerBoss(r.dId, { acc: r.bless.acc, maxCombo: r.bless.maxCombo });
   },
   bossflee() {
+    if (B) enregistrerPV(B.hp);
     annulerCombat();
     if (B) B.over = true;
     UI.dId = B ? B.dId : UI.dId;

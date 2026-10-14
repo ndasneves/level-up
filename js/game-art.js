@@ -26,25 +26,35 @@ function illustrerCreature(name, role = "mob") {
     : "";
   return `<svg class="creature-art ${role}" viewBox="0 0 220 220" role="img" aria-label="${esc(name)}"><defs><radialGradient id="${id}"><stop stop-color="${color}" stop-opacity=".28"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient></defs><circle cx="110" cy="116" r="104" fill="url(#${id})"/><ellipse cx="110" cy="187" rx="65" ry="10" fill="#02060f" opacity=".65"/><circle cx="110" cy="114" r="78" fill="none" stroke="${color}" stroke-opacity=".22" stroke-dasharray="3 12"/>${shape}${crown}<path d="M79 190L108 182 141 190 111 198Z" fill="${color}" opacity=".4"/></svg>`;
 }
+function vignetteRegion(s, region) {
+  const seed = hacherTexte(s.id + ":" + region.id);
+  const R = generateurAleatoire(seed);
+  const centerX = 63 + (R() - .5) * 8, centerY = 47;
+  const main = svgIle(centerX, centerY, 23 + R()*4, seed, s.color, false);
+  let satellites = "";
+  for (let i=0; i<4; i++) {
+    const angle = R()*Math.PI*2, dist=30+R()*11;
+    satellites += svgIle(centerX+Math.cos(angle)*dist,
+      centerY+Math.sin(angle)*dist*.75, 6+R()*4,
+      hacherTexte(region.id+":islet:"+i), s.color, false);
+  }
+  const id="region-land-"+seed;
+  return `<svg class="region-island" viewBox="0 0 130 95" role="img" aria-label="Îles de ${esc(region.name)}"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#31604f"/><stop offset="1" stop-color="#132c25"/></linearGradient></defs><g style="--island-land: url(#${id})">${satellites}${main}</g></svg>`.replaceAll('url(#land)',`url(#${id})`);
+}
 function carteRegions(s, groups, offset = 0) {
-  const W = 400,
-    H = Math.ceil(groups.length / 2) * 230 + 45;
-  let svg = defsOcean(W, H, hacherTexte(s.id + ":regions"));
-  groups.forEach((g, i) => {
-    const x = i % 2 === 0 ? 108 : 292,
-      y = 100 + Math.floor(i / 2) * 230,
-      done = g.filter((d) => S.dungeons[d.id]?.cleared).length,
-      complete = done === g.length,
-      col = complete ? GOLD : s.color;
-    svg += `<g class="isl region-node" role="button" tabindex="0" data-act="group" data-idx="${i + offset}" aria-label="Région ${i + offset + 1}, ${done} sur ${g.length} portails franchis"><circle cx="${x}" cy="${y}" r="89" fill="transparent"/>${svgIle(x, y, 55, hacherTexte(s.id + ":region:" + i), col, true)}<ellipse cx="${x}" cy="${y - 5}" rx="28" ry="38" fill="#060c1e" stroke="${col}" stroke-width="3"/><ellipse cx="${x}" cy="${y - 5}" rx="19" ry="29" fill="${col}" opacity=".12"/><path d="M${x - 9} ${y - 13}L${x} ${y - 25} ${x + 9} ${y - 13} ${x} ${y + 5}Z" fill="none" stroke="${col}" stroke-width="2"/><text x="${x}" y="${y + 75}" text-anchor="middle" fill="#e8f1ff" font-size="16" font-weight="700">Région ${i + offset + 1}</text><text x="${x}" y="${y + 97}" text-anchor="middle" fill="${col}" font-size="12">${done} / ${g.length} portails</text>${g
-      .slice(0, 2)
-      .map(
-        (d, k) =>
-          `<text x="${x}" y="${y + 117 + k * 16}" text-anchor="middle" fill="#a0aec6" font-size="10">${esc(d.name.length > 27 ? d.name.slice(0, 25) + "…" : d.name)}</text>`,
-      )
-      .join("")}</g>`;
-  });
-  return `<div class="region-map"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="Régions de ${esc(s.name)}">${svg}</svg></div>`;
+  const regions=regionsMatiere(s).slice(offset,offset+groups.length);
+  return `<div class="region-list" style="--region-accent:${s.color}">${regions.map((r,i)=>{
+    const done=r.dungeons.filter(d=>S.dungeons[d.id]?.cleared).length;
+    const total=r.dungeons.length;
+    const pct=total?Math.round(done*100/total):0;
+    return `<button type="button" class="region-entry" data-act="group" data-idx="${i+offset}" aria-label="${esc(r.name)} : ${done} sur ${total} donjons vaincus">
+      <span class="region-entry-art">${vignetteRegion(s,r)}</span>
+      <span class="region-entry-info"><strong>${esc(r.name)}</strong>${r.subtitle?`<small>${esc(r.subtitle)}</small>`:""}
+      <span class="region-entry-count"><b>${done} / ${total}</b> donjon${total>1?'s':''}</span>
+      <span class="region-entry-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}" aria-label="Donjons vaincus"><i style="width:${pct}%"></i></span></span>
+      <span class="region-entry-chevron" aria-hidden="true">›</span>
+    </button>`;
+  }).join('')}</div>`;
 }
 function svgCleComplete(obtained, heart) {
   const parts = [

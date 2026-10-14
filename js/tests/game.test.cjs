@@ -73,7 +73,7 @@ test("cours accessibles sans niveau et régions toujours navigables", () => {
   const g = game();
   assert.equal(g.run(`estDebloque(DMAP['en-9'].d)`), true);
   g.run(`UI.arch='en';UI.group=null;`);
-  assert.match(g.run("SCREENS.map()"), /region-node/);
+  assert.match(g.run("SCREENS.map()"), /class="region-entry"/);
   assert.doesNotMatch(g.run("SCREENS.quests()"), /assembled-key/);
   g.run(`globalThis.__codex=''; systeme=(t,b,c,v)=>{ globalThis.__codex=b; globalThis.__variant=v; }; ACTIONS.keycodex();`);
   assert.match(g.run("__codex"), /assembled-key/);
@@ -246,8 +246,8 @@ test("la carte reste bornée avec 40 matières et 120 notions", () => {
   );
   g.run(`UI.arch='s0';UI.group=null;UI.regionPage=2;`);
   html = g.run("SCREENS.map()");
-  assert.equal((html.match(/class="isl region-node"/g) || []).length, 6);
-  assert.match(html, /data-idx="12"/);
+  assert.equal((html.match(/class="region-entry"/g) || []).length, 1);
+  assert.match(html, /data-idx="0"/);
   g.run(`UI.mapView='list';UI.coursePage=11;`);
   assert.equal(
     (g.run("SCREENS.map()").match(/class="course-card"/g) || []).length,
@@ -516,15 +516,14 @@ test("le menu Carte/Portails et la recherche de notion sont masqués dans un arc
   assert.doesNotMatch(html, /data-act="mapview"|id="mapQuery"|Trouver une notion/);
 });
 
-test("tous les archipels sont verrouillés pour le moment, sauf ceux ouverts explicitement", () => {
+test("Anglais est ouvert manuellement et les autres archipels restent verrouillés", () => {
   const g = game();
   let html = g.run("SCREENS.map()");
-  assert.equal((html.match(/subject-island locked/g) || []).length, g.run("SUBJECTS.length"));
-  assert.doesNotMatch(html, /data-act="arch"/);
-  assert.match(html, /Bientôt disponible/);
+  assert.equal((html.match(/subject-island locked/g) || []).length, g.run("SUBJECTS.length") - 1);
+  assert.match(html, /data-id="en"/);
   g.run(`UI.arch=null;ACTIONS.arch({dataset:{id:'en'}});`);
-  assert.equal(g.run("UI.arch"), null);
-  g.run(`ARCHIPELS_OUVERTS=['pc']`);
+  assert.equal(g.run("UI.arch"), "en");
+  g.run(`UI.arch=null;ARCHIPELS_OUVERTS=['pc']`);
   html = g.run("SCREENS.map()");
-  assert.match(html, /data-act="arch" data-id="pc"/);
+  assert.match(html, /data-id="pc"/);
 });

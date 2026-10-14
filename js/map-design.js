@@ -321,6 +321,8 @@
     const verrouille = etat === 'is-locked';
     const id = getPrimaryId(matiere);
 
+    const contenuMatiere = typeof SUBJECTS !== 'undefined' && SUBJECTS.find(s => matiere.ids.includes(s.id));
+    const couleurMatiere = contenuMatiere ? contenuMatiere.color : matiere.couleur;
     const action = verrouille
       ? 'disabled aria-disabled="true"'
       : `data-act="arch" data-id="${id}"`;
@@ -334,7 +336,7 @@
         type="button"
         class="ld-archipelago ${etat} ld-shape-${matiere.shape}"
         style="
-          --ld-accent:${matiere.couleur};
+          --ld-accent:${couleurMatiere};
           --ld-x:${matiere.x}%;
           --ld-rune-x:${matiere.runeX}%;
           top:${matiere.top}px;

@@ -7,10 +7,13 @@
    ===================================================================== */
 window.GAME_CONTENT.subjects.push(
 {
-  id:"hi", name:"Histoire", region:"Archipel des Âges Anciens", color:"#B08BFF",
+  id:"hi", name:"Histoire", region:"Archipel des Âges Anciens", color:"#F4E34A",
+  regions:[
+  { id:"hi-r1", name:"Histoire", subtitle:"Des premiers humains à Rome" }
+  ],
   dungeons:[
   {
-    id:"hi-1", name:"Les premiers humains", rank:"E", req:1,
+    id:"hi-1", regionId:"hi-r1", name:"Les premiers humains", rank:"E", req:1,
     boss:{name:"Le Mammouth Primordial", icon:"🦣"},
     lesson:`
 <p>L’humanité est apparue en <strong>Afrique</strong>. Les premiers humains du genre <em>Homo</em> y vivaient il y a environ <strong>3 millions d’années</strong>.</p>
@@ -36,7 +39,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"hi-2", name:"La révolution néolithique", rank:"E", req:2,
+    id:"hi-2", regionId:"hi-r1", name:"La révolution néolithique", rank:"E", req:2,
     boss:{name:"Le Taureau des Moissons", icon:"🐂"},
     lesson:`
 <p>Vers <strong>−10 000</strong>, au <strong>Proche-Orient</strong>, dans une région appelée le <strong>Croissant fertile</strong>, les humains changent de mode de vie. C’est le <strong>Néolithique</strong>.</p>
@@ -61,7 +64,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"hi-3", name:"Premiers États, premières écritures", rank:"D", req:4,
+    id:"hi-3", regionId:"hi-r1", name:"Premiers États, premières écritures", rank:"D", req:4,
     boss:{name:"Le Scorpion d’Argile", icon:"🦂"},
     lesson:`
 <p>Un <strong>État</strong>, c’est un territoire dirigé par un pouvoir (souvent un roi) qui fait des lois, lève des impôts et commande une armée.</p>
@@ -92,7 +95,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"hi-4", name:"Le monde des cités grecques", rank:"D", req:6,
+    id:"hi-4", regionId:"hi-r1", name:"Le monde des cités grecques", rank:"D", req:6,
     boss:{name:"Le Cyclope des Récifs", icon:"👁️"},
     lesson:`
 <p>À partir du <strong>VIIIe siècle av. J.-C.</strong>, le monde grec est formé de centaines de <strong>cités</strong> indépendantes (en grec : <em>polis</em>) : une ville et la campagne qui l’entoure. Exemples : <strong>Athènes</strong>, <strong>Sparte</strong>.</p>
@@ -119,7 +122,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"hi-5", name:"Rome, du mythe à l’histoire", rank:"C", req:8,
+    id:"hi-5", regionId:"hi-r1", name:"Rome, du mythe à l’histoire", rank:"C", req:8,
     boss:{name:"La Louve du Palatin", icon:"🐺"},
     lesson:`
 <h3>Le mythe</h3>
@@ -146,7 +149,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"hi-6", name:"La naissance du monothéisme juif", rank:"C", req:10,
+    id:"hi-6", regionId:"hi-r1", name:"La naissance du monothéisme juif", rank:"C", req:10,
     boss:{name:"Le Lion du Désert", icon:"🦁"},
     lesson:`
 <p>Au Proche-Orient, les <strong>Hébreux</strong> croient en un <strong>dieu unique</strong>, <strong>Yahvé</strong>. Croire en un seul dieu s’appelle le <strong>monothéisme</strong>.</p>
@@ -173,7 +176,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"hi-7", name:"L’Empire romain", rank:"B", req:12,
+    id:"hi-7", regionId:"hi-r1", name:"L’Empire romain", rank:"B", req:12,
     boss:{name:"L’Hydre des Frontières", icon:"🐲"},
     lesson:`
 <h3>Auguste, premier empereur</h3>
@@ -207,7 +210,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"hi-8", name:"Le grand lexique de la Préhistoire", rank:"B", req:13,
+    id:"hi-8", regionId:"hi-r1", name:"Le grand lexique de la Préhistoire", rank:"B", req:13,
     boss:{name:"Le Gardien des Origines", icon:"🦴"},
     lesson:`
 <p>Avant d’ouvrir ce dernier coffre de l’archipel, un gardien millénaire teste la mémoire du chasseur sur le lexique donné en classe. Voici les définitions à connaître, mot pour mot.</p>

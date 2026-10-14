@@ -7,10 +7,14 @@
    ===================================================================== */
 window.GAME_CONTENT.subjects.push(
 {
-  id:"en", name:"Anglais", region:"Archipel des Langues", color:"#4DB5FF",
+  id:"en", name:"Anglais", region:"Archipel des Langues", color:"#F5BBA9",
+  regions:[
+  { id:"en-r1", name:"Premiers échanges", subtitle:"Saluer et se présenter" },
+  { id:"en-r2", name:"Les nombres et les dates", subtitle:"Compter et se repérer dans le temps" }
+  ],
   dungeons:[
   {
-    id:"en-1", name:"Saluer et se présenter", rank:"E", req:1,
+    id:"en-1", regionId:"en-r1", name:"Saluer et se présenter", rank:"E", req:1,
     boss:{name:"L’Orc de la Première Porte", icon:"👹"},
     lesson:`
 <p>Pour saluer quelqu’un en anglais :</p>
@@ -43,7 +47,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-2", name:"Nombres, couleurs et calendrier", rank:"E", req:2,
+    id:"en-2", regionId:"en-r1", name:"Nombres, couleurs et calendrier", rank:"E", req:2,
     boss:{name:"Le Golem des Chiffres", icon:"🗿"},
     lesson:`
 <h3>Les nombres</h3>
@@ -69,7 +73,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-3", name:"Les verbes be et have got", rank:"D", req:3,
+    id:"en-3", regionId:"en-r1", name:"Les verbes be et have got", rank:"D", req:3,
     boss:{name:"L’Arachne des Verbes", icon:"🕷️"},
     lesson:`
 <h3>Be (être)</h3>
@@ -99,7 +103,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-4", name:"La famille et la possession", rank:"D", req:5,
+    id:"en-4", regionId:"en-r1", name:"La famille et la possession", rank:"D", req:5,
     boss:{name:"Le Serpent aux Mille Liens", icon:"🐍"},
     lesson:`
 <h3>La famille</h3>
@@ -128,7 +132,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-5", name:"Le présent simple", rank:"C", req:7,
+    id:"en-5", regionId:"en-r1", name:"Le présent simple", rank:"C", req:7,
     boss:{name:"Le Chevalier des Habitudes", icon:"💀"},
     lesson:`
 <p>Le <strong>présent simple</strong> sert à parler des habitudes et des vérités générales : <em>I play football on Saturdays.</em></p>
@@ -160,7 +164,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-6", name:"L’école et le verbe can", rank:"C", req:9,
+    id:"en-6", regionId:"en-r1", name:"L’école et le verbe can", rank:"C", req:9,
     boss:{name:"Le Dragon d’Ardoise", icon:"🐉"},
     lesson:`
 <h3>Can (pouvoir, savoir faire)</h3>
@@ -187,7 +191,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-7", name:"Les nombres", rank:"C", req:11,
+    id:"en-7", regionId:"en-r2", name:"Les nombres", rank:"C", req:11,
     boss:{name:"Le Kraken des Grands Nombres", icon:"🐙"},
     tierLabels:{1:"0 à 20", 2:"20 à 100", 3:"1000 et plus"},
     lesson:`
@@ -236,7 +240,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-8", name:"Le calendrier anglo-saxon", rank:"B", req:12,
+    id:"en-8", regionId:"en-r2", name:"Le calendrier anglo-saxon", rank:"B", req:12,
     boss:{name:"Le Hibou des Quatre Saisons", icon:"🦉"},
     lesson:`
 <h3>Les jours, en abrégé</h3>
@@ -263,7 +267,7 @@ window.GAME_CONTENT.subjects.push(
     ]
   },
   {
-    id:"en-9", name:"Les dates et les nationalités", rank:"B", req:13,
+    id:"en-9", regionId:"en-r2", name:"Les dates et les nationalités", rank:"B", req:13,
     boss:{name:"Le Griffon des Nations", icon:"🦅"},
     lesson:`
 <h3>Les nombres ordinaux (pour les dates)</h3>

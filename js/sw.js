@@ -3,7 +3,7 @@
    la dernière version des fichiers du site (moteur et contenu), même si le
    réseau est lent ; le cache ne sert que si le réseau échoue vraiment
    (vraiment hors ligne). La progression (localStorage) n'est jamais touchée. */
-const CACHE = "eveil-chasseur-v15";
+const CACHE = "eveil-chasseur-v18";
 const APP_ROOT = new URL("./", self.location.href);
 const CORE = [
   "./sw.js",
@@ -11,6 +11,8 @@ const CORE = [
   "./",
   "./index.html",
   "./css/styles.css",
+  "./css/map-design.css",
+  "./js/map-design.js",
   "./js/game-engine.js",
   "./js/boot.js",
   "./js/content-rules.js",

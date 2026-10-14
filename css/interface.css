@@ -498,3 +498,22 @@ details[data-panel] > summary {
   line-height: 1.4;
   padding: 12px 0;
 }
+
+/* Sélection des régions : structure bleue, angles et progression couleur matière. */
+.region-list { display:grid; gap:14px; margin:18px 0 26px; }
+.region-entry { position:relative; width:100%; display:grid; grid-template-columns:104px minmax(0,1fr) 18px; gap:12px; align-items:center; padding:13px 12px; min-height:118px; border:1px solid #22407e; border-radius:13px; background:#0c1730; color:var(--text); text-align:left; cursor:pointer; font:inherit; }
+.region-entry::before,.region-entry::after { content:""; position:absolute; pointer-events:none; width:18px; height:18px; }
+.region-entry::before { left:-1px; top:-1px; border-left:2px solid var(--region-accent); border-top:2px solid var(--region-accent); border-radius:12px 0 0 0; }
+.region-entry::after { right:-1px; bottom:-1px; border-right:2px solid var(--region-accent); border-bottom:2px solid var(--region-accent); border-radius:0 0 12px 0; }
+.region-entry:focus-visible { outline:2px solid var(--sys); outline-offset:3px; }
+.region-entry-art { display:block; min-width:0; }
+.region-island { width:100%; height:auto; display:block; }
+.region-entry-info { display:flex; flex-direction:column; min-width:0; }
+.region-entry-info strong { font:700 17px/1.2 var(--ui); overflow-wrap:anywhere; }
+.region-entry-info small { font-size:12px; color:var(--muted); line-height:1.25; margin-top:4px; }
+.region-entry-count { font-size:13px; color:var(--muted); margin-top:12px; white-space:nowrap; }
+.region-entry-count b { color:var(--region-accent); font-size:15px; }
+.region-entry-progress { display:block; height:5px; border-radius:10px; background:#243450; overflow:hidden; margin-top:6px; }
+.region-entry-progress i { display:block; height:100%; border-radius:inherit; background:var(--region-accent); }
+.region-entry-chevron { color:var(--region-accent); font-size:28px; line-height:1; }
+@media(max-width:350px) { .region-entry { grid-template-columns:78px minmax(0,1fr) 14px; gap:9px; padding:12px 9px; }.region-entry-info strong {font-size:15px;} }

@@ -8,10 +8,13 @@
    ===================================================================== */
 window.GAME_CONTENT.subjects.push(
 {
-  id:"pc", name:"Physique-Chimie", region:"Archipel des Éléments", color:"#3DDC97",
+  id:"pc", name:"Physique-Chimie", region:"Archipel des Éléments", color:"#C2C1E7",
+  regions:[
+  { id:"pc-r1", name:"Premières découvertes", subtitle:"Sciences et sécurité" }
+  ],
   dungeons:[
   {
-    id:"pc-8", name:"Les pictogrammes de sécurité", rank:"E", req:1,
+    id:"pc-8", regionId:"pc-r1", name:"Les pictogrammes de sécurité", rank:"E", req:1,
     boss:{name:"Le Spectre Toxique", icon:"☠️"},
     tierLabels:{1:"Reconnaître les pictogrammes", 2:"Retrouver la définition", 3:"Repérer le bon pictogramme"},
     lesson:`

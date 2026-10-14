@@ -2626,3 +2626,22 @@ dl.info dd {
   color: var(--muted);
   margin: 0;
 }
+
+/* PV persistants du chasseur : affichés hors combat dans l'en-tête. */
+.hud-health { order:4; grid-column:1 / -1; display:grid; gap:5px; margin-top:8px; }
+.hud-health-label { display:flex; justify-content:space-between; color:var(--muted); font:600 12px var(--ui); }
+.hud-health-label strong { color:var(--text); }
+.hud-health .bar { height:7px; }
+.hud-heal { justify-self:end; border:1px solid rgba(61,220,151,.55); border-radius:3px; background:#122c2b; color:#bff5de; padding:7px 10px; font:600 12px var(--ui); cursor:pointer; }
+.result .memo { margin:20px 0 22px; }
+.result .btnrow { margin-top:20px; }
+.timegame { gap:14px; }
+.timebar { height:38px; border:1px solid rgba(143,163,200,.65); background:#101d37; cursor:default; }
+.timebar .tzone.good { background:rgba(245,196,81,.38); border-inline:1px solid rgba(245,196,81,.45); }
+.timebar .tzone.crit { background:rgba(61,220,151,.55); border-inline:1px solid rgba(61,220,151,.65); }
+.timebar .tmarker { width:4px; border-radius:1px; }
+.timelegend { display:flex; align-items:center; justify-content:center; gap:20px; color:var(--muted); font:600 12px var(--ui); }
+.timelegend span { display:flex; align-items:center; gap:6px; }
+.timelegend i { display:inline-block; width:11px; height:11px; border-radius:2px; }
+.legend-hit { background:rgba(245,196,81,.7); }
+.legend-perfect { background:rgba(61,220,151,.8); }

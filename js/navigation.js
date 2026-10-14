@@ -81,9 +81,9 @@ let ARCHIPELS_VERROUILLES = true;
 
 
 let ARCHIPELS_OUVERTS = [
-    // "en", // Anglais
-    // "hi", // Histoire-Géographie
-    // "pc", // Physique-Chimie
+    "en", // Anglais
+    "hi", // Histoire-Géographie
+    "pc", // Physique-Chimie
     // "fr", // Français
     // "es"  // Espagnol
 ];
@@ -380,60 +380,23 @@ SCREENS.map = function () {
     return header + listeCours(subject, filtered);
   }
 
-  if (groups.length > 1 && UI.group === null) {
-    const page = pageIndex(
-      UI.regionPage,
-      groups.length,
-      MAP_PAGE_SIZE
-    );
-
-    return (
-      header +
-      `<p class="hint">
-        Navigue entre les régions.
-        La vue Portails permet de retrouver rapidement un cours.
-      </p>` +
-      carteRegions(
-        subject,
-        groups.slice(
-          page * MAP_PAGE_SIZE,
-          (page + 1) * MAP_PAGE_SIZE
-        ),
-        page * MAP_PAGE_SIZE
-      ) +
-      pagination(
-        page,
-        groups.length,
-        MAP_PAGE_SIZE,
-        "regionPage"
-      )
-    );
+  const regions = regionsMatiere(subject);
+  if (UI.group === null) {
+    const page = pageIndex(UI.regionPage, groups.length, MAP_PAGE_SIZE);
+    return `<button class="link" data-act="world">← La Mer des Portails</button>
+      <div class="title-row"><h2>${esc(subject.region || subject.name)}</h2>
+      <p class="sub">Choisis une région pour explorer ses donjons.</p></div>` +
+      carteRegions(subject, groups.slice(page*MAP_PAGE_SIZE,(page+1)*MAP_PAGE_SIZE),page*MAP_PAGE_SIZE) +
+      pagination(page,groups.length,MAP_PAGE_SIZE,"regionPage");
   }
-
-  const group = pageIndex(
-    UI.group,
-    groups.length,
-    1
-  );
-
-  const list = groups.length > 1
-    ? groups[group]
-    : subject.dungeons;
-
-  return (
-    header +
-    (
-      groups.length > 1
-        ? `<button class="link" data-act="backgroup">
-            ← Toutes les régions
-          </button>
-          <p class="eyebrow">
-            Région ${group + 1}
-          </p>`
-        : ""
-    ) +
-    carteArchipel(subject, list)
-  );
+  const index=Math.min(Math.max(Number(UI.group)||0,0), groups.length-1);
+  const region=regions[index];
+  const list=groups[index]||[];
+  const done=list.filter(d=>S.dungeons[d.id]?.cleared).length;
+  return `<button class="link" data-act="backgroup">← ${esc(subject.region || subject.name)}</button>
+    <div class="title-row"><h2>${esc(region?.name || `Région ${index+1}`)}</h2>
+    <p class="sub">${done} / ${list.length} donjon${list.length>1?'s':''} vaincu${done>1?'s':''}</p></div>
+    ${carteArchipel(subject,list)}`;
 };
 
 /* ==========================================
