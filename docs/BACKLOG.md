@@ -17,6 +17,26 @@ Flux : Boîte à idées → À faire → En cours → À tester → Terminés.
 
 - **Ajouter une marge entre le header et l'écran « Évanoui ».** Le bloc (`.win.center-win.result`) colle au header, alors que les autres écrans ont un espacement. À vérifier si les autres écrans de résultat (victoire, défaite contre le boss, entraînement) ont le même défaut. Fin : même espacement que le reste du jeu.
 - **Supprimer la pastille jaune du menu Stats.** Cause : elle s'affiche quand `S.points > 0`, c'est-à-dire des points de caractéristique non répartis (le joueur du test en avait après être passé niveau 2). Décider : la retirer complètement, ou la garder pour signaler ces points. Fin : plus de pastille sur Stats, la pastille de Quête (coffre quotidien) reste.
+- **Refondre la Clé : 7 fragments et mot MEMOIRE.** Décidé :
+  - 6 chefs portent un fragment, lettres mélangées R, M, E, I, E, M (de 2026-09-01 à 2026-11-15, dates actuelles). Les 2 derniers boss (Le Gardien Déchu, Le Messager de la Nuit) sont supprimés.
+  - Le 7ᵉ fragment (O) n'a pas de boss : il est caché dans le jeu et le joueur le récupère en cliquant dessus, dès qu'il le trouve, même avant les chefs. Aujourd'hui le cœur est sur le sceau de la Fenêtre de statut. Si le 6ᵉ fragment est obtenu sans le 7ᵉ, un indice apparaît dans le journal.
+  - Une fois les 7 fragments réunis, le joueur remet les lettres dans l'ordre : le mot **MEMOIRE** (singulier, remplace MEMOIRES) active la Clé. L'activation fait apparaître le « Sanctuaire oublié » sur la carte principale.
+  - Placement des fragments sur les cours (aujourd'hui aucun chef n'en porte dans `js/content/*.js`). Les fragments se gagnent dans l'ordre 1, 2, 3… (mission suivante seulement) ; chaque chef reçoit `fragment: n`, avec `availableFrom` pour la date d'ouverture du cours :
+    - Fragment 1 : **Histoire**, Paléolithique et Néolithique, quand le cours est refait.
+    - Fragment 2 : **Espagnol**, quand le cours est fait (matière à créer).
+    - Objectif : 2 fragments disponibles pendant les vacances de la Toussaint (17/10 au 02/11/2026).
+    - Fragment 3 : **Anglais**, verbe « be », quand il arrivera.
+    - Fragments 4 à 6 : cours à choisir. Les dates actuelles de `js/campaign.js` (01/09 à 15/11) sont déjà passées ou à revoir selon la sortie des cours.
+  - Sanctuaire oublié : ouverture le **2026-12-13** (une semaine avant les vacances du 19/12) au lieu du 15/12 ; les noyaux suivent à la même date. À vérifier : 4 semaines sans nouveau boss entre le 15/11 et le 13/12.
+  - À faire :
+    - `js/campaign.js` : 6 chefs, lettres, message du dernier fragment, date du Sanctuaire et des noyaux.
+    - `js/content-rules.js` et `js/tools/check-content.cjs` : fragments de chefs 1 à 6.
+    - `js/adventure.js` : seuil 6 fragments de chefs + cœur, mot `memoire`, messages « huit / neuf ».
+    - `js/campaign-runtime.js` : quête principale « 7 fragments », condition du Sanctuaire (Clé activée par le mot, pas seulement cœur trouvé), écran secret « Six chefs, six lettres ».
+    - Codex de la Clé : régénérer le SVG (`svgCleComplete` dans `js/game-art.js`, 6 pièces + cœur), `js/key-design.js` : 7 runes dont le cœur (O), compteur « x / 7 », barre de progression.
+    - Tests (`game.test.cjs`, `balance.cjs`), `README.md`, `docs/REGLES.md`, `docs/SCENARIO.md` (régénéré).
+- **Boss du Sanctuaire : Gardien sans Mémoire.** Questions tirées dans tout ce que le joueur a vu depuis le début (base : `poolRevision`). Sanctuaire protégé contre la magie : compétences, mana et invocation d'ombres désactivés ; potions autorisées mais en nombre limité (limite à préciser). Avant le combat, le Système paraît un peu trop insistant (indice discret). À la victoire, sa mémoire revient, il reconnaît la Clé ; le message « le savoir ne peut être révélé à un esprit corrompu » vise le Système, pas le joueur (prépare les noyaux).
+- **Couleur du Système corrompu.** Après le retournement du Sanctuaire, les fenêtres de messages du Système passent du bleu (`--sys` / `--sys-soft` dans `css/styles.css`) au **vert toxique** (décidé : `#b6ff3d`, version claire `#e0ffa6`, fond légèrement verdâtre ; rouge et violet sont déjà pris par l'erreur et la montée de niveau), jusqu'à la victoire sur le Système Noir (2027-01-15), où le bleu revient (« Intégrité restaurée »). À préciser : seulement les fenêtres de messages, ou toute l'interface (bordures, barres, boutons, qui utilisent aussi `--sys`).
 - **Refaire les questions d'anglais.** Ordre de progression :
   1. Fondamentaux : chiffres, nombres, jours de la semaine, mois de l'année, saisons, lire l'heure.
   2. Vocabulaire de l'école : stylo, gomme, cahier, agrafeuse, cartable.
