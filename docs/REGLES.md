@@ -17,15 +17,15 @@ Le calendrier est local au téléphone. L’application familiale ne prétend pa
 
 La courbe existante est conservée : prochain niveau = `50 + niveau × 30` XP. La limite de chapitre empêche d’atteindre prématurément toute la puissance de fin d’année.
 
-Bonne réponse : 10 XP lors de la première réussite ; 8 pour une notion revue après au moins trois jours ; 5 pour une correction d’une erreur récente ; 3 pour la première répétition du jour ; puis 1. Limite : 30 XP par question et par jour, tous modes confondus. Une réponse fausse ne retire pas d’XP. Les identifiants d’origine sont conservés dans les épreuves narratives.
+Bonne réponse : 10 XP lors de la première réussite ; 8 pour une notion revue après au moins trois jours ; 5 pour une correction d’une erreur récente ; 3 pour la première répétition du jour ; puis 1. Limite : 30 XP par question et par jour, tous modes confondus. Une réponse fausse ne retire pas d’XP. Dans la salle chronométrée, l’XP est pleine pendant le premier tiers du temps, puis baisse jusqu’à 50 % à la fin ; le plafond journalier se calcule sur l’XP de base. Les identifiants d’origine sont conservés dans les épreuves narratives.
 
 Trois bonus de fin de session au maximum par jour : 40 XP pour un entraînement, 60 pour un donjon. Trois contrats donnent chacun leur bonus une seule fois par jour : Traque 70 XP, Consolidation 90, Reconquête 90. Un nouveau chef narratif donne 100 XP de plus une seule fois. Les questions déjà vues restent rejouables, et les cours ajoutés restent utiles sans recalculer les seuils globaux.
 
 Au palier maximal, chaque tranche de quatre XP excédentaires devient une essence, avec arrondi supérieur par récompense. Plafond d’essence gagnée : 240 par jour. Rien n’est stocké sous forme d’XP à débloquer plus tard. Les jours sans jeu n’ont aucune conséquence.
 
-Les bonus de médailles donnent 15 essence par nouveau défi, dans le même plafond journalier. Des variantes coûtent 100 essence. Les apparences coûtent 80 ou 120 essence et n’ajoutent aucune puissance. Les ombres s’améliorent jusqu’au niveau 3 (200 puis 400 essence), sous réserve du chapitre ouvert.
+Des variantes coûtent 100 essence. Les apparences coûtent 80 ou 120 essence et n’ajoutent aucune puissance. Les ombres s’améliorent jusqu’au niveau 3 (200 puis 400 essence), sous réserve du chapitre ouvert.
 
-L’or des réponses est limité par la récompense de question. Un boss donne 30 or la première fois, 10 aux reprises. La quête quotidienne donne 40 or et 60 XP ; elle n’ajoute plus de point de statistique répétable.
+L’or ne se gagne que sur les boss (aucun or par réponse ni en entraînement). Un boss donne 30 or la première fois, 10 aux reprises. La quête quotidienne donne 40 or et 60 XP ; elle n’ajoute plus de point de statistique répétable.
 
 ## Rangs
 
@@ -53,7 +53,7 @@ Deux potions maximum par combat. Une invocation maximum. Une seule ombre équip�
 
 Les chefs changent de tempérament à 65 % et 30 % de PV. Les cours ont des boss accessibles à la puissance actuelle ; les chefs narratifs et les gardiens des rangs gardent leur difficulté propre.
 
-Les défis de boss : gagner sans potion, réussir deux esquives parfaites, interrompre une charge. Deux médailles ouvrent la version Élite d’un boss de cours : PV au moins ×1,5 et attaque au moins ×1,2, tempérament insaisissable. Un plancher calculé à partir de la puissance active empêche qu’un ancien portail devienne trivial ; les caractéristiques sont figées au début du duel et restent identiques lors d’une revanche sans changement de personnage. Les chefs narratifs peuvent être rejoués depuis les messages du Journal.
+Les chefs narratifs peuvent être rejoués depuis les messages du Journal.
 
 Après défaite : conserver XP et bénédiction, retenter le boss avec tous les PV. Les consommables dépensés restent consommés. Après fermeture : reprendre au début de la dernière salle ; le combat lui-même ne se sauvegarde pas tour par tour.
 
@@ -79,7 +79,7 @@ Deux artefacts maximum par combat et deux dans la salle chronométrée d’une e
 
 Huit fragments sont portés par des chefs et un neuvième morceau, le cœur, est caché sur le petit sceau de la Fenêtre de statut. Il peut être trouvé dès les Fondamentaux accomplis. Cela ne saute aucune mission ni date. Après huit fragments, une quête d’indice apparaît si le cœur manque. Elle disparaît quand l’indice est suivi ou que le cœur est découvert. Son message reste dans le journal ; aucune expiration liée au calendrier.
 
-Un boss déjà vaincu rapporte dix or sur ses trois premières victoires répétées de la journée, puis zéro. Les nouvelles questions, révisions espacées et premières médailles gardent leurs récompenses propres. Le lien avec l’ombre équipée progresse sur trois portails différents par jour : titres cosmétiques à 10, 30 et 60 aventures, sans statistiques supplémentaires. Pas de série de connexions ni de sanction d’absence.
+Un boss déjà vaincu rapporte dix or sur ses trois premières victoires répétées de la journée, puis zéro. Les nouvelles questions et révisions espacées gardent leurs récompenses propres. Le lien avec l’ombre équipée progresse sur trois portails différents par jour : titres cosmétiques à 10, 30 et 60 aventures, sans statistiques supplémentaires. Pas de série de connexions ni de sanction d’absence.
 
 ## Tactiques, maîtrise et compagnon
 

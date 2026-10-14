@@ -214,7 +214,7 @@ function prochainObjectif() {
 
   return {
     title: "La maîtrise se construit",
-    text: "Les révisions espacées et les médailles ouvrent de nouveaux défis.",
+    text: "Les révisions espacées renforcent ce que tu as appris.",
     action: "allerA",
     to: "training"
   };
@@ -461,30 +461,6 @@ ACTIONS.arch = function (target) {
   UI.coursePage = 0;
 
   choisirArchipel(target);
-};
-
-/* ==========================================
-   IDENTITÉ DES BOSS
-   ========================================== */
-
-const lessonBeforeNavigation = SCREENS.lesson;
-
-SCREENS.lesson = function () {
-  const dungeon = DMAP[UI.dId].d;
-
-  return lessonBeforeNavigation().replace(
-    '<div class="lesson-grid">',
-    `<div class="boss-identity">
-      ${badgeChef(dungeon)}
-      <strong>${esc(dungeon.boss.name)}</strong>
-      <span class="sub">
-        ${TEMPERAMENTS[
-          temperamentBoss(dungeon.id)
-        ].label}
-      </span>
-    </div>
-    <div class="lesson-grid">`
-  );
 };
 
 /* ==========================================

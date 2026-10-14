@@ -79,26 +79,17 @@ resoudreReponse = function (ok, pick, typed, info) {
     sauvegarder();
   }
 };
-const victoryBeforeChallenges = victoireBoss;
-victoireBoss = function () {
-  if (!B || B.over) return;
-  const index = chapitreActuel(),
-    id = B.dId;
-  const prepared =
-    B.bless.acc >= 0.8 || B.interrupts > 0 || B.perfectDodges >= 2 || B.elite;
-  victoryBeforeChallenges();
-  creditDefi("wins", id, index);
-  if (prepared) creditDefi("prepared", id, index);
+/* Suites de victoireBoss / defaiteBoss : défis de chapitre et voix de l'ombre. */
+function suiteVictoireDefis(id, chapitre, preparee) {
+  creditDefi("wins", id, chapitre);
+  if (preparee) creditDefi("prepared", id, chapitre);
   UI.result.shadowVoice = paroleOmbre("win");
   sauvegarder();
-};
-const defeatBeforeChallenges = defaiteBoss;
-defaiteBoss = function () {
-  if (!B || B.over) return;
-  defeatBeforeChallenges();
+}
+function suiteDefaiteDefis() {
   UI.result.shadowVoice = paroleOmbre("lose");
   sauvegarder();
-};
+}
 function htmlDefisChapitre() {
   if (!fondamentauxTermines()) return "";
   const index = Math.min(
@@ -125,7 +116,7 @@ function htmlDefisChapitre() {
     )
     .join(
       "",
-    )}</div><span class="eyebrow">Maîtrise du chapitre · palier ${complete ? 3 : tier + 1}/3</span><h3>${esc(CHAPTER_TITLES[index][complete ? 2 : tier])}</h3>${row("Réponses justes", "reviews")}${row("Portails vaincus", "wins")}${row("Victoires préparées", "prepared")}<p class="sub">10 questions différentes et 3 portails différents comptent par jour. Prépare une victoire avec 80 % de bonnes réponses, une interruption, deux esquives ou un combat Élite. Aucun délai, aucune série de connexions à maintenir.</p>${complete ? '<p class="hint">Maîtrise accomplie. Ton titre est conservé ; la quête principale continue dans le journal.</p>' : `<button class="btn gold" data-act="claimchallenge" data-tier="${tier}" data-chapter="${index}" ${ready ? "" : "disabled"}>${ready ? "Recevoir le titre" : "Défi en cours"} · jusqu’à ${target.essence} essence</button><p class="hint">Titres sans bonus de puissance. L’essence respecte le plafond quotidien.</p>`}</section>`;
+    )}</div><span class="eyebrow">Maîtrise du chapitre · palier ${complete ? 3 : tier + 1}/3</span><h3>${esc(CHAPTER_TITLES[index][complete ? 2 : tier])}</h3>${row("Réponses justes", "reviews")}${row("Portails vaincus", "wins")}${row("Victoires préparées", "prepared")}<p class="sub">10 questions différentes et 3 portails différents comptent par jour. Prépare une victoire avec 80 % de bonnes réponses, une interruption ou deux esquives. Aucun délai, aucune série de connexions à maintenir.</p>${complete ? '<p class="hint">Maîtrise accomplie. Ton titre est conservé ; la quête principale continue dans le journal.</p>' : `<button class="btn gold" data-act="claimchallenge" data-tier="${tier}" data-chapter="${index}" ${ready ? "" : "disabled"}>${ready ? "Recevoir le titre" : "Défi en cours"} · jusqu’à ${target.essence} essence</button><p class="hint">Titres sans bonus de puissance. L’essence respecte le plafond quotidien.</p>`}</section>`;
 }
 ACTIONS.claimchallenge = function (t) {
   const index =

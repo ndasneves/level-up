@@ -75,7 +75,9 @@ test("cours accessibles sans niveau et régions toujours navigables", () => {
   g.run(`UI.arch='en';UI.group=null;`);
   assert.match(g.run("SCREENS.map()"), /class="region-entry"/);
   assert.doesNotMatch(g.run("SCREENS.quests()"), /assembled-key/);
-  g.run(`globalThis.__codex=''; systeme=(t,b,c,v)=>{ globalThis.__codex=b; globalThis.__variant=v; }; ACTIONS.keycodex();`);
+  g.run(
+    `globalThis.__codex=''; systeme=(t,b,c,v)=>{ globalThis.__codex=b; globalThis.__variant=v; }; ACTIONS.keycodex();`,
+  );
   assert.match(g.run("__codex"), /assembled-key/);
   assert.equal(g.run("__variant"), "codex");
 });
@@ -169,7 +171,10 @@ test("tous les écrans et tous les archétypes se rendent sans erreur", () => {
 test("démarrage réel du script final, sans sauvegarde puis avec sauvegarde", () => {
   const fs = require("node:fs"),
     path = require("node:path");
-  const html = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8"),
+  const html = fs.readFileSync(
+      path.join(__dirname, "../../index.html"),
+      "utf8",
+    ),
     boot = fs.readFileSync(path.join(__dirname, "../boot.js"), "utf8");
   const g = game();
   g.run(`let navigator={};let location={protocol:'file:'};`);
@@ -492,7 +497,10 @@ test("l'écran Quête : titre simple, quête principale des 8 fragments, sans pr
   const g = game();
   const html = g.run("SCREENS.quests()");
   assert.match(html, /<h2>Quête<\/h2>/);
-  assert.doesNotMatch(html, /Journal du Chasseur|Promotion|Messages retrouvés|Ouvrir le portail|Localiser/);
+  assert.doesNotMatch(
+    html,
+    /Journal du Chasseur|Promotion|Messages retrouvés|Ouvrir le portail|Localiser/,
+  );
   assert.match(html, /Quête principale/);
   assert.match(html, /Récolter les 9 fragments de la Clé/);
   assert.match(html, /data-act="keycodex">Codex de la clé</);
@@ -513,17 +521,74 @@ test("le menu Carte/Portails et la recherche de notion sont masqués dans un arc
   const g = game();
   g.run(`UI.arch=SUBJECTS[0].id;UI.group=null;`);
   const html = g.run("SCREENS.map()");
-  assert.doesNotMatch(html, /data-act="mapview"|id="mapQuery"|Trouver une notion/);
+  assert.doesNotMatch(
+    html,
+    /data-act="mapview"|id="mapQuery"|Trouver une notion/,
+  );
 });
 
 test("Anglais est ouvert manuellement et les autres archipels restent verrouillés", () => {
   const g = game();
+  g.run("ARCHIPELS_OUVERTS=['en']");
   let html = g.run("SCREENS.map()");
-  assert.equal((html.match(/subject-island locked/g) || []).length, g.run("SUBJECTS.length") - 1);
+  assert.equal(
+    (html.match(/subject-island locked/g) || []).length,
+    g.run("SUBJECTS.length") - 1,
+  );
   assert.match(html, /data-id="en"/);
   g.run(`UI.arch=null;ACTIONS.arch({dataset:{id:'en'}});`);
   assert.equal(g.run("UI.arch"), "en");
   g.run(`UI.arch=null;ARCHIPELS_OUVERTS=['pc']`);
   html = g.run("SCREENS.map()");
   assert.match(html, /data-id="pc"/);
+});
+test("la Clé s'affiche et le cœur se réveille via les actions d'aventure", () => {
+  const g = game();
+  assert.match(g.run("htmlFragments()"), /Codex de la Clé/);
+  assert.equal(g.run("htmlProgressionCle()"), g.run("htmlFragments()"));
+  for (const s of ["status", "quests", "secret"])
+    assert.ok(g.run(`SCREENS.${s}()`).length > 0, s);
+  g.run("UI.screen='map'; ACTIONS.secret();");
+  assert.equal(g.run("UI.screen"), "secret");
+  g.elements.keyAnswer = { value: "faux" };
+  g.run("ACTIONS.solvekey()");
+  assert.equal(g.run("campagne().keyFound"), false);
+  g.elements.keyAnswer = { value: "Mémoires" };
+  g.run("ACTIONS.solvekey()");
+  assert.equal(g.run("campagne().keyFound"), true);
+});
+test("une question ratée revient après deux autres, ou à la fin si la file est courte", () => {
+  const g = game();
+  g.run(`demarrerDonjon('en-1');`);
+  const ordre = (n) =>
+    g.run(`R.rooms[R.roomIndex].queue.slice(0,${n}).map(e=>e.q).join()`);
+  g.run(`R.rooms[R.roomIndex].queue=R.rooms[R.roomIndex].queue.slice(0,3);`);
+  const [a, b, c] = ordre(3).split(",");
+  g.run("resoudreReponse(false,null,'');");
+  assert.equal(ordre(3), [b, c, a].join());
+  g.run(
+    `R.rooms[R.roomIndex].queue=R.rooms[R.roomIndex].queue.slice(0,1);R.fb=null;`,
+  );
+  g.run("resoudreReponse(false,null,'');");
+  assert.equal(g.run("R.rooms[R.roomIndex].queue.length"), 1);
+});
+test("la progression de l'épreuve du Système n'avance que sur une bonne réponse", () => {
+  const g = game();
+  const pips = () => {
+    const html = g.run("SCREENS.trial()");
+    return [...html.matchAll(/class="pip ([^"]*)"/g)].map((m) =>
+      m[1].trim().replace(/\s+/g, " "),
+    );
+  };
+  g.run("demarrerEpreuve()");
+  assert.deepEqual(pips(), ["cur", "", "", "", ""]);
+  g.run("resoudreEpreuve(false,0); epreuveSuivante();");
+  assert.deepEqual(pips(), ["cur", "", "", "", ""]);
+  g.run("resoudreEpreuve(true,0); epreuveSuivante();");
+  assert.deepEqual(pips(), ["on", "cur", "", "", ""]);
+  g.run("resoudreEpreuve(false,0); epreuveSuivante();");
+  assert.deepEqual(pips(), ["on", "cur", "", "", ""]);
+  for (let i = 0; i < 3; i++)
+    g.run("resoudreEpreuve(true,0); epreuveSuivante();");
+  assert.deepEqual(pips(), ["on", "on", "on", "on", "cur"]);
 });

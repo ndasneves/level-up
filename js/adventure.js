@@ -90,12 +90,8 @@ function renforcerLien(id) {
   c.shadowBond[c.shadow] = Math.min(60, (c.shadowBond[c.shadow] || 0) + 1);
 }
 
-const victoryBeforeAdventure = victoireBoss;
-victoireBoss = function () {
-  if (!B || B.over) return;
-  const id = B.dId,
-    alreadyCleared = !!S.dungeons[id]?.cleared;
-  victoryBeforeAdventure();
+/* Suite de victoireBoss : rejouabilité bornée, lien d'ombre, indice de la Clé. */
+function suiteVictoireAventure(id, alreadyCleared) {
   const c = campagne();
   // Three paid replays per course/day; new knowledge and medals retain their value.
   c.day.bossReplays ||= {};
@@ -112,7 +108,7 @@ victoireBoss = function () {
   renforcerLien(id);
   ouvrirIndiceCle();
   sauvegarder();
-};
+}
 
 const statusBeforeAdventure = SCREENS.status;
 SCREENS.status = function () {

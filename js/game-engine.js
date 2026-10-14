@@ -506,7 +506,7 @@ function rangDe(l) {
 const xpNeed = (l) => 50 + l * 30;
 
 /* ===== Sauvegarde ===== */
-const KEY = "eveil-chasseur-v1";
+const KEY = "level-up-v1";
 let S = null;
 /* ===== L'Épreuve du Système =====
    5 questions fixes, toujours dans le même ordre — plus de logique pure (pas
@@ -1141,11 +1141,12 @@ function enteteJeu() {
       <div><div class="hname">${esc(S.name)}</div><div class="hlvl">${classed ? "Chasseur de rang " + r + " · niveau " + S.level : "Non classé · niveau 0"}</div></div></div>
     ${
       classed
-        ? `<div class="xpbox"><div class="bar" role="progressbar" aria-label="Expérience" aria-valuenow="${S.xp}" aria-valuemax="${need}"><i style="width:${Math.min(100, (S.xp / need) * 100)}%"></i></div>
-      <span>${S.xp} / ${need} XP avant le niveau ${S.level + 1}</span></div>`
+        ? `<div class="hud-meters">
+      <div class="hud-meter hud-xp"><span>XP</span><div class="bar" role="progressbar" aria-label="Expérience" aria-valuenow="${S.xp}" aria-valuemax="${need}"><i style="width:${Math.min(100, (S.xp / need) * 100)}%"></i></div><strong>${S.xp} / ${need}</strong></div>
+      <div class="hud-meter"><span>PV</span><div class="bar hp" role="progressbar" aria-label="Points de vie" aria-valuemin="0" aria-valuenow="${pvActuels()}" aria-valuemax="${maxHp()}"><i style="width:${Math.round(100 * pvActuels() / maxHp())}%"></i></div><strong>${pvActuels()} / ${maxHp()}</strong></div>
+    </div>${(S.inv.potHp || 0)+(S.inv.potHpL || 0)>0 && pvActuels()<maxHp() ? `<button type="button" class="hud-heal" data-act="healout">Utiliser une potion (${(S.inv.potHp || 0)+(S.inv.potHpL || 0)})</button>` : ""}`
         : ""
     }
-    ${classed ? `<div class="hud-health"><div class="hud-health-label"><span>PV</span><strong>${pvActuels()} / ${maxHp()}</strong></div><div class="bar hp" role="progressbar" aria-label="Points de vie" aria-valuemin="0" aria-valuenow="${pvActuels()}" aria-valuemax="${maxHp()}"><i style="width:${Math.round(100 * pvActuels() / maxHp())}%"></i></div>${(S.inv.potHp || 0)+(S.inv.potHpL || 0)>0 && pvActuels()<maxHp() ? `<button type="button" class="hud-heal" data-act="healout">Utiliser une potion (${(S.inv.potHp || 0)+(S.inv.potHpL || 0)})</button>` : ""}</div>` : ""}
     <div class="gold-count">◈ ${S.gold} <small>or</small></div>
   </header>
   <nav class="tabs" aria-label="Menu">${tabs.map(([k, l, ic]) => `<button class="tab ${on === k ? "on" : ""} ${locked(k) ? "soon" : ""}" data-act="allerA" data-to="${k}" ${on === k ? 'aria-current="page"' : ""}><span class="ti" aria-hidden="true">${ic}</span><span>${l}</span>${locked(k) ? '<span class="soonbadge">🔒</span>' : dot(k)}</button>`).join("")}</nav>`;
@@ -1270,15 +1271,12 @@ const SCREENS = {
     const { q, order } = TRIAL.cur,
       fb = TRIAL.fb;
     const isLast = TRIAL.phase === "last";
-    const donePositions = new Set(
-      [0, 1, 2, 3].filter((i) => !TRIAL.pending.some((p) => p.origIdx === i)),
-    );
-    const curPos = isLast ? 4 : TRIAL.pending[0].origIdx;
+    // Le curseur ne bouge que sur une bonne réponse : une erreur laisse la
+    // question à sa place (la file tourne en coulisse), sans pastille vide.
+    const curPos = isLast ? 4 : 4 - TRIAL.pending.length;
     let pips = "";
-    for (let i = 0; i < 5; i++) {
-      const on = i === 4 ? false : donePositions.has(i);
-      pips += `<span class="pip ${on ? "on" : ""} ${i === curPos ? "cur" : ""}"></span>`;
-    }
+    for (let i = 0; i < 5; i++)
+      pips += `<span class="pip ${i < curPos ? "on" : ""} ${i === curPos ? "cur" : ""}"></span>`;
     const body = `<div class="answers">${order
       .map((oi, i) => {
         let cls = "";
@@ -1416,21 +1414,19 @@ const SCREENS = {
   lesson() {
     const d = DMAP[UI.dId].d,
       rec = S.dungeons[d.id] || {};
-    return `<button class="link" data-act="allerA" data-to="map">← Retour à l’archipel</button>
+    return `<div class="title-row"><h2>${esc(d.name)}</h2></div>
     <div class="lesson-grid">
-      <article class="win"><div class="win-head">Parchemin de savoir</div><h2>${d.name}</h2><div class="lesson">${d.lesson}</div></article>
-      <aside class="win sticky"><div class="win-head">Portail de rang ${d.rank}</div>
+      <aside class="win"><div class="win-head">Portail de rang ${d.rank}</div>
+        <div class="boss-preview ${rec.cleared ? "" : "unknown"}" aria-hidden="true">${illustrerCreature(d.boss.name, estChef(d) ? "chief" : "boss")}</div>
         <dl class="info">
-          <dt>Matière</dt><dd>${DMAP[d.id].s.name}</dd>
-        <dt>Région</dt><dd>${esc(regionDuDonjon(DMAP[d.id].s, d)?.name || "Région 1")}</dd>
-          <dt>Niveau</dt><dd>${d.req}</dd>
-          <dt>Créatures</dt><dd>${construireSalles(d).reduce((n, r) => n + r.ids.length, 0)}</dd>
-          <dt>Boss</dt><dd>${rec.cleared ? d.boss.icon + " " + d.boss.name : "???"}</dd>
-          <dt>Record</dt><dd>${rec.cleared ? `<span class="stars">${stars(rec.stars)}</span>` : "Jamais vaincu"}</dd>
+          <dt>Matière</dt><dd>${esc(DMAP[d.id].s.name)}</dd>
+          <dt>Archipel</dt><dd>${esc(DMAP[d.id].s.region || DMAP[d.id].s.name)}</dd>
+          <dt>Région</dt><dd>${esc(regionDuDonjon(DMAP[d.id].s, d)?.name || "Région 1")}</dd>
+          <dt>Boss</dt><dd>${rec.cleared ? esc(d.boss.name) : "?"}</dd>
+          <dt>Dernière victoire</dt><dd>${rec.cleared ? (rec.last ? new Date(rec.last).toLocaleDateString("fr-FR") : "Déjà vaincu") + ` <span class="stars">${stars(rec.stars)}</span>` : "Jamais vaincu"}</dd>
         </dl>
         <button class="btn primary big" data-act="enter">Entrer dans le donjon</button>
-        <p class="hint">Chaque créature pose une question sur ce parchemin. Plus tu es précis, plus tu frappes fort contre le boss.</p>
-      </aside></div>`;
+        <button class="btn big" data-act="allerA" data-to="map" style="margin-top:10px">Retour à la carte</button>      </aside></div>`;
   },
 
   dungeon() {
@@ -1480,14 +1476,14 @@ const SCREENS = {
         ? `<p class="kw">Mots-clés retrouvés : ${fb.defInfo.matched} / ${fb.defInfo.total}</p>`
         : "";
       fbHtml = fb.ok
-        ? `<div class="fb ok" role="status"><h3>Créature vaincue</h3><p>${fb.xp > 0 ? `+${fb.xp} XP · ` : `<em>Révision, pas d’XP</em> · `}+${fb.gold} or${R.combo >= 3 ? ` · série de ${R.combo}` : ""}</p>${kwNote}<p class="ex">${q.ex}</p>`
+        ? `<div class="fb ok" role="status"><h3>Créature vaincue</h3><p>${fb.xp > 0 ? `+${fb.xp} XP` : `<em>Révision, pas d’XP</em>`}${R.combo >= 3 ? ` · série de ${R.combo}` : ""}</p>${kwNote}<p class="ex">${q.ex}</p>`
         : `<div class="fb ko" role="status"><h3>${R.mode === "training" ? "Raté" : "La créature riposte : −" + fb.dmg + " PV"}</h3>
            ${kwNote}<p>${q.def ? "Une définition possible" : "La bonne réponse était"} : <strong>${esc(good)}</strong></p><p class="ex">${q.ex}</p>
            <p>${R.mode === "training" ? "Cette question reviendra." : "Elle se relève et reviendra plus tard."}</p>`;
       if (!fb.ok && estSalleChronometree() && (S.inv.potSecond || 0) > 0) {
         fbHtml += `<div class="fbrow"><span></span><button class="btn gold" data-act="usesecond">🔄 Seconde Chance ×${S.inv.potSecond} — retenter cette question</button></div>`;
       }
-      fbHtml += `<div class="fbrow"><span></span><button class="btn primary" data-act="next" id="nextBtn">${R.hp <= 0 ? "Continuer" : room.queue.length ? "Question suivante" : R.mode === "dungeon" ? "Vers la salle du boss" : "Voir le résultat"}</button></div></div>`;
+      fbHtml += `<div class="fbrow"><span></span><button class="btn primary" data-act="next" id="nextBtn">${R.hp <= 0 ? "Continuer" : room.queue.length ? "Question suivante" : R.mode === "dungeon" ? "Continuer d’avancer" : "Voir le résultat"}</button></div></div>`;
     }
     const mobCls = fb ? (fb.ok ? "dead" : "strike") : "";
     const pot = R.mode === "dungeon" ? boutonsPotions() : "";
@@ -1644,13 +1640,12 @@ const SCREENS = {
     if (r.type === "faint") {
       return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Évanoui</div>
         <h2>Tu t’es évanoui dans le donjon</h2>
-        <p>Les créatures étaient trop fortes cette fois. Tu gardes l’XP et l’or gagnés.</p>
-        <p>Relis le parchemin : toutes les réponses s’y trouvent.</p>
-        <div class="btnrow"><button class="btn primary" data-act="gate" data-id="${r.dId}">Relire le parchemin</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
+        <p>Les créatures étaient trop fortes cette fois. Tu gardes l’XP gagnée.</p>
+        <div class="btnrow"><button class="btn primary" data-act="gate" data-id="${r.dId}">Retenter le donjon</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
     }
     return `<div class="win center-win result"><div class="win-head" style="justify-content:center">Entraînement terminé</div>
       <h2>${r.correct} bonnes réponses sur ${r.correct + r.wrong} essais</h2>
-      <div class="rewards"><span class="x">+${r.xp} XP</span><span class="g">+${r.gold} or</span><span class="l">+${r.healed || 0} PV</span></div>
+      <div class="rewards"><span class="x">+${r.xp} XP</span><span class="l">+${r.healed || 0} PV</span></div>
       <p>${r.wrong ? "Les questions ratées sont notées : elles reviendront au prochain entraînement." : "Sans faute. Tes points faibles fondent."}</p>
       <div class="btnrow"><button class="btn primary" data-act="train">Encore un entraînement</button><button class="btn" data-act="allerA" data-to="map">Retour à la carte</button></div></div>`;
   },
@@ -2330,8 +2325,17 @@ function tempsQuestion(q) {
   return q.def ? 90000 : q.t ? 45000 : QTIME;
 }
 let QTIMER = null;
-function estSalleChronometree() {
-  return R && R.mode === "dungeon" && R.roomIndex === R.rooms.length - 1;
+function estSalleChronometree(index = R && R.roomIndex) {
+  // Pas de chronomètre sur les épreuves d'histoire ni de promotion.
+  return (
+    R &&
+    R.mode === "dungeon" &&
+    index === R.rooms.length - 1 &&
+    !R.storyId &&
+    !R.promotion &&
+    !DMAP[R.dId]?.d.storyMission &&
+    !DMAP[R.dId]?.d.promotion
+  );
 }
 function preparerQuestion() {
   clearTimeout(QTIMER);
@@ -2439,16 +2443,17 @@ function ecranEtapeReussie() {
     koN = entries.length - okN;
   const recap = `<div class="recap">
       <div class="recaphead"><span class="rok">✓ ${okN} bonne${okN > 1 ? "s" : ""} réponse${okN > 1 ? "s" : ""}</span><span class="rko">✗ ${koN} erreur${koN > 1 ? "s" : ""}</span></div>
-      <ul class="recaplist">${entries.map((x) => `<li class="${x.ok ? "ok" : "ko"}"><span class="ic">${x.ok ? "✓" : "✗"}</span><div><span class="qt">${esc(x.text)}</span>${x.ok ? "" : `<span class="ca">Bonne réponse : ${esc(x.correct)}</span>`}</div></li>`).join("")}</ul>
+      <ul class="recaplist">${entries.map((x) => `<li class="${x.ok ? "ok" : "ko"}"><span class="ic">${x.ok ? "✓" : "✗"}</span><div><span class="qt">${esc(x.text)}</span>${x.ok || !x.picked ? "" : `<span class="ca">Ta réponse : ${esc(x.picked)}</span>`}<span class="ca">Bonne réponse : ${esc(x.correct)}</span></div></li>`).join("")}</ul>
     </div>`;
   return `<div class="dungeon">
     <div class="dtop"><div class="dtitle">${d.name}<small>${DMAP[d.id].s.name}</small></div></div>
     ${barreEtape()}
     <div class="win center-win" style="margin-top:6px;text-align:center">
       <div class="win-head" style="justify-content:center">${esc(R.rooms[i].label || "Salle " + (i + 1))} franchie</div>
-      <h2>${left > 0 ? (left > 1 ? "Encore " + left + " salles avant le boss" : "Une dernière salle avant le boss") : "Toutes les salles sont franchies"}</h2>
+      <h2>${left > 0 ? "Encore " + left + " salle" + (left > 1 ? "s" : "") : "Toutes les salles sont franchies"}</h2>
       ${recap}
-      <button class="btn primary big" data-act="stagecontinue">${left > 0 ? "Entrer dans la salle suivante" : "Vers la salle du boss"}</button>
+      ${estSalleChronometree(i + 1) ? `<p class="hint">Dans la prochaine salle, chaque question est chronométrée.</p>` : ""}
+      <button class="btn primary big" data-act="stagecontinue">${left > 0 ? "Entrer dans la salle suivante" : "Continuer d’avancer"}</button>
     </div>
   </div>`;
 }
@@ -2479,23 +2484,17 @@ function resoudreReponse(ok, pick, typed, defInfo) {
     const alreadyCleared =
       R.mode === "dungeon" && (S.dungeons[R.dId] || {}).cleared;
     const xpBase = R.mode === "training" ? 5 : 8 + R.lvl * 2;
-    const goldBase = R.mode === "training" ? 3 : 5 + R.lvl;
     // Les Fondamentaux ne font pas encore progresser en niveau : le chasseur
     // est toujours "non classé" tant qu'il ne les a pas terminés.
     const xp = alreadyCleared ? 0 : xpBase;
-    const gold = alreadyCleared
-      ? Math.max(1, Math.round(goldBase * 0.25))
-      : goldBase;
     R.xp += xp;
-    R.gold += gold;
-    S.gold += gold;
     S.total.correct++;
     S.daily.correct++;
     if (S.mistakes[qid]) {
       S.mistakes[qid]--;
       if (S.mistakes[qid] <= 0) delete S.mistakes[qid];
     }
-    R.fb = { ok: true, pick, typed, xp, gold, defInfo };
+    R.fb = { ok: true, pick, typed, xp, defInfo };
     gagnerXP(xp);
   } else {
     R.wrong++;
@@ -2506,7 +2505,9 @@ function resoudreReponse(ok, pick, typed, defInfo) {
       R.mode === "training" ? 0 : Math.max(4, 12 + R.lvl * 2 - defVal());
     R.hp = Math.max(0, R.hp - dmg);
     if (R.mode === "dungeon") enregistrerPV(R.hp);
-    room.queue.push(room.queue.shift());
+    // La question ratée revient après deux autres, pour ne pas être répondue de mémoire.
+    const ratee = room.queue.shift();
+    room.queue.splice(Math.min(room.queue.length, 2), 0, ratee);
     R.fb = { ok: false, pick, typed, dmg, defInfo };
   }
   sauvegarder();
@@ -2537,7 +2538,6 @@ function questionSuivante() {
         correct: R.correct,
         wrong: R.wrong,
         xp: R.xp,
-        gold: R.gold,
       };
       R = null;
       sauvegarder();
@@ -2640,26 +2640,6 @@ function niveauArmure() {
 function estChef(d) {
   return !!(d && d.boss && d.boss.chief);
 }
-/* Nombre total de fragments pour reconstituer la Clé ancestrale — à ajuster
-   si le nombre de donjons "chef" prévus dans l'histoire change. */
-const TOTAL_KEY_FRAGMENTS = 8;
-function htmlProgressionCle() {
-  const n = Math.min(S.keyFragments || 0, TOTAL_KEY_FRAGMENTS);
-  const seg = (i) => `keyseg${i < n ? " on" : ""}`;
-  const svg = `<svg viewBox="0 0 220 70" class="keysvg" aria-hidden="true">
-    <circle cx="34" cy="35" r="24" class="${seg(0)}"/>
-    <circle cx="34" cy="35" r="11" class="keyhole"/>
-    <rect x="56" y="27" width="66" height="16" rx="3" class="${seg(1)}"/>
-    <rect x="124" y="27" width="12" height="16" rx="2" class="${seg(2)}"/>
-    <rect x="138" y="27" width="12" height="28" rx="2" class="${seg(3)}"/>
-    <rect x="152" y="27" width="12" height="16" rx="2" class="${seg(4)}"/>
-    <rect x="166" y="27" width="12" height="34" rx="2" class="${seg(5)}"/>
-    <rect x="180" y="27" width="12" height="16" rx="2" class="${seg(6)}"/>
-    <rect x="194" y="27" width="14" height="28" rx="2" class="${seg(7)}"/>
-  </svg>`;
-  return `<div class="keywrap">${svg}<p class="keycount">${n} / ${TOTAL_KEY_FRAGMENTS} fragments de la Clé ancestrale</p>
-    ${n >= TOTAL_KEY_FRAGMENTS ? `<p class="hint">La Clé est complète…</p>` : ""}</div>`;
-}
 function demarrerBoss(dId, bless) {
   annulerCombat();
   const d = DMAP[dId].d,
@@ -2702,6 +2682,8 @@ function demarrerBoss(dId, bless) {
     fx: [],
     log: [{ text: "Le combat commence.", cls: "systeme" }],
   };
+  initialiserBossCampagne(dId);
+  initialiserMecaniqueBoss(dId);
   UI.screen = "boss";
   window.scrollTo(0, 0);
   afficher();
@@ -2873,7 +2855,7 @@ function resoudreJauge() {
   B.timing = null;
   attaqueJoueur(t.name, t.spec, zone);
 }
-function attaqueJoueur(name, spec, zone) {
+function attaqueJoueurBase(name, spec, zone) {
   B.mp -= spec.mp;
   B.lastZone = zone;
   const mult = { perfect: 1.6, good: 1, miss: 0.35 }[zone || "good"];
@@ -3131,7 +3113,7 @@ function tourBoss(playerDodging) {
     afficher();
   }, 650);
 }
-function victoireBoss() {
+function victoireBossBase() {
   enregistrerPV(B.hp);
   B.over = true;
   const d = DMAP[B.dId].d,
@@ -3161,6 +3143,7 @@ function victoireBoss() {
     cleared: true,
     stars: Math.max(st, rec.stars || 0),
     best: Math.max(acc, rec.best || 0),
+    last: Date.now(),
   };
   S.gold += gold;
   S.daily.bosses++;
@@ -3184,7 +3167,7 @@ function victoireBoss() {
   afficher();
   planifierCombat(() => allerA("result"), 700);
 }
-function defaiteBoss() {
+function defaiteBossBase() {
   enregistrerPV(0);
   B.over = true;
   UI.result = {
@@ -3367,12 +3350,12 @@ const ACTIONS = {
     boirePotionDonjon(t.dataset.id);
   },
   flee() {
+    enregistrerEtape();
     clearTimeout(QTIMER);
     QTIMER = null;
     const mode = R ? R.mode : "dungeon";
     R = null;
-    if (mode === "training") allerA("training");
-    else allerA("lesson");
+    allerA(mode === "training" ? "training" : "lesson");
   },
   usetime() {
     utiliserDilatationTemps();
@@ -3393,15 +3376,19 @@ const ACTIONS = {
     demarrerBoss(r.dId, { acc: r.bless.acc, maxCombo: r.bless.maxCombo });
   },
   bossflee() {
+    const synthetic =
+      (B && DMAP[B.dId]?.d.storyMission) || (B && DMAP[B.dId]?.d.promotion);
     if (B) enregistrerPV(B.hp);
     annulerCombat();
     if (B) B.over = true;
     UI.dId = B ? B.dId : UI.dId;
     B = null;
     R = null;
-    allerA("lesson");
+    allerA(synthetic ? "quests" : "lesson");
   },
   stat(t) {
+    if (!["str", "agi", "vit", "int"].includes(t.dataset.k)) return;
+    if (S.stats[t.dataset.k] >= 5 + 2 * (niveauEffectif() - 1)) return;
     if (S.points > 0) {
       S.stats[t.dataset.k]++;
       S.points--;
@@ -3415,7 +3402,16 @@ const ACTIONS = {
   },
   buy(t) {
     const it = item(t.dataset.id);
-    if (!it || S.gold < it.price || S.level < it.req) return;
+    if (!it) return;
+    if (it.atk !== undefined || it.def !== undefined) {
+      const list = it.atk !== undefined ? SHOP.weapons : SHOP.armors;
+      if (
+        list.indexOf(it) > [1, 2, 3, 4][chapitreActuel()] ||
+        S.owned.includes(it.id)
+      )
+        return;
+    } else if ((S.inv[it.id] || 0) >= 10) return;
+    if (S.gold < it.price || S.level < it.req) return;
     S.gold -= it.price;
     if (UI.shopTab === "potions") S.inv[it.id] = (S.inv[it.id] || 0) + 1;
     else {

@@ -44,7 +44,7 @@ if (typeof fetch === "function") {
   ).then((tags) => {
     if (!tags.some(Boolean)) return; // aucune info exploitable pour aucun fichier
     const combined = tags.join("|");
-    const VKEY = "eveil-chasseur-version";
+    const VKEY = "level-up-version";
     const last = localStorage.getItem(VKEY);
     if (last && last !== combined) {
       systeme(

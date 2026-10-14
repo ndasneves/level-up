@@ -316,7 +316,6 @@
       variant: null,
       styles: [],
       style: null,
-      medals: {},
       history: [],
       day: null,
       attempt: null,

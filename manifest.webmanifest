@@ -1,7 +1,7 @@
 {
   "name": "Level Up",
   "short_name": "Level Up",
-  "description": "Réviser ses cours de 6e en traversant des donjons.",
+  "description": "Réviser ses cours en traversant des donjons.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",

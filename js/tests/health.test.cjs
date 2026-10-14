@@ -29,13 +29,21 @@ test("une potion hors combat rétablit les PV et consomme un objet", () => {
 
 test("la sauvegarde conserve les PV, les anciennes sauvegardes démarrent pleines", () => {
   const g = game();
-  assert.equal(g.run("migrerSauvegarde({...nouvelleSauvegarde('A'), hp:37}).hp"), 37);
-  assert.equal(g.run("migrerSauvegarde((({hp, ...s}) => s)(nouvelleSauvegarde('A'))).hp"), 130);
+  assert.equal(
+    g.run("migrerSauvegarde({...nouvelleSauvegarde('A'), hp:37}).hp"),
+    37,
+  );
+  assert.equal(
+    g.run("migrerSauvegarde((({hp, ...s}) => s)(nouvelleSauvegarde('A'))).hp"),
+    130,
+  );
 });
 
 test("terminer un entraînement soigne de 35 PV au maximum", () => {
   const g = game();
-  g.run("enregistrerPV(40); demarrerEntrainement(); R.rooms[0].queue=[]; questionSuivante()");
+  g.run(
+    "enregistrerPV(40); demarrerEntrainement(); R.rooms[0].queue=[]; questionSuivante()",
+  );
   assert.equal(g.run("pvActuels()"), 75);
   assert.equal(g.run("UI.result.healed"), 35);
 });

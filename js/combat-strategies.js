@@ -1,20 +1,6 @@
 /* Chief tactics are announced before the player's choice. They never depend on
    the number of lessons, and the author can explicitly disable or choose them. */
 "use strict";
-function adapterBossElite() {
-  if (!B || B.eliteScaled) return;
-  B.elite = B.eliteScaled = true;
-  B.temper = "insaisissable";
-  B.L = Math.max(B.L, niveauEffectif());
-  B.bossHp = B.bossMax = Math.max(
-    Math.round(B.bossMax * 1.5),
-    Math.round(atkVal() * 12 + B.L * 22),
-  );
-  B.bossAtk = Math.max(
-    Math.round(B.bossAtk * 1.2),
-    Math.round(maxHp() / 9 + defVal()),
-  );
-}
 function rendreManaVole() {
   if (!B.stolenMana) return;
   const restored = Math.min(B.stolenMana, B.mpMax - B.mp);
@@ -37,9 +23,7 @@ function preparerTactiqueChef() {
     );
   }
 }
-const bossBeforeStrategies = demarrerBoss;
-demarrerBoss = function (id, bless) {
-  bossBeforeStrategies(id, bless);
+function initialiserMecaniqueBoss(id) {
   const config = DMAP[id].d.boss;
   B.mechanic =
     config.mechanic ||
@@ -51,18 +35,17 @@ demarrerBoss = function (id, bless) {
   B.stolenMana = 0;
   B.messengerPattern = "piercing";
   preparerTactiqueChef();
-  afficher();
-};
-const attackBeforeStrategies = attaqueJoueur;
-attaqueJoueur = function (name, spec, zone) {
+}
+function attaqueJoueur(name, spec, zone) {
   const charged = B.specialNext;
-  attackBeforeStrategies(name, spec, zone);
+  attaqueJoueurBase(name, spec, zone);
+  changerPhaseChef();
   if (charged && name === "s1" && zone === "perfect" && !B.specialNext) {
     if (B.mechanic === "collector") rendreManaVole();
     // Restart the cycle: interruption earns two ordinary attacks before a charge.
     if (["collector", "messenger"].includes(B.mechanic)) B.enemyTurns = 0;
   }
-};
+}
 const enemyBeforeStrategies = tourBoss;
 tourBoss = function (dodging) {
   if (!B || B.over) return;
@@ -131,9 +114,5 @@ SCREENS.boss = function () {
     B.messengerPattern === "piercing"
   )
     html = html.replace("−60 % de dégâts", "−30 % sur cette pointe");
-  if (B.elite)
-    html =
-      `<p class="elite-banner">Épreuve Élite · adaptée à ta puissance au début du combat</p>` +
-      html;
   return html;
 };

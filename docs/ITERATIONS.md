@@ -45,9 +45,9 @@ La campagne est réglée pour septembre 2026 à juin 2027. Les dates sont des ou
 
 ## Améliorations du gameplay après les quatre itérations
 
-Ajout de deux modules : `js/combat-strategies.js` pour les tactiques et l’Élite, `js/chapter-challenges.js` pour la maîtrise et le compagnon. Le parent peut choisir `boss.mechanic` ou garder le combat classique. Le cours conserve sa localisation de fragment et les statistiques explicites.
+Ajout de deux modules : `js/combat-strategies.js` pour les tactiques, `js/chapter-challenges.js` pour la maîtrise et le compagnon. Le parent peut choisir `boss.mechanic` ou garder le combat classique. Le cours conserve sa localisation de fragment et les statistiques explicites.
 
-Les chefs annoncent une stratégie exploitable avant chaque choix. Les versions Élite restent adaptées aux personnages avancés et conservent leur difficulté en revanche. Les trois paliers facultatifs de chaque chapitre font progresser un titre visible, avec des crédits journaliers bornés et sans bonus de puissance. Les objectifs passés restent accessibles sans expiration. La redistribution restitue exactement les points, avec confirmation et coût limité. Les Ombres ont des paroles adaptées aux révisions, victoires et défaites.
+Les chefs annoncent une stratégie exploitable avant chaque choix. Les trois paliers facultatifs de chaque chapitre font progresser un titre visible, avec des crédits journaliers bornés et sans bonus de puissance. Les objectifs passés restent accessibles sans expiration. La redistribution restitue exactement les points, avec confirmation et coût limité. Les Ombres ont des paroles adaptées aux révisions, victoires et défaites.
 
 Une vérification visuelle supplémentaire a conduit à replier la sauvegarde et les pouvoirs dans Statut et à corriger la largeur des lignes d’Ombres. Les panneaux gardent leur état pendant les mises à jour de l’écran. Le compteur du carnet utilise désormais les mêmes fragments que la Clé graphique.
 

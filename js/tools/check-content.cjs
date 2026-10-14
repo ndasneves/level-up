@@ -81,7 +81,7 @@ for (const subject of subjects) {
   }
 }
 errors.push(...context.window.ContentRules.audit(subjects).errors);
-const sw = fs.readFileSync(path.join(root, "js/sw.js"), "utf8");
+const sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 const manifest = JSON.parse(
   fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"),
 );
@@ -96,16 +96,9 @@ for (const file of [
   ...mediaFiles,
   "index.html",
   "sw.js",
-  "js/sw.js",
 ])
   if (!sw.includes('"./' + file + '"'))
     errors.push("Fichier absent du cache initial : " + file);
-if (
-  !/^importScripts\("\.\/js\/sw\.js"\);$/m.test(
-    fs.readFileSync(path.join(root, "sw.js"), "utf8"),
-  )
-)
-  errors.push("Le chargeur racine doit pointer sur js/sw.js.");
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exitCode = 1;

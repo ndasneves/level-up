@@ -4,7 +4,7 @@ const test = require("node:test"),
   fs = require("node:fs"),
   vm = require("node:vm"),
   path = require("node:path");
-const source = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8");
+const source = fs.readFileSync(path.join(__dirname, "../../sw.js"), "utf8");
 function worker(fetcher, hit) {
   const handlers = {},
     deleted = [],
@@ -26,6 +26,7 @@ function worker(fetcher, hit) {
       keys: async () => [
         "other-app-cache",
         "eveil-chasseur-v9",
+        "level-up-v9",
         source.match(/const CACHE = "([^"]+)"/)[1],
       ],
       delete: async (k) => deleted.push(k),
@@ -69,10 +70,10 @@ test("l’activation ne supprime jamais les caches d’autres applications du m�
   let pending;
   w.handlers.activate({ waitUntil: (p) => (pending = p) });
   await pending;
-  assert.deepEqual(w.deleted, ["eveil-chasseur-v9"]);
+  assert.deepEqual(w.deleted, ["eveil-chasseur-v9", "level-up-v9"]);
 });
 
-test("le chargeur racine garde les URLs du cache dans le projet GitHub Pages", async () => {
+test("le service worker garde les URLs du cache dans le projet GitHub Pages", async () => {
   const w = worker(async () => {}, null);
   let pending;
   w.handlers.install({ waitUntil: (p) => (pending = p) });

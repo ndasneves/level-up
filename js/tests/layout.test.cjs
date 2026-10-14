@@ -9,7 +9,9 @@ function files(dir = root) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     if ([".git", "node_modules"].includes(entry.name)) return [];
     const file = path.join(dir, entry.name);
-    return entry.isDirectory() ? files(file) : [path.relative(root, file)];
+    return entry.isDirectory()
+      ? files(file)
+      : [path.relative(root, file).split(path.sep).join("/")];
   });
 }
 test("la page reste à la racine, les scripts et images ont un emplacement unique", () => {
@@ -44,13 +46,8 @@ test("la page reste à la racine, les scripts et images ont un emplacement uniqu
     hashes.set(hash, file);
   }
 });
-test("seul le chargeur technique du service worker est conservé hors de js", () => {
-  const source = fs.readFileSync(path.join(root, "sw.js"), "utf8");
-  assert.match(source, /^importScripts\("\.\/js\/sw\.js"\);$/m);
-  assert.equal(
-    source.replace(/\/\*[\s\S]*?\*\//g, "").trim(),
-    'importScripts("./js/sw.js");',
-  );
+test("le service worker est unique, à la racine, et le manifest couvre tout le site", () => {
+  assert.ok(!fs.existsSync(path.join(root, "js/sw.js")));
   const manifest = JSON.parse(
     fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"),
   );

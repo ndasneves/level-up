@@ -6,6 +6,10 @@ const fs = require("node:fs"),
   assert = require("node:assert/strict");
 const { chromium } = require(process.env.LEVEL_UP_PLAYWRIGHT || "playwright");
 const root = path.resolve(__dirname, "../..");
+// Les captures vont dans le dossier temporaire, pas dans le dépôt.
+const shots = fs.mkdtempSync(
+  path.join(require("node:os").tmpdir(), "level-up-"),
+);
 const mime = {
   ".html": "text/html",
   ".js": "application/javascript",
@@ -52,7 +56,7 @@ const mime = {
     await page.goto(base, { waitUntil: "domcontentloaded" });
     await page.waitForFunction(() => typeof S !== "undefined");
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-intro.png"),
+      path: path.join(shots, "mobile-intro.png"),
     });
     await page.evaluate(() => {
       S = nouvelleSauvegarde("Chasseur");
@@ -63,6 +67,7 @@ const mime = {
       S.gold = 200;
       S.points = 6;
       S.campaign.completed = ["fragment-1"];
+      STATS_EN_CALCUL = false; // écran Statut complet (sceau, défis) en test
       sauvegarder();
     });
     for (const screen of ["map", "status", "shop", "training", "quests"]) {
@@ -76,7 +81,7 @@ const mime = {
         screen + " déborde horizontalement",
       );
       await page.screenshot({
-        path: path.join(root, "images/apercus/mobile-" + screen + ".png"),
+        path: path.join(shots, "mobile-" + screen + ".png"),
       });
     }
     await page.evaluate(() => {
@@ -85,16 +90,16 @@ const mime = {
       allerA("map");
     });
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-regions.png"),
+      path: path.join(shots, "mobile-regions.png"),
     });
     await page.locator('[data-act="group"]').first().tap();
     await page.locator('[data-act="gate"]').first().tap();
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-lesson.png"),
+      path: path.join(shots, "mobile-lesson.png"),
     });
     await page.locator('[data-act="enter"]').tap();
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-question.png"),
+      path: path.join(shots, "mobile-question.png"),
     });
     // Test the rendered event handlers, not only the underlying functions.
     for (let step = 0; step < 80; step++) {
@@ -128,7 +133,7 @@ const mime = {
     assert.equal(await page.evaluate(() => UI.screen), "bossgate");
     await page.locator('[data-act="fightboss"]').tap();
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-boss.png"),
+      path: path.join(shots, "mobile-boss.png"),
     });
     await page.locator('[data-bact="atk"]').tap();
     assert.ok(await page.evaluate(() => !!B.timing));
@@ -157,7 +162,7 @@ const mime = {
     assert.equal(await page.evaluate(() => B.bossMax), 480);
     assert.match(await page.locator(".intent").innerText(), /Collecteur/);
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-chief.png"),
+      path: path.join(shots, "mobile-chief.png"),
     });
     await page.evaluate(() => {
       annulerCombat();
@@ -167,7 +172,7 @@ const mime = {
       allerA("shop");
     });
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-artifacts.png"),
+      path: path.join(shots, "mobile-artifacts.png"),
     });
     await page.setViewportSize({ width: 375, height: 812 });
     for (const screen of ["map", "status", "shop", "training", "quests"]) {
@@ -205,7 +210,7 @@ const mime = {
     );
     await page.locator(".power-row").first().scrollIntoViewIfNeeded();
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-powers.png"),
+      path: path.join(shots, "mobile-powers.png"),
     });
     await page.locator('details[data-panel="powerPanel"] summary').tap();
     await page.locator('[data-act="respec"]').tap();
@@ -229,7 +234,7 @@ const mime = {
     });
     assert.match(await page.locator(".hunter-title").innerText(), /Éclaireur/);
     await page.screenshot({
-      path: path.join(root, "images/apercus/mobile-mastery.png"),
+      path: path.join(shots, "mobile-mastery.png"),
       fullPage: true,
     });
     // Cache readiness is tested from a project subdirectory, then with no network.

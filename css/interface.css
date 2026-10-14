@@ -229,15 +229,8 @@ main {
   border-color: #973a53;
   background: #311526;
 }
-.boss-identity {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  margin: 18px 0;
-}
-.boss-identity strong {
-  font: 700 var(--fs-texte) var(--ui);
+.boss-preview.unknown .creature-art {
+  filter: brightness(0) opacity(0.75);
 }
 .chiefgate .boss-preview {
   animation: none;
@@ -446,14 +439,6 @@ main {
 .shadow-voice {
   color: #a8d8ff;
   line-height: 1.6;
-}
-.elite-banner {
-  padding: 10px 14px;
-  border: 1px solid #9269de;
-  border-radius: 12px;
-  color: #dac8ff;
-  background: #15132c;
-  font-size: 0.85rem;
 }
 .challenge-tabs {
   display: flex;

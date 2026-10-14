@@ -1,6 +1,6 @@
 # Configurer les cours, les chefs et les fragments
 
-L’application reste composée de fichiers statiques. Aucun serveur, compte ou compilation n’est nécessaire. Ajouter une matière en chargeant son fichier dans `index.html` et `js/sw.js`. Les cartes se calculent à partir des tableaux, sans nombre de matières ou de notions fixé à l’avance.
+L’application reste composée de fichiers statiques. Aucun serveur, compte ou compilation n’est nécessaire. Ajouter une matière en chargeant son fichier dans `index.html` et `sw.js`. Les cartes se calculent à partir des tableaux, sans nombre de matières ou de notions fixé à l’avance.
 
 Chaque donjon garde un identifiant unique et stable. Ne pas renommer les identifiants de questions existantes : ils portent la maîtrise du joueur.
 
@@ -41,14 +41,13 @@ Les cours actuels ne reçoivent pas de fragments automatiquement. Renseigner `bo
 
 Sans champ explicite, un chef gardien devient Sentinelle, un chef vampirique devient Collecteur, les autres deviennent Messagers. Les boss ordinaires gardent le combat classique. La tactique est fixée au début du combat ; les phases changent le tempérament, pas cette identité. Donner un nom cohérent avec la tactique choisie.
 
-Les statistiques explicites du parent continuent à s’appliquer au combat normal. En Élite, elles servent de minimum : la difficulté peut augmenter suivant la puissance du personnage. Vérifier les chefs avec les compétences disponibles au moment de leur rencontre ; une Sentinelle très résistante peut être trop difficile avant Entaille.
+Les statistiques explicites du parent continuent à s’appliquer au combat normal. Vérifier les chefs avec les compétences disponibles au moment de leur rencontre ; une Sentinelle très résistante peut être trop difficile avant Entaille.
 
 ## Où placer les fichiers
 
 - Cours : `js/content/anglais.js`, `js/content/histoire.js`, `js/content/physique-chimie.js`, `js/content/fondamentaux.js`.
 - Images du jeu : `images/app/`.
 - Images des cours : `images/<matière>/` ; actuellement les neuf pictogrammes sont dans `images/physique-chimie/`.
-- Captures et aperçus techniques : `images/apercus/`, sans les mélanger aux ressources utilisées par le joueur.
 
 Les chemins sont toujours relatifs au `index.html` de la racine, indépendamment du dossier du fichier JS. Exemple :
 
@@ -61,6 +60,6 @@ Les chemins sont toujours relatifs au `index.html` de la racine, indépendamment
       { src: "images/physique-chimie/corrosif.png", alt: "Corrosion", label: "B" }] }
 ```
 
-Ajouter les nouvelles images dans `CORE` de `js/sw.js` avec leur chemin `./images/...` pour qu’elles soient disponibles dès la première ouverture hors ligne, même si la question n’a jamais été affichée. Pour une nouvelle matière, ajouter son script dans `index.html` (`js/content/svt.js` par exemple) et dans le même cache. Lancer `npm run check:content` avant publication.
+Ajouter les nouvelles images dans `CORE` de `sw.js` avec leur chemin `./images/...` pour qu’elles soient disponibles dès la première ouverture hors ligne, même si la question n’a jamais été affichée. Pour une nouvelle matière, ajouter son script dans `index.html` (`js/content/svt.js` par exemple) et dans le même cache. Lancer `npm run check:content` avant publication.
 
 Conserver les identifiants existants des matières, donjons et questions. Les anciennes copies et les guides `_lisez-moi` ont été supprimés ; le présent document rassemble les consignes encore utiles.

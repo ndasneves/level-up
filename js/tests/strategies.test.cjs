@@ -88,21 +88,6 @@ test("le Messager annonce son alternance et la bonne défense compte", () => {
   assert.ok(g.run("B.hp") < g.run("B.hpMax"));
   assert.equal(g.run("B.incomingReduction"), null);
 });
-test("l’Élite reste adaptée après défaite et ne se multiplie pas deux fois", () => {
-  const g = game();
-  g.run(`STATS_EN_CALCUL=false`);
-  g.run(
-    "S.level=9;S.stats.str=20;demarrerBoss('en-1',{acc:1,maxCombo:0});adapterBossElite();",
-  );
-  const hp = g.run("B.bossMax");
-  assert.ok(hp >= g.run("atkVal()*12+B.L*22"));
-  g.run("adapterBossElite()");
-  assert.equal(g.run("B.bossMax"), hp);
-  g.run("defaiteBoss();S.inv.potHpL=2;ACTIONS.healout();ACTIONS.retry()");
-  assert.equal(g.run("B.elite"), true);
-  assert.equal(g.run("B.temper"), "insaisissable");
-  assert.equal(g.run("B.bossMax"), hp);
-});
 test("les objectifs bornent le crédit, sans dépendre des nouveaux cours", () => {
   const g = game();
   g.run(

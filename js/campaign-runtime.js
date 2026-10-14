@@ -91,6 +91,16 @@ function donnerEssence(n) {
   c.day.essence += gain;
   return gain;
 }
+/* Exécute le moteur d'origine sans qu'il crédite d'XP : la campagne gère les gains. */
+function sansGainXP(fn) {
+  const gain = gagnerXP;
+  gagnerXP = () => ({ xp: 0, essence: 0 });
+  try {
+    fn();
+  } finally {
+    gagnerXP = gain;
+  }
+}
 gagnerXP = function (n) {
   if (!S || n <= 0) return { xp: 0, essence: 0 };
   const c = campagne(),
@@ -317,7 +327,6 @@ function enregistrerEtape() {
     wrong: R.wrong,
     maxCombo: R.maxCombo,
     hp: R.hp,
-    elite: !!R.elite,
     qtimeBonus: R.qtimeBonus || 0,
   };
   sauvegarder();
@@ -375,7 +384,6 @@ function reprendreEtape() {
   R.maxCombo = a.maxCombo;
   R.hp = Math.min(R.hpMax, Math.max(1, a.hp));
   R.qtimeBonus = a.qtimeBonus;
-  R.elite = a.elite;
   const room = R.rooms[R.roomIndex];
   room.queue = room.ids.map((qid, k) => ({
     d: a.dId,
@@ -417,6 +425,14 @@ demarrerDonjon = function (id) {
     R.lvl = Math.min(R.lvl, niveauEffectif() + 1);
   enregistrerEtape();
 };
+/* Salle chronométrée : XP pleine pendant le premier tiers du temps, puis
+   dégressive jusqu'à 50 % à la fin. Le plafond journalier reste calculé sur l'XP de base. */
+function facteurVitesse() {
+  if (!estSalleChronometree() || !R.questionDeadline) return 1;
+  const total = tempsQuestion(R.cur.q) + (R.qtimeBonus || 0),
+    ecoule = 1 - Math.max(0, R.questionDeadline - Date.now()) / total;
+  return Math.max(0.5, Math.min(1, 1 - 0.75 * (ecoule - 1 / 3)));
+}
 const originalQuestion = resoudreReponse;
 resoudreReponse = function (ok, pick, typed, defInfo) {
   if (!R || R.fb) return;
@@ -431,8 +447,6 @@ resoudreReponse = function (ok, pick, typed, defInfo) {
       lastResult: null,
     };
   const beforeXp = R.xp,
-    beforeGold = S.gold,
-    beforeRoomGold = R.gold,
     sessionFirst = !(R.sessionSeen || []).includes(key);
   if (R.assessment && !R.assessment.seen.includes(key)) {
     const a = R.assessment,
@@ -447,13 +461,9 @@ resoudreReponse = function (ok, pick, typed, defInfo) {
   const xp = ok
     ? CG.questionReward(history, today(), c.day.questionXp[key] || 0)
     : 0;
-  const gain = gagnerXP;
-  gagnerXP = () => ({ xp: 0, essence: 0 });
-  originalQuestion(ok, pick, typed, defInfo);
-  gagnerXP = gain;
+  const xpGagne = Math.round(xp * facteurVitesse());
+  sansGainXP(() => originalQuestion(ok, pick, typed, defInfo));
   R.xp = beforeXp;
-  R.gold = beforeRoomGold;
-  S.gold = beforeGold;
   history.asked++;
   history.lastResult = ok;
   if (ok) {
@@ -465,14 +475,10 @@ resoudreReponse = function (ok, pick, typed, defInfo) {
   if (sessionFirst) R.sessionSeen.push(key);
   if (ok) {
     c.day.questionXp[key] = (c.day.questionXp[key] || 0) + xp;
-    const award = gagnerXP(xp);
+    const award = gagnerXP(xpGagne);
     R.xp += award.xp;
     R.essence = (R.essence || 0) + award.essence;
-    const gold = xp > 0 ? Math.max(1, Math.ceil(xp / 3)) : 0;
-    S.gold += gold;
-    R.gold += gold;
     R.fb.xp = award.xp;
-    R.fb.gold = gold;
     R.fb.essence = award.essence;
   }
   enregistrerEtape();
@@ -546,29 +552,9 @@ ACTIONS.fightboss = function () {
   B.storyId = storyId;
   B.promotion = promotion;
   B.assessment = assessment;
-  if (R?.elite) {
-    B.elite = true;
-    adapterBossElite();
-  }
   if (assessment?.total)
     B.mult = 1 + (assessment.correct / assessment.total) * 0.5;
   afficher();
-};
-const originalBoss = demarrerBoss;
-demarrerBoss = function (id, bless) {
-  originalBoss(id, bless);
-  B.cooldowns = { s1: 0, s2: 0 };
-  B.potions = 0;
-  B.perfectDodges = 0;
-  B.interrupts = 0;
-  B.shadowUsed = false;
-  B.phase = 0;
-  B.baseTemper = B.temper;
-  if (!DMAP[id].d.storyMission && !DMAP[id].d.promotion) {
-    B.L = Math.min(B.L, niveauEffectif() + 1);
-    B.bossHp = B.bossMax = Math.round((150 + B.L * 55) * (B.chief ? 1.8 : 1));
-    B.bossAtk = Math.round((9 + B.L * 3) * (B.chief ? 1.3 : 1));
-  }
 };
 function appliquerCaracteristiquesBoss() {
   const stats = DMAP[B.dId].d.boss.stats;
@@ -581,12 +567,21 @@ function appliquerCaracteristiquesBoss() {
   if (stats.hp !== undefined) B.bossHp = B.bossMax = Math.round(stats.hp);
   if (stats.attack !== undefined) B.bossAtk = Math.round(stats.attack);
 }
-const bossAvantConfiguration = demarrerBoss;
-demarrerBoss = function (id, bless) {
-  bossAvantConfiguration(id, bless);
+function initialiserBossCampagne(id) {
+  B.cooldowns = { s1: 0, s2: 0 };
+  B.potions = 0;
+  B.perfectDodges = 0;
+  B.interrupts = 0;
+  B.shadowUsed = false;
+  B.phase = 0;
+  B.baseTemper = B.temper;
+  if (!DMAP[id].d.storyMission && !DMAP[id].d.promotion) {
+    B.L = Math.min(B.L, niveauEffectif() + 1);
+    B.bossHp = B.bossMax = Math.round((150 + B.L * 55) * (B.chief ? 1.8 : 1));
+    B.bossAtk = Math.round((9 + B.L * 3) * (B.chief ? 1.3 : 1));
+  }
   appliquerCaracteristiquesBoss();
-  afficher();
-};
+}
 
 function competenceDisponible(k) {
   const c = campagne(),
@@ -707,18 +702,17 @@ actionBoss = function (a) {
   }
   originalActionBoss(a);
 };
-const originalVictory = victoireBoss;
-victoireBoss = function () {
+/* Victoire : socle du moteur, puis campagne, aventure et défis de chapitre. */
+function victoireBoss() {
   if (!B || B.over) return;
+  const chapitre = chapitreActuel(),
+    preparee = B.bless.acc >= 0.8 || B.interrupts > 0 || B.perfectDodges >= 2;
   const c = campagne(),
     story = B.storyId,
     prom = B.promotion,
     id = B.dId,
     wasCleared = !!S.dungeons[id]?.cleared;
-  const gain = gagnerXP;
-  gagnerXP = () => ({ xp: 0, essence: 0 });
-  originalVictory();
-  gagnerXP = gain;
+  sansGainXP(victoireBossBase);
   if (story && !c.completed.includes(story)) {
     c.completed.push(story);
     const m = CG.missions.find((x) => x.id === story);
@@ -765,21 +759,10 @@ victoireBoss = function () {
     c.history.push({ id: "rank-" + prom, date: today(), messages });
     raconter(messages);
   }
-  const medalKey = B.elite ? id + ":elite" : id;
-  const medal = c.medals[medalKey] || (c.medals[medalKey] = []);
-  const gained = [];
-  if (!B.potions && !medal.includes("sans-potion")) gained.push("sans-potion");
-  if (B.perfectDodges >= 2 && !medal.includes("esquive"))
-    gained.push("esquive");
-  if (B.interrupts > 0 && !medal.includes("interruption"))
-    gained.push("interruption");
-  medal.push(...gained);
-  donnerEssence(gained.length * 15);
   const reward = recompenserSession("dungeon", !story && !prom ? "hunt" : null);
   const bonus = story && !wasCleared ? gagnerXP(100) : { xp: 0, essence: 0 };
   UI.result.xp = reward.xp + bonus.xp;
   UI.result.essence = reward.essence + bonus.essence;
-  UI.result.medals = gained;
   S.keyFragments = c.completed.filter((x) => x.startsWith("fragment-")).length;
   UI.result.fragment =
     courseFragment ||
@@ -795,61 +778,28 @@ victoireBoss = function () {
   S.gold += UI.result.gold;
   effacerEtape();
   sauvegarder();
-};
-const originalDefeat = defaiteBoss;
-defaiteBoss = function () {
-  originalDefeat();
+  suiteVictoireAventure(id, wasCleared);
+  suiteVictoireDefis(id, chapitre, preparee);
+}
+function defaiteBoss() {
+  if (!B || B.over) return;
+  defaiteBossBase();
   UI.result.storyId = B.storyId;
   UI.result.promotion = B.promotion;
   UI.result.assessment = B.assessment;
-  UI.result.elite = !!B.elite;
-};
+  suiteDefaiteDefis();
+}
 ACTIONS.retry = function () {
   const r = UI.result;
   demarrerBoss(r.dId, { acc: r.bless.acc, maxCombo: r.bless.maxCombo });
   B.storyId = r.storyId;
   B.promotion = r.promotion;
   B.assessment = r.assessment;
-  if (r.elite) adapterBossElite();
   afficher();
-};
-const originalFlee = ACTIONS.flee;
-ACTIONS.flee = function () {
-  enregistrerEtape();
-  originalFlee();
-};
-const originalBossFlee = ACTIONS.bossflee;
-ACTIONS.bossflee = function () {
-  const synthetic =
-    (B && DMAP[B.dId]?.d.storyMission) || (B && DMAP[B.dId]?.d.promotion);
-  originalBossFlee();
-  if (synthetic) allerA("quests");
 };
 ACTIONS.resume = reprendreEtape;
 ACTIONS.mission = (t) => lancerMission(t.dataset.id);
 ACTIONS.promote = lancerPromotion;
-ACTIONS.secret = function () {
-  const c = campagne();
-  if (c.completed.filter((x) => x.startsWith("fragment-")).length < 8) return;
-  allerA("secret");
-};
-ACTIONS.solvekey = function () {
-  const value = norm($("#keyAnswer").value);
-  if (value !== "memoires") {
-    systeme(
-      "Signal incomplet",
-      "<p>Lis les lettres des huit fragments dans leur ordre de découverte.</p>",
-    );
-    return;
-  }
-  campagne().keyFound = true;
-  sauvegarder();
-  raconter([
-    "Le cœur caché de la Clé s’éveille. Les Gardiens l’avaient dissimulé dans la mémoire du Système.",
-    "Clé ancestrale reconstituée. Le Sanctuaire pourra être ouvert dès que son signal sera localisé.",
-  ]);
-  allerA("quests");
-};
 ACTIONS.contract = function (t) {
   const kind = t.dataset.id;
   if (kind === "hunt") {
@@ -948,12 +898,6 @@ ACTIONS.style = function (t) {
   sauvegarder();
   afficher();
 };
-const originalStat = ACTIONS.stat;
-ACTIONS.stat = function (t) {
-  if (!["str", "agi", "vit", "int"].includes(t.dataset.k)) return;
-  if (S.stats[t.dataset.k] >= 5 + 2 * (niveauEffectif() - 1)) return;
-  originalStat(t);
-};
 ACTIONS.claim = function () {
   if (!dailyDone() || S.daily.claimed) return;
   S.daily.claimed = true;
@@ -966,20 +910,6 @@ ACTIONS.claim = function () {
   sauvegarder();
   afficher();
 };
-const originalBuy = ACTIONS.buy;
-ACTIONS.buy = function (t) {
-  const it = item(t.dataset.id);
-  if (!it) return;
-  if (it.atk !== undefined || it.def !== undefined) {
-    const list = it.atk !== undefined ? SHOP.weapons : SHOP.armors;
-    if (
-      list.indexOf(it) > [1, 2, 3, 4][chapitreActuel()] ||
-      S.owned.includes(it.id)
-    )
-      return;
-  } else if ((S.inv[it.id] || 0) >= 10) return;
-  originalBuy(t);
-};
 ACTIONS.equip = function (t) {
   const it = item(t.dataset.id);
   if (!it || !S.owned.includes(it.id)) return;
@@ -988,31 +918,6 @@ ACTIONS.equip = function (t) {
   sauvegarder();
   afficher();
 };
-const originalChrono = estSalleChronometree;
-estSalleChronometree = function () {
-  return (
-    originalChrono() &&
-    !R.storyId &&
-    !R.promotion &&
-    !DMAP[R.dId]?.d.storyMission &&
-    !DMAP[R.dId]?.d.promotion
-  );
-};
-function htmlFragments() {
-  const c = campagne(),
-    obtained = new Set(c.completed.filter((x) => x.startsWith("fragment-")));
-  return `<section class="key-vault win"><div class="win-head">La Clé ancestrale</div><div class="key-art">${svgCleComplete(obtained, c.keyFound)}</div><p class="key-total">${obtained.size} / 8 fragments · ${c.keyFound ? "Cœur retrouvé" : "Cœur inconnu"}</p><div class="fragment-runes">${Array.from(
-    "MEMOIRES",
-  )
-    .map(
-      (l, i) =>
-        `<span class="rune ${obtained.has("fragment-" + (i + 1)) ? "found" : ""}" title="Fragment ${i + 1}">${obtained.has("fragment-" + (i + 1)) ? l : "?"}</span>`,
-    )
-    .join(
-      "",
-    )}</div><p class="hint">Chaque chef vaincu révèle un fragment et une lettre.</p></section>`;
-}
-htmlProgressionCle = htmlFragments;
 const oldQuests = SCREENS.quests;
 SCREENS.quests = function () {
   if (!fondIntroTerminee()) return oldQuests();
@@ -1187,8 +1092,6 @@ SCREENS.result = function () {
   let html = oldResult();
   if (UI.result.essence)
     html += `<p class="win">+${UI.result.essence} essence d’ombre</p>`;
-  if (UI.result.medals?.length)
-    html += `<p class="win">Défis accomplis : ${UI.result.medals.map(esc).join(" · ")}</p>`;
   return html;
 };
 const oldHeader = enteteJeu;
@@ -1197,17 +1100,16 @@ enteteJeu = function () {
   let html = oldHeader();
   if (S.level >= CG.CONFIG.chapters[chapitreActuel()].cap)
     html = html.replace(
-      /<div class="xpbox">[\s\S]*?<div class="gold-count">/,
-      `<div class="xpbox"><span>Palier atteint · tes récompenses deviennent de l’essence</span><span>${campagne().essence} essence d’ombre</span></div><div class="gold-count">`,
+      /<div class="hud-meter hud-xp">[\s\S]*?<\/strong><\/div>/,
+      `<div class="hud-meter hud-xp"><span>XP</span><strong title="Palier atteint : tes récompenses deviennent de l’essence">${campagne().essence} essence d’ombre</strong></div>`,
     );
   return html;
 };
 if (S) campagne();
 
 // Les chefs changent effectivement de tactique, en plus de la jauge plus rapide.
-const originalAttack = attaqueJoueur;
-attaqueJoueur = function (name, spec, zone) {
-  originalAttack(name, spec, zone);
+/* Un chef change de tempérament en perdant des PV (appelé après chaque frappe). */
+function changerPhaseChef() {
   if (!B || B.over || !B.chief) return;
   const ratio = B.bossHp / B.bossMax,
     configured = DMAP[B.dId].d.boss.phases;
@@ -1224,25 +1126,7 @@ attaqueJoueur = function (name, spec, zone) {
       "systeme",
     );
   }
-};
-
-ACTIONS.elite = function (t) {
-  const id = t.dataset.id;
-  if (!S.dungeons[id]?.cleared || (campagne().medals[id] || []).length < 2)
-    return;
-  demarrerDonjon(id);
-  R.elite = true;
-  enregistrerEtape();
-};
-const originalLessonScreen = SCREENS.lesson;
-SCREENS.lesson = function () {
-  const html = originalLessonScreen(),
-    medals = campagne().medals[UI.dId] || [];
-  return (
-    html +
-    `<section class="win" style="margin-top:16px"><div class="win-head">Défis du boss</div><p>Sans potion · Deux esquives parfaites · Interrompre une charge</p><p>${medals.length ? medals.map(esc).join(" · ") : "Aucune médaille pour le moment."}</p><button class="btn gold" data-act="elite" data-id="${UI.dId}" ${medals.length < 2 || !S.dungeons[UI.dId]?.cleared ? "disabled" : ""}>Version Élite — deux médailles requises</button></section>`
-  );
-};
+}
 
 ACTIONS.shadowupgrade = function (t) {
   const c = campagne(),
