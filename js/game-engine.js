@@ -1128,8 +1128,7 @@ function enteteJeu() {
     ["quests", "Quête", "⭐"],
   ];
   const dot = (k) =>
-    (k === "status" && S.points > 0) ||
-    (k === "quests" && classed && dailyDone() && !S.daily.claimed)
+    k === "quests" && classed && dailyDone() && !S.daily.claimed
       ? '<span class="dot" aria-label="nouveau"></span>'
       : "";
   const locked = (k) =>

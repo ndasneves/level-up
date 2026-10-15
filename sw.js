@@ -3,7 +3,7 @@
    la dernière version des fichiers du site (moteur et contenu), même si le
    réseau est lent ; le cache ne sert que si le réseau échoue vraiment
    (vraiment hors ligne). La progression (localStorage) n'est jamais touchée. */
-const CACHE = "level-up-v19";
+const CACHE = "level-up-v20";
 const APP_ROOT = new URL("./", self.location.href);
 const CORE = [
   "./sw.js",

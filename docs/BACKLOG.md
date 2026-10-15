@@ -34,7 +34,6 @@ Flux : Boîte à idées → À faire → En cours → À tester → Terminés.
     - Codex de la Clé : régénérer le SVG (`svgCleComplete` dans `js/game-art.js`, 6 pièces + cœur), `js/key-design.js` : 7 runes dont le cœur (O), compteur « x / 7 », barre de progression.
     - Tests (`game.test.cjs`, `balance.cjs`), `README.md`, `docs/REGLES.md`, `docs/SCENARIO.md` (régénéré).
 - **Ajouter une marge entre le header et l'écran « Évanoui ».** Le bloc (`.win.center-win.result`) colle au header, alors que les autres écrans ont un espacement. À vérifier si les autres écrans de résultat (victoire, défaite contre le boss, entraînement) ont le même défaut. Fin : même espacement que le reste du jeu.
-- **Supprimer la pastille jaune du menu Stats.** Cause : elle s'affiche quand `S.points > 0`, c'est-à-dire des points de caractéristique non répartis (le joueur du test en avait après être passé niveau 2). Décider : la retirer complètement, ou la garder pour signaler ces points. Fin : plus de pastille sur Stats, la pastille de Quête (coffre quotidien) reste.
 - **Reprendre le cours d'histoire** : le Paléolithique et le Néolithique.
 - **Créer le skill de création de questions** (déplacé de la boîte à idées). Guider l'ajout d'une notion (texte, photos éventuelles) : questions au bon format, écriture dans `js/content/*.js`, validation par `check:content`. Relecture humaine obligatoire ; photos sans donnée personnelle. À faire après le `CLAUDE.md`.
 - **Refaire les questions d'anglais.** Ordre de progression :
@@ -54,6 +53,7 @@ _Rien pour l'instant._
 ## À tester
 
 - **Compacter les barres de PV et d'XP du header.** Implémenté : XP et PV côte à côte sur une seule ligne, sans le texte « avant le niveau X ». À vérifier : lisibilité sur mobile, palier d'XP atteint.
+- **Supprimer la pastille jaune du menu Stats.** Implémenté : la pastille ne s'affiche plus pour les points de caractéristique non répartis ; celle de Quête (coffre quotidien) reste. À vérifier à l'écran après un passage de niveau.
 
 ## Terminés
 
