@@ -2080,6 +2080,7 @@ dl.info dd {
 }
 .result {
   text-align: center;
+  margin-top: 14px;
 }
 .result .big-stars {
   font-size: 44px;
